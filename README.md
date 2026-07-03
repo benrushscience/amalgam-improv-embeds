@@ -4,6 +4,8 @@ Public embeds and widget loaders for Amalgam Improv Squarespace pages.
 
 Map and aggregator projects are published as folders with an `index.html` file so Squarespace can embed stable GitHub Pages URLs.
 
+Event-feed projects are published as folders with an `index.html` file and should be embedded in Squarespace with iframes.
+
 Utility projects are published as widgets with a `widget.js` loader. Squarespace should load those scripts from GitHub Pages so this repository stays the source of truth.
 
 ## Current Embeds
@@ -15,9 +17,28 @@ Utility projects are published as widgets with a `widget.js` loader. Squarespace
 - `maps/improv-groups/table/`
 - `maps/improv-festival/map/`
 - `maps/improv-festival/table/`
+- `event-feeds/all-show-dates/`
+- `event-feeds/big-honey-events/`
+- `event-feeds/half-baked-dates/`
+- `event-feeds/pop-culture-improv-dates/`
+- `event-feeds/sci-prov-dates/`
+- `event-feeds/story-prov-dates/`
+- `event-feeds/workshops-and-jams-dates/`
 - `utilities/jam-generator/widget.js`
 - `utilities/multi-timer/widget.js`
 - `utilities/suggestion-generator/widget.js`
+
+## Squarespace Event Feed Iframes
+
+Use event-feed pages in Squarespace Code Blocks with iframes.
+
+```html
+<iframe
+  src="https://benrushscience.github.io/amalgam-improv-embeds/event-feeds/all-show-dates/"
+  style="width:100%; height:700px; border:0;"
+  title="All Show Dates">
+</iframe>
+```
 
 ## Squarespace Utility Widgets
 

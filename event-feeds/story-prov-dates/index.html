@@ -1,0 +1,271 @@
+<!-- Squarespace embed: Story-prov events (ANY Event Type, Event Name contains "story-prov") -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Story-prov Events</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; }
+
+    .feed-container {
+      max-width: 1600px;
+      margin: 0 auto;
+      padding: 20px;
+      background-color: #fff;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+      border-radius: 8px;
+    }
+
+    /* Loading state */
+    .loading-state {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    .loading-state.hidden {
+      display: none;
+    }
+
+    .loading-spinner {
+      width: 16px;
+      height: 16px;
+      border: 2px solid #d9d9d9;
+      border-top-color: #007BFF;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      flex-shrink: 0;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .event { border-bottom: 1px solid #ddd; padding: 20px 0; }
+    .event:last-child { border-bottom: none; }
+    .event h3 { margin: 0 0 10px; font-size: 1.5em; }
+    .event p { margin: 8px 0; }
+    .event a { color: #007BFF; text-decoration: none; }
+    .event a:hover { text-decoration: underline; }
+
+    .actions {
+      margin-top: 10px;
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+    }
+
+    .btn {
+      padding: 8px 12px;
+      border: 1px solid #007BFF;
+      border-radius: 6px;
+      display: inline-block;
+    }
+
+    .empty-state {
+      text-align: center;
+      color: #666;
+      padding: 24px 0;
+    }
+  </style>
+</head>
+<body>
+  <div class="feed-container">
+    <div id="loading-state" class="loading-state" aria-live="polite">
+      <div class="loading-spinner" aria-hidden="true"></div>
+      <span>Loading events</span>
+    </div>
+
+    <div id="rss-feed" aria-busy="true"></div>
+  </div>
+
+  <script>
+    // ---------- Configuration ----------
+    const rssUrl =
+      'https://script.google.com/macros/s/AKfycbyKAy9w0-nFU9FLYFxLAonIssaUnAgImseLr7NICtXvCe1wnd-yiI3h29fDN7ipH0_mSg/exec';
+
+    const maxEventsToShow = 200;
+    const defaultEventDurationMinutes = 120;
+    const requiredTitleSubstring = 'story-prov'; // case-insensitive
+
+    // ---------- DOM references ----------
+    const feedEl = document.getElementById('rss-feed');
+    const loadingEl = document.getElementById('loading-state');
+
+    function hideLoadingState() {
+      loadingEl.classList.add('hidden');
+      feedEl.setAttribute('aria-busy', 'false');
+    }
+
+    // ---------- Utilities ----------
+    function getText(node, selector) {
+      const el = node.querySelector(selector);
+      return el ? (el.textContent || '').trim() : '';
+    }
+
+    function parseDate(value) {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function stripScripts(html) {
+      return (html || '')
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    }
+
+    function removeTypeAndWebsiteLines(html) {
+      return (html || '')
+        .replace(/<strong>\s*Type:\s*<\/strong>.*?(<br\/>|<\/p>)/gi, '')
+        .replace(/<strong>\s*Website RSS Display:\s*<\/strong>.*?(<br\/>|<\/p>)/gi, '')
+        .replace(/Type:\s*[^\n<]+/gi, '')
+        .replace(/Website RSS Display:\s*[^\n<]+/gi, '')
+        .replace(/(<br\/>\s*){2,}/g, '<br/>')
+        .replace(/<p>\s*<\/p>/gi, '')
+        .trim();
+    }
+
+    function plainText(html) {
+      return (html || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/?[^>]+>/g, '')
+        .trim();
+    }
+
+    function extractLocation(html) {
+      const text = plainText(html);
+      const match = text.match(/Location:\s*(.+)/i);
+      return match ? match[1].split('\n')[0].trim() : '';
+    }
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function toUtc(date) {
+      return (
+        date.getUTCFullYear() +
+        pad(date.getUTCMonth() + 1) +
+        pad(date.getUTCDate()) + 'T' +
+        pad(date.getUTCHours()) +
+        pad(date.getUTCMinutes()) +
+        pad(date.getUTCSeconds()) + 'Z'
+      );
+    }
+
+    function googleCalUrl({ title, description, start, end, location }) {
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: title,
+        details: description,
+        dates: `${toUtc(start)}/${toUtc(end)}`,
+        location: location || ''
+      });
+      return `https://www.google.com/calendar/render?${params.toString()}`;
+    }
+
+    function icsEscape(text) {
+      return (text || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/\n/g, '\\n')
+        .replace(/,/g, '\\,')
+        .replace(/;/g, '\\;');
+    }
+
+    function icsUrl({ title, description, start, end, link, location }) {
+      const uid = `${Date.now()}-${Math.random().toString(36).slice(2)}@amalgamimprov`;
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Amalgam Improv//Events//EN',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${toUtc(new Date())}`,
+        `DTSTART:${toUtc(start)}`,
+        `DTEND:${toUtc(end)}`,
+        `SUMMARY:${icsEscape(title)}`,
+        `DESCRIPTION:${icsEscape(description)}`,
+        location ? `LOCATION:${icsEscape(location)}` : '',
+        link ? `URL:${icsEscape(link)}` : '',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].filter(Boolean).join('\r\n');
+
+      return URL.createObjectURL(
+        new Blob([lines], { type: 'text/calendar;charset=utf-8' })
+      );
+    }
+
+    // ---------- Fetch & Render ----------
+    fetch(rssUrl)
+      .then(r => r.text())
+      .then(xml => new DOMParser().parseFromString(xml, 'text/xml'))
+      .then(doc => {
+        const now = new Date();
+
+        const items = Array.from(doc.querySelectorAll('item'))
+          .map(node => {
+            const title = getText(node, 'title');
+            const link = getText(node, 'link');
+            const pubDate = parseDate(getText(node, 'pubDate'));
+
+            if (!title.toLowerCase().includes(requiredTitleSubstring)) return null;
+            if (!pubDate || pubDate < now) return null;
+
+            const rawDesc = stripScripts(getText(node, 'description'));
+            const cleanDesc = removeTypeAndWebsiteLines(rawDesc);
+            const end = new Date(pubDate.getTime() + defaultEventDurationMinutes * 60000);
+
+            return {
+              title,
+              link,
+              pubDate,
+              end,
+              cleanDesc,
+              plainDesc: plainText(cleanDesc),
+              location: extractLocation(cleanDesc)
+            };
+          })
+          .filter(Boolean)
+          .sort((a, b) => a.pubDate - b.pubDate);
+
+        const html = items.slice(0, maxEventsToShow).map(ev => `
+          <div class="event">
+            <h3>${ev.title}</h3>
+            ${ev.cleanDesc ? `<div class="event-desc">${ev.cleanDesc}</div>` : ''}
+            ${ev.link ? `<p><a href="${ev.link}" target="_blank" rel="noopener noreferrer">Link</a></p>` : ''}
+            <div class="actions">
+              <a class="btn" href="${googleCalUrl({
+                title: ev.title,
+                description: ev.plainDesc,
+                start: ev.pubDate,
+                end: ev.end,
+                location: ev.location
+              })}" target="_blank">Add to Google Calendar</a>
+              <a class="btn" href="${icsUrl({
+                title: ev.title,
+                description: ev.plainDesc,
+                start: ev.pubDate,
+                end: ev.end,
+                link: ev.link,
+                location: ev.location
+              })}" download="${encodeURIComponent(ev.title)}.ics">Download .ics</a>
+            </div>
+          </div>
+        `).join('');
+
+        feedEl.innerHTML =
+          html || '<div class="empty-state">No upcoming Story-prov events.</div>';
+      })
+      .catch(err => {
+        console.error(err);
+        feedEl.innerHTML =
+          '<div class="empty-state">Error loading events.</div>';
+      })
+      .finally(() => {
+        hideLoadingState();
+      });
+  </script>
+</body>
+</html>
