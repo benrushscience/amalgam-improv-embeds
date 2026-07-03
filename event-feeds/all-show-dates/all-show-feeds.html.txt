@@ -1,0 +1,290 @@
+<!-- Squarespace embed: pulls NEW Airtable-backed RSS feed, shows ONLY Event Type = Show or Sign-up,
+     removes the redundant date/time header line, removes "Type" + "Website RSS Display" lines from the description,
+     shows only the raw Link URL (no "More Information"), and keeps Google Calendar + .ics buttons. -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Public Events Page</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; }
+    .feed-container { max-width: 1600px; margin: 0 auto; padding: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; position: relative; }
+    .event { border-bottom: 1px solid #ddd; padding: 20px 0; }
+    .event:last-child { border-bottom: none; }
+    .event h3 { margin: 0 0 10px; font-size: 1.5em; }
+    .event p { margin: 8px 0; }
+    .event a { color: #007BFF; text-decoration: none; word-break: break-word; }
+    .event a:hover { text-decoration: underline; }
+    .actions { margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn { display: inline-block; padding: 8px 12px; border: 1px solid #007BFF; border-radius: 6px; }
+    #loading-spinner { border: 16px solid #f3f3f3; border-top: 16px solid #3498db; border-radius: 50%; width: 120px; height: 120px; animation: spin 2s linear infinite; margin: 50px auto; }
+    @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+    .empty-state { text-align: center; color: #666; padding: 24px 0; }
+  </style>
+</head>
+<body>
+  <div class="feed-container">
+    <div id="loading-spinner"></div>
+    <div id="rss-feed"></div>
+  </div>
+
+  <script>
+    // ---------- Configuration ----------
+    const rssUrl = 'https://script.google.com/macros/s/AKfycbyKAy9w0-nFU9FLYFxLAonIssaUnAgImseLr7NICtXvCe1wnd-yiI3h29fDN7ipH0_mSg/exec';
+    const maxEventsToShow = 200;
+    const defaultEventDurationMinutes = 120; // fallback if "Time End" isn't parseable
+
+    // Only include items whose Event Type category is one of these:
+    const allowedEventTypes = new Set(['show', 'sign-up']);
+
+    // ---------- Utilities ----------
+    function getTextOrEmpty(parentElement, selector) {
+      const node = parentElement.querySelector(selector);
+      return node ? (node.textContent || '').trim() : '';
+    }
+
+    function getCategories(itemNode) {
+      return Array.from(itemNode.querySelectorAll('category'))
+        .map(node => (node.textContent || '').trim())
+        .filter(Boolean);
+    }
+
+    function hasAllowedEventType(categories) {
+      // Your feed includes categories for:
+      // - Event Type (e.g., "Show", "Sign-up", "Jam", etc.)
+      // - Website RSS Display (e.g., "Public", "Private", "Shows", "Workshops and Jams")
+      // We only want Event Type == Show or Sign-up.
+      const normalized = categories.map(c => c.toLowerCase());
+      return normalized.some(c => allowedEventTypes.has(c));
+    }
+
+    function parseRfcOrDate(value) {
+      if (!value) return null;
+      const parsed = new Date(value);
+      return isNaN(parsed.getTime()) ? null : parsed;
+    }
+
+    // Very light “sanitize”: strip script tags if any ever appeared
+    function stripScriptTags(htmlString) {
+      return (htmlString || '').replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    }
+
+    // Remove specific lines from the description:
+    // - "Type: Sign-up"
+    // - "Website RSS Display: Public"
+    // Works for both <br/> and newline-separated variants.
+    function removeTypeAndWebsiteRssLines(descriptionHtml) {
+      let cleaned = descriptionHtml || '';
+
+      // Normalize <br> variants to <br/>
+      cleaned = cleaned.replace(/<br\s*>/gi, '<br/>').replace(/<br\s*\/>/gi, '<br/>');
+
+      // Remove the Type line (strong label + value) + trailing <br/> if present
+      cleaned = cleaned.replace(/<strong>\s*Type:\s*<\/strong>\s*[^<]*?(?:<br\/>|<\/p>)/gi, match => {
+        // Keep closing </p> if it was the delimiter
+        return match.toLowerCase().includes('</p>') ? '</p>' : '';
+      });
+
+      // Remove Website RSS Display line
+      cleaned = cleaned.replace(/<strong>\s*Website RSS Display:\s*<\/strong>\s*[^<]*?(?:<br\/>|<\/p>)/gi, match => {
+        return match.toLowerCase().includes('</p>') ? '</p>' : '';
+      });
+
+      // Also handle any plain-text remnants (in case tags differ)
+      cleaned = cleaned.replace(/Type:\s*[^\n<]+/gi, '');
+      cleaned = cleaned.replace(/Website RSS Display:\s*[^\n<]+/gi, '');
+
+      // Tidy multiple breaks/empty paragraphs
+      cleaned = cleaned
+        .replace(/(<br\/>\s*){2,}/g, '<br/>')
+        .replace(/<p>\s*<\/p>/gi, '')
+        .trim();
+
+      return cleaned;
+    }
+
+    function extractLocationFromDescription(descriptionHtmlString) {
+      const text = (descriptionHtmlString || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/?[^>]+>/g, '');
+      const match = text.match(/Location:\s*(.+)/i);
+      if (!match) return '';
+      return (match[1] || '').split('\n')[0].trim();
+    }
+
+    function plainTextFromHtml(descriptionHtmlString) {
+      return (descriptionHtmlString || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/?[^>]+>/g, '')
+        .trim();
+    }
+
+    function pad(n){ return String(n).padStart(2,'0'); }
+
+    // Google expects YYYYMMDDTHHMMSSZ (UTC)
+    function toGoogleUtc(date) {
+      const d = new Date(date);
+      return d.getUTCFullYear().toString() +
+        pad(d.getUTCMonth()+1) + pad(d.getUTCDate()) + 'T' +
+        pad(d.getUTCHours()) + pad(d.getUTCMinutes()) + pad(d.getUTCSeconds()) + 'Z';
+    }
+
+    function buildGoogleCalendarUrl({ title, description, location, start, end }) {
+      const base = 'https://www.google.com/calendar/render?action=TEMPLATE';
+      const params = new URLSearchParams({
+        text: title || 'Event',
+        details: description || '',
+        location: location || '',
+        dates: `${toGoogleUtc(start)}/${toGoogleUtc(end)}`
+      });
+      return `${base}&${params.toString()}`;
+    }
+
+    function icsEscape(s) {
+      return (s || '')
+        .replace(/\\/g, '\\\\')
+        .replace(/\n/g, '\\n')
+        .replace(/,/g, '\\,')
+        .replace(/;/g, '\\;');
+    }
+
+    function buildIcsBlobUrl({ title, description, location, start, end, urlHint }) {
+      const uid = `${Date.now()}-${Math.random().toString(36).slice(2)}@amalgamimprov`;
+      const dtstamp = toGoogleUtc(new Date());
+      const lines = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Amalgam Improv//Events//EN',
+        'CALSCALE:GREGORIAN',
+        'METHOD:PUBLISH',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${dtstamp}`,
+        `DTSTART:${toGoogleUtc(start)}`,
+        `DTEND:${toGoogleUtc(end)}`,
+        `SUMMARY:${icsEscape(title || 'Event')}`,
+        description ? `DESCRIPTION:${icsEscape(description)}` : 'DESCRIPTION:',
+        location ? `LOCATION:${icsEscape(location)}` : 'LOCATION:',
+        urlHint ? `URL:${icsEscape(urlHint)}` : '',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].filter(Boolean).join('\r\n');
+
+      const blob = new Blob([lines], { type: 'text/calendar;charset=utf-8' });
+      return URL.createObjectURL(blob);
+    }
+
+    function deriveStartEnd({ pubDateRaw }) {
+      const startFromFeed = parseRfcOrDate(pubDateRaw);
+      if (!startFromFeed) return null;
+      const end = new Date(startFromFeed.getTime() + defaultEventDurationMinutes * 60000);
+      return { start: startFromFeed, end };
+    }
+
+    // ---------- Fetch & Render ----------
+    fetch(rssUrl)
+      .then(response => response.text())
+      .then(xmlText => new window.DOMParser().parseFromString(xmlText, 'text/xml'))
+      .then(xmlDoc => {
+        const itemNodes = Array.from(xmlDoc.querySelectorAll('item'));
+        const now = new Date();
+
+        const normalizedItems = itemNodes.map(node => {
+          const title = getTextOrEmpty(node, 'title');
+          const link = getTextOrEmpty(node, 'link');
+          const pubDateRaw = getTextOrEmpty(node, 'pubDate');
+
+          // The feed description is HTML inside CDATA.
+          const descriptionHtmlRaw = getTextOrEmpty(node, 'description');
+          const descriptionHtmlSanitized = stripScriptTags(descriptionHtmlRaw);
+          const categories = getCategories(node);
+
+          const times = deriveStartEnd({ pubDateRaw });
+          const startDate = times ? times.start : null;
+          const endDate = times ? times.end : null;
+
+          // Remove the redundant "Type" + "Website RSS Display" lines from the description
+          const descriptionHtmlClean = removeTypeAndWebsiteRssLines(descriptionHtmlSanitized);
+
+          const locationFromDesc = extractLocationFromDescription(descriptionHtmlClean);
+
+          return {
+            title,
+            link,
+            pubDateRaw,
+            startDate,
+            endDate,
+            descriptionHtmlClean,
+            categories,
+            locationFromDesc
+          };
+        });
+
+        const filteredItems = normalizedItems.filter(item => {
+          if (!item.startDate) return false;
+          if (item.startDate < now) return false;
+          if (!hasAllowedEventType(item.categories)) return false;
+          return true;
+        });
+
+        filteredItems.sort((a, b) => a.startDate - b.startDate);
+
+        const html = filteredItems.slice(0, maxEventsToShow).map(item => {
+          const safeTitle = (item.title || 'Untitled Event');
+          const safeLink = (item.link || '').trim();
+
+          const plainDescription = plainTextFromHtml(item.descriptionHtmlClean);
+
+          const gcalUrl = buildGoogleCalendarUrl({
+            title: safeTitle,
+            description: plainDescription,
+            location: item.locationFromDesc,
+            start: item.startDate,
+            end: item.endDate
+          });
+
+          const icsUrl = buildIcsBlobUrl({
+            title: safeTitle,
+            description: plainDescription,
+            location: item.locationFromDesc,
+            start: item.startDate,
+            end: item.endDate,
+            urlHint: safeLink
+          });
+
+          // Only include the raw Link URL (no "More Information" label)
+          const linkHtml = safeLink
+            ? `<p><a href="${safeLink}" target="_blank" rel="noopener noreferrer">${safeLink}</a></p>`
+            : '';
+
+          return `
+            <div class="event">
+              <h3>${safeTitle}</h3>
+
+              ${item.descriptionHtmlClean ? `<div class="event-desc">${item.descriptionHtmlClean}</div>` : ''}
+
+              ${linkHtml}
+
+              <div class="actions">
+                <a class="btn" href="${gcalUrl}" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
+                <a class="btn" href="${icsUrl}" download="${encodeURIComponent((safeTitle || 'event') + '.ics')}">Download .ics (Outlook/Apple)</a>
+              </div>
+            </div>
+          `;
+        }).join('');
+
+        const feedEl = document.getElementById('rss-feed');
+        feedEl.innerHTML = html || '<div class="empty-state">No upcoming events.</div>';
+      })
+      .catch(error => {
+        console.error('Error fetching feed:', error);
+        document.getElementById('rss-feed').innerHTML = '<p class="empty-state">Error loading feed.</p>';
+      })
+      .finally(() => {
+        const spinner = document.getElementById('loading-spinner');
+        if (spinner) spinner.style.display = 'none';
+      });
+  </script>
+</body>
+</html>
