@@ -71,6 +71,25 @@
       color: #666;
       padding: 24px 0;
     }
+
+    .load-more-wrap {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .load-more-btn {
+      padding: 10px 16px;
+      border: 1px solid #007BFF;
+      border-radius: 6px;
+      background: #fff;
+      color: #007BFF;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .load-more-btn:hover {
+      background: #eef6ff;
+    }
   </style>
 </head>
 <body>
@@ -232,7 +251,12 @@
           .filter(Boolean)
           .sort((a, b) => a.pubDate - b.pubDate);
 
-        const html = items.slice(0, maxEventsToShow).map(ev => `
+        const visibleItems = items.slice(0, maxEventsToShow);
+        const eventsPerLoad = 1;
+        let visibleEventCount = 0;
+
+        function renderEvent(ev, index) {
+          return `
           <div class="event">
             <h3>${ev.title}</h3>
             ${ev.cleanDesc ? `<div class="event-desc">${ev.cleanDesc}</div>` : ''}
@@ -245,20 +269,68 @@
                 end: ev.end,
                 location: ev.location
               })}" target="_blank">Add to Google Calendar</a>
-              <a class="btn" href="${icsUrl({
-                title: ev.title,
-                description: ev.plainDesc,
-                start: ev.pubDate,
-                end: ev.end,
-                link: ev.link,
-                location: ev.location
-              })}" download="${encodeURIComponent(ev.title)}.ics">Download .ics</a>
+              <a class="btn ics-download" href="#" data-event-index="${index}" download="${encodeURIComponent(ev.title)}.ics">Download .ics</a>
             </div>
           </div>
-        `).join('');
+        `;
+        }
 
-        feedEl.innerHTML =
-          html || '<div class="empty-state">No upcoming Sci-prov events.</div>';
+        function updateLoadMoreButton() {
+          let loadMoreButton = document.getElementById('load-more-events');
+          if (visibleEventCount >= visibleItems.length) {
+            if (loadMoreButton) loadMoreButton.parentElement.remove();
+            return;
+          }
+          if (!loadMoreButton) {
+            const wrap = document.createElement('div');
+            wrap.className = 'load-more-wrap';
+            loadMoreButton = document.createElement('button');
+            loadMoreButton.id = 'load-more-events';
+            loadMoreButton.className = 'load-more-btn';
+            loadMoreButton.type = 'button';
+            loadMoreButton.addEventListener('click', renderNextEvents);
+            wrap.appendChild(loadMoreButton);
+            feedEl.insertAdjacentElement('afterend', wrap);
+          }
+          const remaining = visibleItems.length - visibleEventCount;
+          loadMoreButton.textContent = remaining === 1 ? 'Load final event' : `Load next event (${remaining} remaining)`;
+        }
+
+        function renderNextEvents() {
+          if (!visibleItems.length) {
+            feedEl.innerHTML = '<div class="empty-state">No upcoming Sci-prov events.</div>';
+            return;
+          }
+          const nextItems = visibleItems.slice(visibleEventCount, visibleEventCount + eventsPerLoad);
+          feedEl.insertAdjacentHTML('beforeend', nextItems.map((ev, offset) => renderEvent(ev, visibleEventCount + offset)).join(''));
+          visibleEventCount += nextItems.length;
+          updateLoadMoreButton();
+        }
+
+        feedEl.addEventListener('click', event => {
+          const link = event.target.closest('.ics-download');
+          if (!link) return;
+          event.preventDefault();
+          const ev = visibleItems[Number(link.dataset.eventIndex)];
+          if (!ev) return;
+          const url = icsUrl({
+            title: ev.title,
+            description: ev.plainDesc,
+            start: ev.pubDate,
+            end: ev.end,
+            link: ev.link,
+            location: ev.location
+          });
+          const tempLink = document.createElement('a');
+          tempLink.href = url;
+          tempLink.download = `${encodeURIComponent(ev.title)}.ics`;
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          tempLink.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        });
+
+        renderNextEvents();
       })
       .catch(err => {
         console.error(err);

@@ -21,6 +21,25 @@
     #loading-spinner { border: 16px solid #f3f3f3; border-top: 16px solid #3498db; border-radius: 50%; width: 120px; height: 120px; animation: spin 2s linear infinite; margin: 50px auto; }
     @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     .empty-state { text-align: center; color: #666; padding: 24px 0; }
+
+    .load-more-wrap {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .load-more-btn {
+      padding: 10px 16px;
+      border: 1px solid #007BFF;
+      border-radius: 6px;
+      background: #fff;
+      color: #007BFF;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .load-more-btn:hover {
+      background: #eef6ff;
+    }
   </style>
 </head>
 <body>
@@ -232,12 +251,15 @@
 
         filteredItems.sort((a, b) => a.startDate - b.startDate);
 
-        const html = filteredItems.slice(0, maxEventsToShow).map(item => {
+        const visibleItems = filteredItems.slice(0, maxEventsToShow);
+        const eventsPerLoad = 1;
+        let visibleEventCount = 0;
+        const feedEl = document.getElementById('rss-feed');
+
+        function renderEvent(item, index) {
           const safeTitle = (item.title || 'Untitled Event');
           const safeLink = (item.link || '').trim();
-
           const plainDescription = plainTextFromHtml(item.descriptionHtmlClean);
-
           const gcalUrl = buildGoogleCalendarUrl({
             title: safeTitle,
             description: plainDescription,
@@ -245,8 +267,62 @@
             start: item.startDate,
             end: item.endDate
           });
+          const linkHtml = safeLink ? `<p><a href="${safeLink}" target="_blank" rel="noopener noreferrer">${safeLink}</a></p>` : '';
+          return `
+            <div class="event">
+              <h3>${safeTitle}</h3>
+              ${item.descriptionHtmlClean ? `<div class="event-desc">${item.descriptionHtmlClean}</div>` : ''}
+              ${linkHtml}
+              <div class="actions">
+                <a class="btn" href="${gcalUrl}" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
+                <a class="btn ics-download" href="#" data-event-index="${index}" download="${encodeURIComponent((safeTitle || 'event') + '.ics')}">Download .ics (Outlook/Apple)</a>
+              </div>
+            </div>
+          `;
+        }
 
-          const icsUrl = buildIcsBlobUrl({
+        function updateLoadMoreButton() {
+          let loadMoreButton = document.getElementById('load-more-events');
+          if (visibleEventCount >= visibleItems.length) {
+            if (loadMoreButton) loadMoreButton.parentElement.remove();
+            return;
+          }
+          if (!loadMoreButton) {
+            const wrap = document.createElement('div');
+            wrap.className = 'load-more-wrap';
+            loadMoreButton = document.createElement('button');
+            loadMoreButton.id = 'load-more-events';
+            loadMoreButton.className = 'load-more-btn';
+            loadMoreButton.type = 'button';
+            loadMoreButton.addEventListener('click', renderNextEvents);
+            wrap.appendChild(loadMoreButton);
+            feedEl.insertAdjacentElement('afterend', wrap);
+          }
+          const remaining = visibleItems.length - visibleEventCount;
+          loadMoreButton.textContent = remaining === 1 ? 'Load final event' : `Load next event (${remaining} remaining)`;
+        }
+
+        function renderNextEvents() {
+          if (!visibleItems.length) {
+            feedEl.innerHTML = '<div class="empty-state">No upcoming events.</div>';
+            return;
+          }
+          const nextItems = visibleItems.slice(visibleEventCount, visibleEventCount + eventsPerLoad);
+          feedEl.insertAdjacentHTML('beforeend', nextItems.map((item, offset) => renderEvent(item, visibleEventCount + offset)).join(''));
+          visibleEventCount += nextItems.length;
+          updateLoadMoreButton();
+        }
+
+        feedEl.addEventListener('click', event => {
+          const link = event.target.closest('.ics-download');
+          if (!link) return;
+          event.preventDefault();
+          const item = visibleItems[Number(link.dataset.eventIndex)];
+          if (!item) return;
+          const safeTitle = (item.title || 'Untitled Event');
+          const safeLink = (item.link || '').trim();
+          const plainDescription = plainTextFromHtml(item.descriptionHtmlClean);
+          const url = buildIcsBlobUrl({
             title: safeTitle,
             description: plainDescription,
             location: item.locationFromDesc,
@@ -254,30 +330,16 @@
             end: item.endDate,
             urlHint: safeLink
           });
+          const tempLink = document.createElement('a');
+          tempLink.href = url;
+          tempLink.download = `${encodeURIComponent((safeTitle || 'event') + '.ics')}`;
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          tempLink.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        });
 
-          // Only include the raw Link URL (no "More Information" label)
-          const linkHtml = safeLink
-            ? `<p><a href="${safeLink}" target="_blank" rel="noopener noreferrer">${safeLink}</a></p>`
-            : '';
-
-          return `
-            <div class="event">
-              <h3>${safeTitle}</h3>
-
-              ${item.descriptionHtmlClean ? `<div class="event-desc">${item.descriptionHtmlClean}</div>` : ''}
-
-              ${linkHtml}
-
-              <div class="actions">
-                <a class="btn" href="${gcalUrl}" target="_blank" rel="noopener noreferrer">Add to Google Calendar</a>
-                <a class="btn" href="${icsUrl}" download="${encodeURIComponent((safeTitle || 'event') + '.ics')}">Download .ics (Outlook/Apple)</a>
-              </div>
-            </div>
-          `;
-        }).join('');
-
-        const feedEl = document.getElementById('rss-feed');
-        feedEl.innerHTML = html || '<div class="empty-state">No upcoming events.</div>';
+        renderNextEvents();
       })
       .catch(error => {
         console.error('Error fetching feed:', error);
