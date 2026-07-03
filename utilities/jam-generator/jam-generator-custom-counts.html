@@ -1,0 +1,611 @@
+﻿<!-- Jam Generator for Squarespace: configurable warm-up, drill, and game counts -->
+<div id="amalgam-jam-generator" class="ajg">
+  <div class="ajg-header">
+    <div class="ajg-title">Jam Generator</div>
+    <div id="ajg-subtitle" class="ajg-subtitle">3 warm-ups &bull; 1 drill &bull; 5 games</div>
+  </div>
+
+  <div class="ajg-counts" aria-label="Jam size controls">
+    <div class="ajg-counter">
+      <span class="ajg-counter-label">Warm-ups</span>
+      <button class="ajg-counter-btn" type="button" data-count-key="warmUps" data-count-step="-1" aria-label="Decrease warm-ups">-</button>
+      <span id="ajg-count-warmups" class="ajg-counter-value" aria-live="polite">3</span>
+      <button class="ajg-counter-btn" type="button" data-count-key="warmUps" data-count-step="1" aria-label="Increase warm-ups">+</button>
+    </div>
+    <div class="ajg-counter">
+      <span class="ajg-counter-label">Drills</span>
+      <button class="ajg-counter-btn" type="button" data-count-key="drills" data-count-step="-1" aria-label="Decrease drills">-</button>
+      <span id="ajg-count-drills" class="ajg-counter-value" aria-live="polite">1</span>
+      <button class="ajg-counter-btn" type="button" data-count-key="drills" data-count-step="1" aria-label="Increase drills">+</button>
+    </div>
+    <div class="ajg-counter">
+      <span class="ajg-counter-label">Games</span>
+      <button class="ajg-counter-btn" type="button" data-count-key="games" data-count-step="-1" aria-label="Decrease games">-</button>
+      <span id="ajg-count-games" class="ajg-counter-value" aria-live="polite">5</span>
+      <button class="ajg-counter-btn" type="button" data-count-key="games" data-count-step="1" aria-label="Increase games">+</button>
+    </div>
+  </div>
+
+  <div class="ajg-controls">
+    <button id="ajg-generate" class="ajg-btn">Generate Jam</button>
+    <button id="ajg-copy" class="ajg-btn ajg-btn-secondary" type="button">Copy to Clipboard</button>
+  </div>
+
+  <div id="ajg-meta" class="ajg-meta" aria-live="polite"></div>
+
+  <div class="ajg-table-wrap">
+    <table class="ajg-table" id="ajg-table" aria-label="Generated jam activities">
+      <thead>
+        <tr>
+          <th style="width: 18%">Slot</th>
+          <th style="width: 18%">Game name</th>
+          <th style="width: 18%">Type</th>
+          <th>Description</th>
+        </tr>
+      </thead>
+      <tbody id="ajg-tbody">
+        <tr>
+          <td colspan="4" class="ajg-empty">Click <strong>Generate Jam</strong> to get a random set of activities.</td>
+        </tr>
+      </tbody>
+    </table>
+  </div>
+
+  <div class="ajg-footer">
+    <span class="ajg-note">Note: Selection is random without replacement within each slot.</span>
+  </div>
+</div>
+
+<style>
+  /* Amalgam Improv palette */
+  :root{
+    --ajg-offwhite:#F7F6F3;
+    --ajg-yellow:#FFE974;
+    --ajg-orange:#E55937;
+    --ajg-pink:#BD005B;
+    --ajg-black:#000000;
+  }
+
+  .ajg{
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    background: var(--ajg-offwhite);
+    border: 2px solid var(--ajg-black);
+    border-radius: 14px;
+    padding: 18px;
+    max-width: 1100px;
+    margin: 0 auto;
+  }
+
+  .ajg-header{
+    display:flex;
+    align-items:flex-end;
+    justify-content:space-between;
+    gap: 14px;
+    margin-bottom: 12px;
+  }
+
+  .ajg-title{
+    font-size: 22px;
+    font-weight: 800;
+    letter-spacing: 0.2px;
+    color: var(--ajg-black);
+  }
+
+  .ajg-subtitle{
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--ajg-black);
+    background: var(--ajg-yellow);
+    border: 2px solid var(--ajg-black);
+    padding: 6px 10px;
+    border-radius: 999px;
+    white-space: nowrap;
+  }
+
+  .ajg-counts{
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 8px 0 10px 0;
+  }
+
+  .ajg-counter{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    padding: 6px 10px;
+    border: 2px solid var(--ajg-black);
+    border-radius: 10px;
+    background: #fff;
+    color: var(--ajg-black);
+  }
+
+  .ajg-counter-label{
+    font-size: 13px;
+    font-weight: 800;
+    min-width: 70px;
+    color: var(--ajg-black) !important;
+  }
+
+  .ajg-counter-btn{
+    width: 28px;
+    height: 28px;
+    border: 2px solid var(--ajg-black);
+    border-radius: 7px;
+    background: var(--ajg-offwhite);
+    color: var(--ajg-black);
+    font-size: 18px;
+    line-height: 1;
+    font-weight: 900;
+    cursor: pointer;
+  }
+
+  .ajg-counter-value{
+    min-width: 20px;
+    text-align: center;
+    font-weight: 900;
+    font-size: 14px;
+    color: var(--ajg-black) !important;
+  }
+
+  .ajg-controls{
+    display:flex;
+    gap: 10px;
+    flex-wrap: wrap;
+    margin: 10px 0 10px 0;
+  }
+
+  .ajg-btn{
+    appearance:none;
+    border: 2px solid var(--ajg-black);
+    background: var(--ajg-pink);
+    color: var(--ajg-offwhite);
+    font-weight: 800;
+    padding: 10px 14px;
+    border-radius: 10px;
+    cursor: pointer;
+    transition: transform 0.04s ease, filter 0.12s ease;
+  }
+  .ajg-btn:hover{ filter: brightness(1.05); }
+  .ajg-btn:active{ transform: translateY(1px); }
+
+  .ajg-btn-secondary{
+    background: var(--ajg-offwhite);
+    color: var(--ajg-black);
+  }
+
+  .ajg-meta{
+    font-size: 13px;
+    color: var(--ajg-black);
+    margin-bottom: 10px;
+  }
+
+  .ajg-table-wrap{
+    overflow-x:auto;
+    border-radius: 12px;
+    border: 2px solid var(--ajg-black);
+    background: white;
+  }
+
+  .ajg-table{
+    border-collapse: collapse;
+    width: 100%;
+    min-width: 780px;
+  }
+
+  .ajg-table thead th{
+    position: sticky;
+    top: 0;
+    background: var(--ajg-black);
+    color: var(--ajg-offwhite);
+    text-align: left;
+    font-size: 13px;
+    padding: 10px;
+    border-bottom: 2px solid var(--ajg-black);
+  }
+
+  .ajg-table tbody td{
+    font-size: 13px;
+    padding: 10px;
+    border-bottom: 1px solid #ddd;
+    vertical-align: top;
+    color: var(--ajg-black) !important;
+  }
+
+  .ajg-table tbody td strong,
+  .ajg-pill{
+    color: var(--ajg-black) !important;
+  }
+
+  .ajg-table tbody tr:nth-child(even) td{
+    background: #fbfbfb;
+  }
+
+  .ajg-slot{
+    font-weight: 900;
+    border-left: 6px solid var(--ajg-orange);
+  }
+  .ajg-slot-warmup{ border-left-color: var(--ajg-yellow); }
+  .ajg-slot-drill{ border-left-color: var(--ajg-pink); }
+  .ajg-slot-game{ border-left-color: var(--ajg-orange); }
+
+  .ajg-pill{
+    display:inline-block;
+    font-weight: 800;
+    font-size: 12px;
+    padding: 2px 8px;
+    border-radius: 999px;
+    border: 2px solid var(--ajg-black);
+    background: var(--ajg-offwhite);
+    margin-right: 6px;
+    white-space: nowrap;
+  }
+
+  .ajg-empty{
+    padding: 14px !important;
+    color: #333;
+  }
+
+  .ajg-footer{
+    margin-top: 10px;
+    font-size: 12px;
+    color: #333;
+  }
+</style>
+
+<script>
+  (function () {
+    // --- Compendium data from Tables 1â€“3 (name, type, description, difficulty) ---
+    const ACTIVITIES = [
+      // ===== Table 1 =====
+      { name: "Yes, Letâ€™s", type: "Warm-up / drill", description: "Have players stand in a circle. One player suggests an action, everyone says \"Yes, let's!\" and does it until someone offers the next action.", difficulty: 1 },
+      { name: "Zip Zap Zop", type: "Warm-up", description: "Stand in a circle. A player points with eye contact and says Zip, the next passes Zap, the next passes Zop, repeating the pattern quickly.", difficulty: 1 },
+      { name: "Pass the Clap", type: "Warm-up", description: "Stand in a circle. Two neighboring players make eye contact and clap at the same time, then the receiver turns and passes the clap onward.", difficulty: 1 },
+      { name: "Name & Gesture Circle", type: "Warm-up", description: "Each player says their name with a simple gesture. The whole group repeats the name and gesture before moving to the next player.", difficulty: 1 },
+      { name: "Count to 20 (No Plan)", type: "Warm-up / drill", description: "Have the group count aloud from 1 to 20 with no order or signals. If two people speak at once, restart at 1.", difficulty: 2 },
+      { name: "One Word Story", type: "Game / drill", description: "Line players up or circle them. Give a title or prompt, then have each player add exactly one word at a time to build a complete story.", difficulty: 2 },
+      { name: "One Sentence Story", type: "Game / drill", description: "Give the group a title or prompt. Each player adds one full sentence, continuing the same story until it reaches a clear ending.", difficulty: 2 },
+      { name: "Word-at-a-Time Expert (Panel)", type: "Game / drill", description: "Seat two or three players as one expert. Ask them questions, and have them answer one word at a time, rotating through the panel.", difficulty: 3 },
+      { name: "Gibberish Translator", type: "Game / exercise", description: "Pair players. One speaks in expressive gibberish while the other translates into English, matching the speaker's tone and body language.", difficulty: 2 },
+      { name: "Mirror", type: "Warm-up / drill", description: "Pair players face to face. One moves slowly while the other mirrors as exactly as possible, then switch leaders or let leadership become shared.", difficulty: 2 },
+      { name: "Sound Ball", type: "Warm-up", description: "Stand in a circle. A player mimes tossing a ball with a sound; the receiver catches by repeating the sound, then throws a new sound to someone else.", difficulty: 1 },
+      { name: "Emotion Orchestra", type: "Warm-up", description: "Divide the group into sections, assign each an emotion and sound, then conduct them by pointing and raising or lowering volume.", difficulty: 2 },
+      { name: "Space Walk / Tempo Walk", type: "Warm-up", description: "Have players walk the room without talking. Call out tempo, energy, direction, or spacing changes for everyone to adjust together.", difficulty: 1 },
+      { name: "Tableau (Group Picture)", type: "Exercise", description: "Call out a location, event, or theme. Players enter one at a time and freeze into a group picture with clear levels and relationships.", difficulty: 2 },
+      { name: "Three-Line Scenes", type: "Scene format", description: "Put two players up. Give a suggestion and have them play a scene with three lines total, then stop and start a new pair.", difficulty: 3 },
+      { name: "Two-Line Scenes", type: "Scene format", description: "Put two players up. Give a suggestion and have them make a complete tiny scene in only two total lines, focusing on strong choices.", difficulty: 4 },
+      { name: "Silent Scenes", type: "Scene format / drill", description: "Give two players a location or relationship. They play without speaking, using movement, objects, and reactions to make the scene clear.", difficulty: 3 },
+      { name: "Environment First", type: "Drill / scene format", description: "Start two players in silence. Have them build a shared location through object work before allowing dialogue to begin.", difficulty: 3 },
+      { name: "Who/What/Where (Rapid Initiations)", type: "Drill", description: "Run quick two-person starts. After a suggestion, players establish who they are, where they are, and what is happening within a few lines.", difficulty: 2 },
+      { name: "Emotional Reactions (Consequences)", type: "Drill", description: "Have pairs replay short scenes, asking them to let each new offer visibly affect how their character feels or behaves.", difficulty: 3 },
+      { name: "Status as Physicality (Neutral)", type: "Drill", description: "Assign players high, medium, or low status and have them show it through posture, pace, space, and eye contact while keeping choices respectful.", difficulty: 3 },
+      { name: "Objective Switch", type: "Scene format", description: "Start a two-person scene with clear wants. Mid-scene, call switch and have each player adopt the other character's objective.", difficulty: 4 },
+      { name: "New Choice", type: "Game / drill", description: "Run a scene and call New Choice after a line or action. The player immediately replaces the last choice and continues from the new version.", difficulty: 3 },
+      { name: "Alphabet Scene", type: "Game / drill", description: "Give two players a starting letter. Each new line must begin with the next letter of the alphabet until the scene ends.", difficulty: 4 },
+      { name: "Questions Only", type: "Game / drill", description: "Run a scene where every spoken line must be a question. If someone makes a statement, rotate them out or restart.", difficulty: 4 },
+      { name: "Only Statements", type: "Game / drill", description: "Run a scene where players may only make statements, no questions. Coach them to add facts, choices, and reactions.", difficulty: 3 },
+      { name: "Half-Life (Repeat with Variation)", type: "Drill", description: "Have players perform a short scene, then repeat the same scene in half the time, then half again, keeping the essential story.", difficulty: 4 },
+      { name: "Replay (Scene Replay)", type: "Drill / scene format", description: "Play a short scene once, then replay it while changing one variable such as emotion, genre, speed, or relationship.", difficulty: 4 },
+      { name: "Freeze Tag (Learning Version)", type: "Game / drill", description: "Two players start a scene. Someone calls Freeze, taps out one player, takes their exact position, and starts a new justified scene.", difficulty: 3 },
+      { name: "Tag-Outs (Edit Practice)", type: "Drill", description: "During a scene, a waiting player taps one performer out, takes their place, and changes the scene's who, where, or time clearly.", difficulty: 4 },
+      { name: "Sweep Edit / Wipe", type: "Drill", description: "Have players practice ending a scene by walking across the playing area, clearing the stage, and immediately starting a fresh scene.", difficulty: 3 },
+      { name: "Walk-On Edit", type: "Drill", description: "Run scenes where outside players may enter only when they bring a clear offer that helps, clarifies, or heightens the scene.", difficulty: 4 },
+      { name: "Monologue â†’ Scene", type: "Drill / scene format", description: "One player gives a brief true or fictional monologue. Other players then start scenes inspired by specific details they heard.", difficulty: 3 },
+      { name: "Object Work Relay", type: "Warm-up / drill", description: "One player mimes using an object or doing a task, then hands it off. The next player preserves the details and adds a step.", difficulty: 2 },
+      { name: "5 Things", type: "Game / warm-up", description: "Ask one player to name five things in a category while the group counts each answer enthusiastically and celebrates the fifth.", difficulty: 2 },
+      { name: "Categories (Rapid Fire)", type: "Warm-up", description: "Choose a category and go around the circle with each player naming one item quickly. Switch categories when momentum drops.", difficulty: 1 },
+      { name: "Story Spine (Once Upon a Timeâ€¦)", type: "Exercise", description: "Guide players through story prompts such as Once upon a time, Every day, Until one day, Because of that, and Finally.", difficulty: 2 },
+      { name: "Story Conductor", type: "Exercise", description: "One facilitator points to players to narrate the next part of a shared story, switching speakers often and shaping pace.", difficulty: 3 },
+      { name: "One Voice", type: "Drill", description: "Have three or more players stand together as one character and speak simultaneously, slowly enough to find shared words.", difficulty: 4 },
+      { name: "Group Mind Scene", type: "Scene format", description: "Assign the ensemble to play one collective character or group. They enter, speak, and move as parts of the same shared point of view.", difficulty: 4 },
+      { name: "Pattern Game (Simple)", type: "Drill", description: "Start with one repeated sound, phrase, or movement. Players add related pieces, return to repeats, and heighten the pattern together.", difficulty: 3 },
+      { name: "Pattern Game (Advanced)", type: "Drill", description: "Have players build several recurring sounds, lines, or movements, then practice bringing them back cleanly and combining them.", difficulty: 5 },
+      { name: "Emotional Builds (0â†’5)", type: "Drill", description: "Choose a safe fictional emotion and replay a short beat at intensity levels 0 through 5, increasing clearly without losing control.", difficulty: 4 },
+      { name: "Stakes Ladder (Smallâ†’Big)", type: "Drill", description: "Replay the same scene beat several times, each time making the reason it matters more specific, personal, or urgent.", difficulty: 4 },
+      { name: "Relationship Dial", type: "Drill", description: "Run a short scene, then call out relationship adjustments such as closer, more formal, more equal, or more authority.", difficulty: 3 },
+      { name: "Point of View Game", type: "Drill", description: "Give a player a mundane topic and have them state a strong opinion. Their partner supports and asks questions that reveal more detail.", difficulty: 3 },
+      { name: "Justification Chain", type: "Drill", description: "Have players make unusual offers one at a time. The next player must immediately explain why the offer makes sense in the world.", difficulty: 3 },
+      { name: "Endowment Practice", type: "Drill", description: "In pairs, one player gives the other a specific identity, trait, or history. The receiver accepts it and uses it in the scene.", difficulty: 2 },
+      { name: "Emotional Labeling (Third-Person)", type: "Drill", description: "Run short scenes where players name what they observe in another character's behavior instead of announcing their own feelings.", difficulty: 2 },
+      { name: "Montage Seeds", type: "Drill / scene format", description: "Get a theme and run several short scenes. Encourage players to reuse names, objects, lines, or ideas from earlier scenes.", difficulty: 4 },
+      { name: "Opening: Popcorn Characters", type: "Exercise", description: "Have players quickly step forward one at a time with a bold character line or behavior, then later revisit the clearest characters.", difficulty: 3 },
+      { name: "Opening: Group Tableau to Scenes", type: "Exercise", description: "Build a frozen group image from a suggestion. Then start scenes that explain, precede, or follow parts of that image.", difficulty: 3 },
+      { name: "Space Object Expansion", type: "Drill", description: "One player establishes an object in the room. Each next player adds a consistent detail, use, or nearby object without contradicting it.", difficulty: 2 },
+
+      // ===== Table 2 =====
+      { name: "Bunny Bunny", type: "Warm-up", description: "Stand in a circle. One player sends \"bunny bunny\" to another with hand motions while neighbors keep the side rhythm going.", difficulty: 2 },
+      { name: "Evolution", type: "Warm-up / game", description: "Give everyone creature stages. Players pair up for rock-paper-scissors; winners evolve up one stage and find a new partner.", difficulty: 2 },
+      { name: "What Are You Doing?", type: "Game / drill", description: "One player mimes an action. The next asks \"What are you doing?\" and must begin doing whatever different action the first player names.", difficulty: 2 },
+      { name: "Hitchhiker", type: "Game", description: "Set chairs as a car. Each new hitchhiker enters with a strong emotion or behavior, and everyone in the car gradually adopts it.", difficulty: 3 },
+      { name: "Party Quirks (Party Host)", type: "Game", description: "Send the host away while assigning each guest a quirk. The host returns, interacts with guests, and guesses each quirk.", difficulty: 4 },
+      { name: "Conducted Story", type: "Drill / exercise", description: "Have players line up or circle. Point to one speaker at a time to continue the same story, switching often and shaping pace.", difficulty: 3 },
+      { name: "Fortunately / Unfortunately", type: "Drill / exercise", description: "Have players tell a story one turn at a time, alternating sentences that begin with Fortunately and Unfortunately.", difficulty: 2 },
+      { name: "I Am a Tree", type: "Warm-up / exercise", description: "One player enters and says \"I am a tree\" while posing. Two more add related elements, then one element is kept to start the next picture.", difficulty: 2 },
+      { name: "Machine", type: "Exercise", description: "One player starts a repeated motion and sound. Others join one at a time as connected parts until the group machine is complete.", difficulty: 3 },
+      { name: "One Minute Life Story", type: "Exercise", description: "Pair players. One tells a light fictional or true life story for 60 seconds, then the partner repeats back the key details.", difficulty: 2 },
+      { name: "Story Swap", type: "Exercise", description: "Pair players and start one shared story. Call switch during the telling so the other player must continue smoothly from that exact point.", difficulty: 3 },
+      { name: "Kitty Wants a Corner", type: "Warm-up / game", description: "Put players in spots with one player in the middle as kitty. Players try to trade spots while kitty tries to take an open spot.", difficulty: 2 },
+      { name: "Stop / Walk / Shuffle / Drop", type: "Warm-up", description: "Have players move around the room and respond instantly to commands like walk, stop, shuffle, and drop; add reversed meanings for challenge.", difficulty: 2 },
+      { name: "Mighty Whispers", type: "Warm-up", description: "Stand in a circle and pass a whispered word or phrase around carefully. Reveal the final version and repeat with more precision.", difficulty: 2 },
+      { name: "That Wig", type: "Warm-up / game", description: "Pass an imaginary wig or object around the circle. Each receiver puts it on and immediately becomes a new character or attitude.", difficulty: 3 },
+      { name: "Traffic Jam", type: "Warm-up", description: "Have players walk through the room as traffic. Call rules such as red light, green light, detour, slow motion, or lane change.", difficulty: 2 },
+      { name: "Woosh (Whoosh)", type: "Warm-up", description: "Stand in a circle and pass a whoosh sound and gesture around. Add options like boing to reverse or zap to send across the circle.", difficulty: 1 },
+      { name: "Zip-Zap-Zup (variation family)", type: "Warm-up", description: "Run Zip Zap Zop with a new word pattern or extra rules such as reverse, across-the-circle passes, or elimination after hesitation.", difficulty: 2 },
+      { name: "Red Ball", type: "Warm-up / drill", description: "Pass an imaginary red ball by naming it clearly. The receiver accepts it as the same size and weight, then passes it on.", difficulty: 2 },
+      { name: "One-Word-at-a-Time Interview", type: "Game / drill", description: "Interview two or more players as one person. They answer each question one word at a time, taking turns in a fixed order.", difficulty: 3 },
+      { name: "Last Word Response", type: "Drill", description: "Run a two-person scene where each line must begin with the last word of the previous line, then continue naturally.", difficulty: 3 },
+      { name: "Yes, Because", type: "Drill", description: "In pairs or a circle, one player makes an offer and the next begins with \"Yes, because...\" to accept and explain it.", difficulty: 2 },
+      { name: "Three-Headed Expert", type: "Game / drill", description: "Seat three players as one expert. Ask audience questions and have the expert answer one word at a time in order.", difficulty: 4 },
+      { name: "Slide Show (Presenter)", type: "Game / exercise", description: "One player presents an imaginary slideshow. Other players freeze as each slide, and the presenter explains what the audience is seeing.", difficulty: 3 },
+      { name: "Doubles", type: "Scene format / drill", description: "Assign each scene player a double standing nearby. Doubles may speak inner thoughts, echo movement, or clarify subtext when useful.", difficulty: 4 },
+      { name: "Emotional Symphony", type: "Warm-up / exercise", description: "Divide players into emotion sections. Conduct them with hand signals for start, stop, louder, softer, and changing intensity.", difficulty: 2 },
+      { name: "Gibberish Meeting", type: "Game / exercise", description: "Set a meeting topic. Players discuss entirely in gibberish using clear emotion and status; optionally have one translator summarize.", difficulty: 3 },
+      { name: "Foreign Film (Gibberish Subtitles)", type: "Game / exercise", description: "Two actors play a scene in gibberish while two offstage players provide English subtitles that match tone, timing, and action.", difficulty: 4 },
+      { name: "Silent Line-Up", type: "Warm-up", description: "Give the group an ordering task such as birthday, height, or distance traveled. They must arrange themselves without speaking.", difficulty: 2 },
+      { name: "Word Association Circle", type: "Warm-up", description: "Stand in a circle. One player says a word, and the next immediately says the first associated word that comes to mind.", difficulty: 1 },
+
+      // ===== Table 3 =====
+      { name: "Accepting Circle", type: "Warm-up / drill", description: "Stand in a circle. One player makes a simple offer, and the next accepts it with Yes, and then adds a new detail.", difficulty: 1 },
+      { name: "Alliterations", type: "Warm-up", description: "Go around the circle and have each player introduce themselves with an alliterative adjective and name, then repeat previous names if desired.", difficulty: 1 },
+      { name: "Alphabet Circle", type: "Warm-up / drill", description: "Choose a category or story frame. Each player contributes a word, phrase, or sentence beginning with the next letter of the alphabet.", difficulty: 2 },
+      { name: "Assassin", type: "Warm-up / game", description: "Secretly assign one player as the assassin. Players mingle; the assassin subtly signals targets, who count silently before sitting out.", difficulty: 3 },
+      { name: "Big Booty", type: "Warm-up", description: "Number players in a circle. Lead the chant, then have players pass focus by calling their own number and another player's number on rhythm.", difficulty: 2 },
+      { name: "Bippety Bop", type: "Warm-up / game", description: "Put one player in the center. They point and give a prompt, and the target plus neighbors must make the required shape before time runs out.", difficulty: 3 },
+      { name: "Blind Line Up", type: "Warm-up / exercise", description: "Give players an ordering task such as birthday or height. They must line up without speaking, using gestures or other nonverbal signals.", difficulty: 2 },
+      { name: "Bumpity Bump", type: "Warm-up", description: "Stand in a circle with one caller in the middle. The caller points and says a cue, and the target must answer or redirect before the phrase ends.", difficulty: 2 },
+      { name: "Cat and Mouse", type: "Warm-up / game", description: "Arrange players in a circle or paired gates. One player chases while another escapes, with clear rules for switching targets or safe spots.", difficulty: 2 },
+      { name: "Clap Snap Association", type: "Warm-up", description: "Set a repeating clap-snap rhythm. On each turn, a player says a word association while keeping the rhythm moving around the circle.", difficulty: 2 },
+      { name: "Clap Snap Stamp", type: "Warm-up", description: "Teach a simple clap, snap, and stamp pattern. Have the group repeat it together, then add speed or leader changes.", difficulty: 2 },
+      { name: "Concentration Circle", type: "Warm-up", description: "Create a steady rhythm and have players pass names, numbers, or categories around the circle without breaking tempo.", difficulty: 2 },
+      { name: "Cross the Circle", type: "Warm-up", description: "Players make eye contact across the circle, trade places, and keep multiple crossings moving without collisions or hesitation.", difficulty: 2 },
+      { name: "Duck Duck Goose", type: "Warm-up / game", description: "Seat players in a circle. One walks around tapping heads, chooses a runner, and races them back to the open spot.", difficulty: 1 },
+      { name: "Ducks and Cows", type: "Warm-up", description: "Assign prompts that require immediate group sounds or motions, such as ducks or cows. Call prompts quickly and have everyone commit together.", difficulty: 2 },
+      { name: "Eights", type: "Warm-up", description: "Have everyone shake one hand for eight counts, the other hand for eight, each foot for eight, then repeat with four, two, and one.", difficulty: 2 },
+      { name: "Elephant", type: "Warm-up / game", description: "Teach three-person shapes such as elephant, palm tree, or toaster. A center caller points and names a shape for the target and neighbors to make.", difficulty: 2 },
+      { name: "Emotional Mirror", type: "Warm-up / drill", description: "Pair players face to face. One shows an emotion through face, breath, and body; the other mirrors it, then they switch.", difficulty: 2 },
+      { name: "Energy 1â€“10", type: "Warm-up / drill", description: "Have players move around the room while you call energy levels from 1 to 10. They adjust size, speed, and voice safely.", difficulty: 2 },
+      { name: "Exaggeration Circle", type: "Warm-up", description: "One player makes a small gesture or sound. Each next player repeats it slightly bigger until it grows around the circle.", difficulty: 2 },
+      { name: "Family Portraits", type: "Exercise", description: "Call out a family type, event, or location. Small groups quickly freeze into portraits with clear relationships and physical levels.", difficulty: 2 },
+      { name: "Flock Dance", type: "Warm-up", description: "Group players in a diamond. The person facing front leads slow movement, and leadership changes whenever the group turns.", difficulty: 2 },
+      { name: "Follow the Leader", type: "Warm-up", description: "One player leads movement, walk, or behavior while the group copies. Rotate leaders and encourage clear, repeatable choices.", difficulty: 1 },
+      { name: "Free Association Lines", type: "Warm-up", description: "Give a prompt and have players quickly form a line or cluster based on their association, then call a new prompt and reshuffle.", difficulty: 2 },
+      { name: "Fruit Basket", type: "Warm-up / game", description: "Give seated players categories or fruit names. A center caller names a category, and matching players switch seats while the caller tries to sit.", difficulty: 2 },
+      { name: "Fuzzy Ducky", type: "Warm-up", description: "Teach the tongue-twister phrase and direction rules. Pass it around the circle, reversing direction on the agreed cue.", difficulty: 2 },
+      { name: "Greetings", type: "Warm-up", description: "Have players walk around and greet each other. Call different relationships, emotions, or contexts for each new greeting.", difficulty: 2 },
+      { name: "Group Order", type: "Warm-up / exercise", description: "Ask the group to arrange themselves by a rule such as birthday, distance traveled, or shoe size, with or without talking.", difficulty: 2 },
+      { name: "Ha Soh Kah", type: "Warm-up", description: "Teach the three-part sound and gesture pattern. Players pass focus around the circle using the correct cue and rhythm.", difficulty: 2 },
+      { name: "Hot Spot", type: "Warm-up", description: "Put one player in the center to sing, speak, or move briefly. Other players support and replace them by stepping in quickly.", difficulty: 3 },
+      { name: "House, Creature, Flood", type: "Warm-up / game", description: "Call one of three prompts. Players quickly form the required group shape, such as a house, creature, or flood, before the next call.", difficulty: 2 },
+      { name: "Jump", type: "Warm-up", description: "Stand in a circle and pass a jump cue with eye contact. The receiver jumps and immediately sends the cue to someone else.", difficulty: 2 },
+      { name: "Last Letter", type: "Warm-up", description: "Choose a category or open association. Each new word must begin with the final letter of the previous player's word.", difficulty: 2 },
+      { name: "Letter Number Name", type: "Warm-up", description: "Create a repeating pattern using a letter, a number, and a name. Players pass the pattern around while preserving the order.", difficulty: 3 },
+      { name: "Malapropism", type: "Drill / game", description: "Run a scene where players intentionally use an incorrect word, then immediately justify it as meaningful in the scene.", difficulty: 3 },
+      { name: "Mexican Name Wave", type: "Warm-up", description: "Have one player say their name with a gesture, then the group passes that name and gesture around the circle like a wave.", difficulty: 1 },
+      { name: "Commercial", type: "Game", description: "Get an imaginary product or problem from the audience. Players improvise a short commercial with a pitch, demonstration, and tagline.", difficulty: 3 },
+      { name: "Consciences", type: "Game / scene format", description: "Start a scene with one main character. Assign two offstage voices to advise them with competing impulses during the scene.", difficulty: 4 },
+      { name: "Countdown", type: "Game / drill", description: "Give players a scene or task and a visible countdown. Call remaining time so they make faster, clearer choices before time expires.", difficulty: 3 },
+      { name: "Cut", type: "Game / drill", description: "Run a scene where the facilitator or players can call Cut to jump to a new time, angle, or location while preserving continuity.", difficulty: 4 },
+      { name: "Dada Monologue", type: "Game / exercise", description: "Give one player a word or image. They deliver a short abstract monologue using free association, sound, and committed physicality.", difficulty: 3 },
+      { name: "Dating Game", type: "Game", description: "Send one contestant away while assigning each date a character or quirk. The contestant returns, asks questions, and guesses the dates.", difficulty: 4 },
+      { name: "Dubbed Movie", type: "Game", description: "Two actors play a silent or gibberish scene while two offstage players provide their dialogue, matching movement and timing.", difficulty: 4 },
+      { name: "Fast Forward", type: "Game / drill", description: "Start a scene, then call Fast Forward to jump ahead in time. Players show what changed while keeping the story connected.", difficulty: 4 },
+      { name: "First Line Last Line", type: "Game / scene format", description: "Get a first line and a final line. Players start with the first line and justify the scene so it can end on the final line.", difficulty: 4 },
+      { name: "Five Four Three Two One", type: "Warm-up / drill", description: "Give a simple prompt and have players make five quick offers, then four, three, two, and one with shrinking thinking time.", difficulty: 2 },
+      { name: "Funeral Service", type: "Game", description: "Choose a fictional person, object, or idea to memorialize. Players step up as different speakers giving brief tributes.", difficulty: 3 },
+      { name: "Gibberish Expert", type: "Game / exercise", description: "One player is an expert who speaks only gibberish. A translator stands beside them and turns each answer into English.", difficulty: 3 },
+      { name: "Give and Take", type: "Exercise", description: "Pair players for a scene focused on sharing focus, space, and offers. Coach them to notice when to lead and when to yield.", difficulty: 3 },
+      { name: "Character Swap", type: "Game / drill", description: "Start a scene with clear characters. Call Swap, and players exchange characters, traits, or points of view while continuing the scene.", difficulty: 4 },
+    ];
+
+    const MAX_COUNT = 12;
+    const selectedCounts = {
+      warmUps: 3,
+      drills: 1,
+      games: 5
+    };
+
+
+    // --- Categorization rules ---
+    function normalizeType(typeText) {
+      return String(typeText || "").toLowerCase();
+    }
+
+    function isWarmUp(activity) {
+      return normalizeType(activity.type).includes("warm-up");
+    }
+
+    function isDrill(activity) {
+      const typeText = normalizeType(activity.type);
+      // Drill bucket: explicitly drill/exercise/scene format, excluding anything already counted as warm-up
+      const drillish = typeText.includes("drill") || typeText.includes("exercise") || typeText.includes("scene format");
+      return drillish && !isWarmUp(activity);
+    }
+
+    function isGame(activity) {
+      const typeText = normalizeType(activity.type);
+      // Game bucket: has "game" and not a warm-up; (some items are game/drillâ€”fine)
+      return typeText.includes("game") && !isWarmUp(activity);
+    }
+
+    function shuffleInPlace(array) {
+      for (let index = array.length - 1; index > 0; index--) {
+        const swapIndex = Math.floor(Math.random() * (index + 1));
+        [array[index], array[swapIndex]] = [array[swapIndex], array[index]];
+      }
+      return array;
+    }
+
+    function sampleWithoutReplacement(poolArray, sampleCount) {
+      const poolCopy = poolArray.slice();
+      shuffleInPlace(poolCopy);
+      return poolCopy.slice(0, Math.min(sampleCount, poolCopy.length));
+    }
+
+    function uniqueByName(items) {
+      const seen = new Set();
+      const output = [];
+      for (const item of items) {
+        const key = item.name.trim().toLowerCase();
+        if (!seen.has(key)) {
+          seen.add(key);
+          output.push(item);
+        }
+      }
+      return output;
+    }
+
+    function generateJam(counts) {
+      const warmUpsPool = ACTIVITIES.filter(isWarmUp);
+      const drillsPool = ACTIVITIES.filter(isDrill);
+      const gamesPool = ACTIVITIES.filter(isGame);
+
+      const warmUpsPicked = sampleWithoutReplacement(warmUpsPool, counts.warmUps);
+
+      let usedNames = new Set(warmUpsPicked.map(a => a.name.toLowerCase()));
+
+      let drillPicked = sampleWithoutReplacement(
+        drillsPool.filter(a => !usedNames.has(a.name.toLowerCase())),
+        counts.drills
+      );
+      usedNames = new Set([...usedNames, ...drillPicked.map(a => a.name.toLowerCase())]);
+
+      if (drillPicked.length < counts.drills) {
+        const fallbackDrills = ACTIVITIES.filter(a => {
+          const typeText = normalizeType(a.type);
+          return !isWarmUp(a) && !usedNames.has(a.name.toLowerCase()) && (typeText.includes("drill") || typeText.includes("exercise") || typeText.includes("scene format"));
+        });
+        const fallbackPicked = sampleWithoutReplacement(fallbackDrills, counts.drills - drillPicked.length);
+        drillPicked = [...drillPicked, ...fallbackPicked];
+        usedNames = new Set([...usedNames, ...fallbackPicked.map(a => a.name.toLowerCase())]);
+      }
+
+      const gamesFiltered = gamesPool.filter(a => !usedNames.has(a.name.toLowerCase()));
+      const gamesPicked = sampleWithoutReplacement(gamesFiltered, counts.games);
+
+      const finalWarmUps = uniqueByName(warmUpsPicked).slice(0, counts.warmUps);
+      const finalDrills = uniqueByName(drillPicked).slice(0, counts.drills);
+      const finalGames = uniqueByName(gamesPicked).slice(0, counts.games);
+
+      return { warmUps: finalWarmUps, drills: finalDrills, games: finalGames, requested: counts };
+    }
+
+    function renderJam(jam) {
+      const tbody = document.getElementById("ajg-tbody");
+      const meta = document.getElementById("ajg-meta");
+
+      const rows = [];
+
+      jam.warmUps.forEach((a, idx) => {
+        rows.push({ slot: `Warm-up ${idx + 1}`, slotClass: "ajg-slot ajg-slot-warmup", activity: a });
+      });
+
+      jam.drills.forEach((a, idx) => {
+        rows.push({ slot: `Drill ${idx + 1}`, slotClass: "ajg-slot ajg-slot-drill", activity: a });
+      });
+
+      const missingDrills = Math.max(0, jam.requested.drills - jam.drills.length);
+      for (let index = 0; index < missingDrills; index++) {
+        rows.push({ slot: `Drill ${jam.drills.length + index + 1}`, slotClass: "ajg-slot ajg-slot-drill", activity: { name: "--", type: "--", description: "No drill found with current filters.", difficulty: "--" } });
+      }
+
+      jam.games.forEach((a, idx) => {
+        rows.push({ slot: `Game ${idx + 1}`, slotClass: "ajg-slot ajg-slot-game", activity: a });
+      });
+
+      tbody.innerHTML = rows.map(r => {
+        return `
+          <tr>
+            <td class="${r.slotClass}">
+              <span class="ajg-pill">${r.slot}</span>
+            </td>
+            <td><strong>${escapeHtml(r.activity.name)}</strong></td>
+            <td>${escapeHtml(r.activity.type)}</td>
+            <td>${escapeHtml(r.activity.description)}</td>
+          </tr>
+        `;
+      }).join("");
+
+      const now = new Date();
+      meta.textContent = `Generated: ${now.toLocaleString()}`;
+
+      // Store last jam for copy
+      window.__AJG_LAST_JAM__ = rows;
+    }
+
+    function escapeHtml(value) {
+      return String(value ?? "")
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+    }
+
+    async function copyToClipboard() {
+      const rows = window.__AJG_LAST_JAM__;
+      if (!rows || !rows.length) return;
+
+      const lines = rows.map(r => {
+        const a = r.activity;
+        return `${r.slot}\t${a.name}\t${a.type}\t${a.description}`;
+      });
+
+      const header = "Slot\tGame name\tType\tDescription";
+      const text = [header, ...lines].join("\n");
+
+      try {
+        await navigator.clipboard.writeText(text);
+        const meta = document.getElementById("ajg-meta");
+        meta.textContent = "Copied to clipboard âœ…";
+      } catch (error) {
+        const meta = document.getElementById("ajg-meta");
+        meta.textContent = "Copy failed (browser blocked clipboard). You can manually select the table instead.";
+      }
+    }
+
+    function clampCount(value) {
+      return Math.max(0, Math.min(MAX_COUNT, value));
+    }
+
+    function updateSubtitle() {
+      const subtitle = document.getElementById("ajg-subtitle");
+      subtitle.textContent = `${selectedCounts.warmUps} warm-ups | ${selectedCounts.drills} drills | ${selectedCounts.games} games`;
+    }
+
+    function renderCounters() {
+      document.getElementById("ajg-count-warmups").textContent = String(selectedCounts.warmUps);
+      document.getElementById("ajg-count-drills").textContent = String(selectedCounts.drills);
+      document.getElementById("ajg-count-games").textContent = String(selectedCounts.games);
+      updateSubtitle();
+    }
+
+    function wireUp() {
+      const generateButton = document.getElementById("ajg-generate");
+      const copyButton = document.getElementById("ajg-copy");
+      const counterButtons = document.querySelectorAll("[data-count-key][data-count-step]");
+
+      counterButtons.forEach(button => {
+        button.addEventListener("click", () => {
+          const key = button.getAttribute("data-count-key");
+          const step = Number(button.getAttribute("data-count-step") || "0");
+          if (!Object.prototype.hasOwnProperty.call(selectedCounts, key)) return;
+          selectedCounts[key] = clampCount(selectedCounts[key] + step);
+          renderCounters();
+        });
+      });
+
+      generateButton.addEventListener("click", () => {
+        const jam = generateJam(selectedCounts);
+        renderJam(jam);
+      });
+
+      copyButton.addEventListener("click", () => {
+        copyToClipboard();
+      });
+
+      renderCounters();
+    }
+
+    wireUp();
+  })();
+</script>

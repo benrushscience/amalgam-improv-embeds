@@ -1,0 +1,462 @@
+<!-- Ultra-safe Random Word Generator (minimal UI, Squarespace-resistant) -->
+<div id="amalgam-word-widget" tabindex="0">
+  <style>
+    #amalgam-word-widget{
+      --bg-offwhite:#F7F6F3;
+      --bg-yellow:#FFE974;
+      --bg-orange:#E55937;
+      --bg-pink:#BD005B;
+      --ink:#000000;
+    }
+
+    /* HARD RESET scoped to widget */
+    #amalgam-word-widget,
+    #amalgam-word-widget *{
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+      text-decoration: none !important;
+      background-image: none !important;
+      filter: none !important;
+    }
+
+    #amalgam-word-widget{
+      max-width: 720px;
+      margin: 0 auto;
+      padding: 18px;
+      background: var(--bg-offwhite);
+      border: 2px solid var(--ink);
+      border-radius: 18px;
+      box-shadow: 8px 8px 0 var(--ink);
+      font-family: system-ui, -apple-system, Segoe UI, Roboto, Helvetica, Arial, sans-serif;
+      color: var(--ink);
+    }
+
+    #amalgam-word-widget .word-card{
+      background: var(--bg-yellow);
+      border: 2px solid var(--ink);
+      border-radius: 14px;
+      padding: 28px 20px;
+      text-align: center;
+      margin-bottom: 18px;
+    }
+
+    #amalgam-word-widget .word{
+      font-size: clamp(36px, 6vw, 60px);
+      font-weight: 900;
+      letter-spacing: 0.5px;
+      text-transform: uppercase;
+      line-height: 1.05;
+    }
+
+    #amalgam-word-widget .controls{
+      display: flex;
+      gap: 12px;
+      flex-wrap: wrap;
+      justify-content: center;
+    }
+
+    #amalgam-word-widget .category-lanes{
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: center;
+      margin-bottom: 14px;
+    }
+
+    #amalgam-word-widget .lane-btn{
+      appearance: none;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 8px 12px;
+      font-size: 13px;
+      font-weight: 800;
+      cursor: pointer;
+      background: #ffffff;
+      color: var(--ink);
+    }
+
+    #amalgam-word-widget .lane-btn.active{
+      background: var(--bg-orange);
+      color: var(--bg-offwhite);
+    }
+
+    #amalgam-word-widget button{
+      appearance: none;
+      border: 2px solid var(--ink);
+      border-radius: 999px;
+      padding: 12px 18px;
+      font-weight: 900;
+      cursor: pointer;
+      box-shadow: 4px 4px 0 var(--ink);
+      background: var(--bg-offwhite);
+      color: var(--ink);
+    }
+
+    #amalgam-word-widget button.primary{
+      background: var(--bg-pink);
+      color: var(--bg-offwhite);
+      font-size: 16px;
+    }
+
+    #amalgam-word-widget button:active{
+      transform: translate(2px,2px);
+      box-shadow: 2px 2px 0 var(--ink);
+    }
+
+    #amalgam-word-widget button[disabled]{
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+  </style>
+
+  <div class="word-card">
+    <div class="word" id="current-word">Click for a word</div>
+  </div>
+
+  <div class="category-lanes" role="group" aria-label="Word categories">
+    <button class="lane-btn active" data-category="all" type="button">All</button>
+    <button class="lane-btn" data-category="object" type="button">Object</button>
+    <button class="lane-btn" data-category="emotion" type="button">Emotion</button>
+    <button class="lane-btn" data-category="location" type="button">Location</button>
+    <button class="lane-btn" data-category="relationship" type="button">Relationship</button>
+    <button class="lane-btn" data-category="wildcard" type="button">Wildcard</button>
+  </div>
+
+  <div class="controls">
+    <button class="primary" id="new-word">New Word</button>
+    <button id="copy-word">Copy</button>
+    <button id="undo-word" disabled>Undo</button>
+  </div>
+</div>
+
+<script>
+  // Minimal, non-repeating random word generator
+  (function(){
+    const words = [
+      { text: "apple", category: "object" },
+      { text: "ladder", category: "object" },
+      { text: "mirror", category: "object" },
+      { text: "backpack", category: "object" },
+      { text: "candle", category: "object" },
+      { text: "river", category: "location" },
+      { text: "helmet", category: "object" },
+      { text: "suitcase", category: "object" },
+      { text: "clock", category: "object" },
+      { text: "blanket", category: "object" },
+      { text: "telescope", category: "object" },
+      { text: "mailbox", category: "object" },
+      { text: "hammer", category: "object" },
+      { text: "pillow", category: "object" },
+      { text: "bicycle", category: "object" },
+      { text: "sandwich", category: "object" },
+      { text: "flashlight", category: "object" },
+      { text: "notebook", category: "object" },
+      { text: "doorway", category: "location" },
+      { text: "umbrella", category: "object" },
+      { text: "key", category: "object" },
+      { text: "island", category: "location" },
+      { text: "refrigerator", category: "object" },
+      { text: "compass", category: "object" },
+      { text: "whistle", category: "object" },
+      { text: "staircase", category: "location" },
+      { text: "painting", category: "object" },
+      { text: "shoelace", category: "object" },
+      { text: "microphone", category: "object" },
+      { text: "ticket", category: "object" },
+      { text: "window", category: "location" },
+      { text: "shovel", category: "object" },
+      { text: "lantern", category: "object" },
+      { text: "envelope", category: "object" },
+      { text: "fountain", category: "location" },
+      { text: "jacket", category: "object" },
+      { text: "anchor", category: "object" },
+      { text: "toothbrush", category: "object" },
+      { text: "bridge", category: "location" },
+      { text: "wallet", category: "object" },
+      { text: "jealous", category: "emotion" },
+      { text: "guilty", category: "emotion" },
+      { text: "hopeful", category: "emotion" },
+      { text: "rivals", category: "relationship" },
+      { text: "siblings", category: "relationship" },
+      { text: "exes", category: "relationship" },
+      { text: "apron", category: "object" },
+      { text: "violin", category: "object" },
+      { text: "thermos", category: "object" },
+      { text: "map", category: "object" },
+      { text: "glasses", category: "object" },
+      { text: "camera", category: "object" },
+      { text: "drum", category: "object" },
+      { text: "keychain", category: "object" },
+      { text: "magnet", category: "object" },
+      { text: "soap", category: "object" },
+      { text: "teacup", category: "object" },
+      { text: "scooter", category: "object" },
+      { text: "headphones", category: "object" },
+      { text: "clipboard", category: "object" },
+      { text: "binoculars", category: "object" },
+      { text: "rake", category: "object" },
+      { text: "skateboard", category: "object" },
+      { text: "necklace", category: "object" },
+      { text: "ring", category: "object" },
+      { text: "broom", category: "object" },
+      { text: "bucket", category: "object" },
+      { text: "paperclip", category: "object" },
+      { text: "stapler", category: "object" },
+      { text: "remote", category: "object" },
+      { text: "joystick", category: "object" },
+      { text: "dice", category: "object" },
+      { text: "domino", category: "object" },
+      { text: "chessboard", category: "object" },
+      { text: "kite", category: "object" },
+      { text: "frisbee", category: "object" },
+      { text: "snowglobe", category: "object" },
+      { text: "bookmark", category: "object" },
+      { text: "measuring tape", category: "object" },
+      { text: "guitar", category: "object" },
+      { text: "pocketwatch", category: "object" },
+      { text: "watering can", category: "object" },
+      { text: "rubber duck", category: "object" },
+      { text: "plunger", category: "object" },
+      { text: "corkscrew", category: "object" },
+      { text: "frying pan", category: "object" },
+      { text: "colander", category: "object" },
+      { text: "mug", category: "object" },
+      { text: "plate", category: "object" },
+      { text: "spoon", category: "object" },
+      { text: "fork", category: "object" },
+      { text: "ladle", category: "object" },
+      { text: "mop", category: "object" },
+      { text: "paintbrush", category: "object" },
+      { text: "easel", category: "object" },
+      { text: "globe", category: "object" },
+      { text: "calculator", category: "object" },
+      { text: "alarm clock", category: "object" },
+      { text: "calendar", category: "object" },
+      { text: "battery", category: "object" },
+      { text: "extension cord", category: "object" },
+      { text: "toolbox", category: "object" },
+      { text: "wrench", category: "object" },
+      { text: "screwdriver", category: "object" },
+      { text: "pliers", category: "object" },
+      { text: "drill", category: "object" },
+      { text: "tape measure", category: "object" },
+      { text: "flash drive", category: "object" },
+      { text: "keyboard", category: "object" },
+      { text: "mouse", category: "object" },
+      { text: "monitor", category: "object" },
+      { text: "printer", category: "object" },
+      { text: "tripod", category: "object" },
+      { text: "sunglasses", category: "object" },
+      { text: "raincoat", category: "object" },
+      { text: "boots", category: "object" },
+      { text: "mittens", category: "object" },
+      { text: "scarf", category: "object" },
+      { text: "baseball bat", category: "object" },
+      { text: "tennis racket", category: "object" },
+      { text: "soccer ball", category: "object" },
+      { text: "harmonica", category: "object" },
+      { text: "ukulele", category: "object" },
+      { text: "metronome", category: "object" },
+      { text: "candleholder", category: "object" },
+      { text: "jar", category: "object" },
+      { text: "anxious", category: "emotion" },
+      { text: "ecstatic", category: "emotion" },
+      { text: "embarrassed", category: "emotion" },
+      { text: "nostalgic", category: "emotion" },
+      { text: "curious", category: "emotion" },
+      { text: "resentful", category: "emotion" },
+      { text: "relieved", category: "emotion" },
+      { text: "confident", category: "emotion" },
+      { text: "lonely", category: "emotion" },
+      { text: "playful", category: "emotion" },
+      { text: "suspicious", category: "emotion" },
+      { text: "terrified", category: "emotion" },
+      { text: "grateful", category: "emotion" },
+      { text: "impatient", category: "emotion" },
+      { text: "calm", category: "emotion" },
+      { text: "frustrated", category: "emotion" },
+      { text: "proud", category: "emotion" },
+      { text: "ashamed", category: "emotion" },
+      { text: "overwhelmed", category: "emotion" },
+      { text: "bored", category: "emotion" },
+      { text: "determined", category: "emotion" },
+      { text: "heartbroken", category: "emotion" },
+      { text: "optimistic", category: "emotion" },
+      { text: "pessimistic", category: "emotion" },
+      { text: "envious", category: "emotion" },
+      { text: "awkward", category: "emotion" },
+      { text: "inspired", category: "emotion" },
+      { text: "defensive", category: "emotion" },
+      { text: "restless", category: "emotion" },
+      { text: "content", category: "emotion" },
+      { text: "panicked", category: "emotion" },
+      { text: "amused", category: "emotion" },
+      { text: "disappointed", category: "emotion" },
+      { text: "affectionate", category: "emotion" },
+      { text: "irritated", category: "emotion" },
+      { text: "melancholy", category: "emotion" },
+      { text: "bold", category: "emotion" },
+      { text: "tender", category: "emotion" },
+      { text: "smug", category: "emotion" },
+      { text: "vulnerable", category: "emotion" },
+      { text: "attic", category: "location" },
+      { text: "basement", category: "location" },
+      { text: "rooftop", category: "location" },
+      { text: "parking lot", category: "location" },
+      { text: "bus stop", category: "location" },
+      { text: "train station", category: "location" },
+      { text: "library", category: "location" },
+      { text: "museum", category: "location" },
+      { text: "hospital hallway", category: "location" },
+      { text: "classroom", category: "location" },
+      { text: "grocery aisle", category: "location" },
+      { text: "bowling alley", category: "location" },
+      { text: "arcade", category: "location" },
+      { text: "beach boardwalk", category: "location" },
+      { text: "mountain trail", category: "location" },
+      { text: "campground", category: "location" },
+      { text: "office breakroom", category: "location" },
+      { text: "courtroom", category: "location" },
+      { text: "airport gate", category: "location" },
+      { text: "hotel lobby", category: "location" },
+      { text: "subway platform", category: "location" },
+      { text: "farmhouse", category: "location" },
+      { text: "greenhouse", category: "location" },
+      { text: "boat dock", category: "location" },
+      { text: "construction site", category: "location" },
+      { text: "thrift store", category: "location" },
+      { text: "pet store", category: "location" },
+      { text: "dentist office", category: "location" },
+      { text: "record store", category: "location" },
+      { text: "coffee shop", category: "location" },
+      { text: "laundromat", category: "location" },
+      { text: "city park", category: "location" },
+      { text: "cemetery", category: "location" },
+      { text: "skating rink", category: "location" },
+      { text: "movie theater", category: "location" },
+      { text: "science lab", category: "location" },
+      { text: "newsroom", category: "location" },
+      { text: "bakery", category: "location" },
+      { text: "florist shop", category: "location" },
+      { text: "fire station", category: "location" },
+      { text: "best friends", category: "relationship" },
+      { text: "neighbors", category: "relationship" },
+      { text: "roommates", category: "relationship" },
+      { text: "boss and intern", category: "relationship" },
+      { text: "teacher and student", category: "relationship" },
+      { text: "coach and captain", category: "relationship" },
+      { text: "parent and teenager", category: "relationship" },
+      { text: "landlord and tenant", category: "relationship" },
+      { text: "customer and cashier", category: "relationship" },
+      { text: "doctor and patient", category: "relationship" },
+      { text: "detective and suspect", category: "relationship" },
+      { text: "hero and sidekick", category: "relationship" },
+      { text: "magician and assistant", category: "relationship" },
+      { text: "chef and food critic", category: "relationship" },
+      { text: "podcast hosts", category: "relationship" },
+      { text: "wedding planners", category: "relationship" },
+      { text: "bandmates", category: "relationship" },
+      { text: "chess rivals", category: "relationship" },
+      { text: "debate partners", category: "relationship" },
+      { text: "lifeguard and swimmer", category: "relationship" },
+      { text: "camp counselor and camper", category: "relationship" },
+      { text: "pilot and copilot", category: "relationship" },
+      { text: "scientist and test subject", category: "relationship" },
+      { text: "journalist and source", category: "relationship" },
+      { text: "author and editor", category: "relationship" },
+      { text: "driver and passenger", category: "relationship" },
+      { text: "captain and pirate", category: "relationship" },
+      { text: "queen and advisor", category: "relationship" },
+      { text: "mechanic and car owner", category: "relationship" },
+      { text: "trainer and athlete", category: "relationship" },
+      { text: "siblings-in-law", category: "relationship" },
+      { text: "former teammates", category: "relationship" },
+      { text: "step siblings", category: "relationship" },
+      { text: "twins", category: "relationship" },
+      { text: "mentor and apprentice", category: "relationship" },
+      { text: "lawyer and witness", category: "relationship" },
+      { text: "streamer and moderator", category: "relationship" },
+      { text: "game designer and playtester", category: "relationship" },
+      { text: "barista and regular", category: "relationship" },
+      { text: "tour guide and tourist", category: "relationship" },
+      { text: "YOUR MOM LOL", category: "wildcard" }
+    ];
+
+    const widgetEl = document.getElementById("amalgam-word-widget");
+    const currentWordEl = widgetEl ? widgetEl.querySelector("#current-word") : null;
+    const newWordBtn = widgetEl ? widgetEl.querySelector("#new-word") : null;
+    const copyBtn = widgetEl ? widgetEl.querySelector("#copy-word") : null;
+    const undoBtn = widgetEl ? widgetEl.querySelector("#undo-word") : null;
+    const laneBtns = widgetEl ? Array.from(widgetEl.querySelectorAll(".lane-btn")) : [];
+
+    if (!widgetEl || !currentWordEl || !newWordBtn || !copyBtn || !undoBtn || laneBtns.length === 0) return;
+
+    let deck = [];
+    let lastWord = null;
+    let activeCategory = "all";
+
+    function shuffle(array){
+      return array
+        .map(value => ({ value, sort: Math.random() }))
+        .sort((a,b) => a.sort - b.sort)
+        .map(({ value }) => value);
+    }
+
+    function drawWord(){
+      const activePool = words
+        .filter((item) => activeCategory === "all" || item.category === activeCategory)
+        .map((item) => item.text);
+
+      if (activePool.length === 0){
+        currentWordEl.textContent = "No words in this lane";
+        undoBtn.disabled = true;
+        return;
+      }
+
+      if (deck.length === 0){
+        deck = shuffle(activePool);
+      }
+      lastWord = currentWordEl.textContent;
+      currentWordEl.textContent = deck.pop();
+      undoBtn.disabled = false;
+    }
+
+    function undo(){
+      if (!lastWord) return;
+      deck.push(currentWordEl.textContent);
+      currentWordEl.textContent = lastWord;
+      lastWord = null;
+      undoBtn.disabled = true;
+    }
+
+    async function copyWord(){
+      const text = currentWordEl.textContent;
+      if (!text || text === "Click for a word") return;
+      try{
+        await navigator.clipboard.writeText(text);
+      } catch(e){}
+    }
+
+    newWordBtn.addEventListener("click", drawWord);
+    undoBtn.addEventListener("click", undo);
+    copyBtn.addEventListener("click", copyWord);
+    laneBtns.forEach((btn) => {
+      btn.addEventListener("click", () => {
+        activeCategory = btn.dataset.category || "all";
+        laneBtns.forEach((candidate) => candidate.classList.remove("active"));
+        btn.classList.add("active");
+        deck = [];
+        lastWord = null;
+        undoBtn.disabled = true;
+        currentWordEl.textContent = "Click for a word";
+      });
+    });
+
+    widgetEl.addEventListener("keydown", (e) => {
+      if (e.key === "n" || e.key === "N") drawWord();
+      if (e.key === "u" || e.key === "U") undo();
+      if (e.key === "c" || e.key === "C") copyWord();
+    });
+  })();
+</script>

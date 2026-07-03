@@ -1,0 +1,925 @@
+<!-- Multi-timer system for Squarespace embed: responsive UI + WebAudio chime + 1 main + 5 optional milestone timers -->
+<div id="amalgam-multitimer">
+  <div class="amt-card">
+    <div class="amt-header">
+      <div class="amt-title">MULTI TIMER</div>
+      <div class="amt-subtitle">Main timer + up to 5 milestone chimes</div>
+    </div>
+
+    <!-- MAIN TIMER -->
+    <section class="amt-section amt-main">
+      <div class="amt-row amt-row-top">
+        <div class="amt-section-title">MAIN TIMER</div>
+
+        <div class="amt-controls" aria-label="Main controls">
+          <button class="amt-icon-btn" id="amt-play" type="button" aria-label="Play">▶️</button>
+          <button class="amt-icon-btn" id="amt-pause" type="button" aria-label="Pause">⏸️</button>
+          <button class="amt-icon-btn" id="amt-stop" type="button" aria-label="Stop">⏹️</button>
+          <button class="amt-text-btn" id="amt-reset" type="button" aria-label="Reset all">Reset</button>
+        </div>
+      </div>
+
+      <div class="amt-row amt-row-mid">
+        <div class="amt-picker">
+          <div class="amt-picker-label">Set main duration</div>
+          <div class="amt-picker-grid">
+            <div class="amt-picker-block">
+              <label class="amt-small-label" for="amt-main-min">Minutes</label>
+              <select id="amt-main-min" class="amt-select" aria-label="Main minutes"></select>
+            </div>
+            <div class="amt-picker-block">
+              <label class="amt-small-label" for="amt-main-sec">Seconds</label>
+              <select id="amt-main-sec" class="amt-select" aria-label="Main seconds"></select>
+            </div>
+          </div>
+        </div>
+
+        <div class="amt-display" aria-live="polite">
+          <div class="amt-display-label">Elapsed</div>
+          <div class="amt-time" id="amt-main-elapsed">00:00</div>
+          <div class="amt-display-label">Remaining</div>
+          <div class="amt-time amt-time-secondary" id="amt-main-remaining">00:00</div>
+        </div>
+      </div>
+
+      <div class="amt-row amt-row-bottom">
+        <div class="amt-status" id="amt-status">Ready</div>
+        <div class="amt-hint">
+          Tip: timers 1–5 are <strong>milestones</strong> (chime when elapsed reaches their set time).
+        </div>
+      </div>
+    </section>
+
+    <!-- MILESTONE TIMERS -->
+    <section class="amt-section amt-milestones">
+      <div class="amt-section-title">MILESTONE TIMERS</div>
+
+      <div class="amt-grid" id="amt-timers"></div>
+    </section>
+
+    <div class="amt-footer">
+      <div class="amt-footer-note">
+        Chime plays for ~5 seconds (overlaps allowed). First Play click enables sound on most browsers.
+      </div>
+    </div>
+  </div>
+</div>
+
+<style>
+  :root{
+    --amt-offwhite:#F7F6F3;
+    --amt-yellow:#FFE974;
+    --amt-orange:#E55937;
+    --amt-pink:#BD005B;
+    --amt-black:#000000;
+  }
+
+  #amalgam-multitimer{
+    font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
+    color: var(--amt-black);
+    background: transparent;
+    display: flex;
+    justify-content: center;
+    padding: 14px 10px;
+  }
+
+  .amt-card{
+    width: min(920px, 100%);
+    border: 3px solid var(--amt-black);
+    border-radius: 14px;
+    background: var(--amt-yellow);
+    overflow: hidden;
+    box-shadow: 0 6px 0 rgba(0,0,0,0.15);
+  }
+
+  .amt-header{
+    background: var(--amt-orange);
+    padding: 14px 16px;
+    border-bottom: 3px solid var(--amt-black);
+  }
+
+  .amt-title{
+    font-weight: 900;
+    letter-spacing: 0.6px;
+    font-size: 18px;
+    color: var(--amt-yellow);
+    text-transform: uppercase;
+  }
+
+  .amt-subtitle{
+    margin-top: 4px;
+    font-size: 13px;
+    color: var(--amt-offwhite);
+    opacity: 0.95;
+  }
+
+  .amt-section{
+    padding: 14px 16px;
+  }
+
+  .amt-main{
+    background: rgba(247,246,243,0.55);
+    border-bottom: 3px solid var(--amt-black);
+  }
+
+  .amt-section-title{
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 14px;
+  }
+
+  .amt-row{
+    display: flex;
+    gap: 12px;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+  }
+
+  .amt-row-top{
+    margin-bottom: 10px;
+  }
+
+  .amt-controls{
+    display: flex;
+    gap: 8px;
+    align-items: center;
+    flex-wrap: wrap;
+  }
+
+  .amt-icon-btn{
+    appearance: none;
+    border: 2px solid var(--amt-black);
+    background: var(--amt-yellow);
+    border-radius: 10px;
+    padding: 8px 10px;
+    font-size: 18px;
+    line-height: 1;
+    cursor: pointer;
+    transition: transform 0.05s ease;
+  }
+  .amt-icon-btn:active{ transform: translateY(1px); }
+
+  .amt-text-btn{
+    appearance: none;
+    border: 2px solid var(--amt-black);
+    background: var(--amt-pink);
+    color: var(--amt-offwhite);
+    border-radius: 10px;
+    padding: 9px 12px;
+    font-weight: 800;
+    cursor: pointer;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+  }
+
+  .amt-picker{
+    flex: 1 1 300px;
+    min-width: 260px;
+  }
+
+  .amt-picker-label{
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  .amt-picker-grid{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .amt-picker-block{
+    background: var(--amt-yellow);
+    border: 2px solid var(--amt-black);
+    border-radius: 12px;
+    padding: 10px;
+  }
+
+  .amt-small-label{
+    display: block;
+    font-size: 12px;
+    font-weight: 800;
+    margin-bottom: 6px;
+  }
+
+  /* "Scroll wheel" feel: native select with larger tap target */
+  .amt-select{
+    width: 100%;
+    padding: 10px 10px;
+    border-radius: 10px;
+    border: 2px solid var(--amt-black);
+    background: var(--amt-offwhite);
+    font-weight: 800;
+    font-size: 16px;
+    cursor: pointer;
+  }
+
+  .amt-display{
+    flex: 0 0 260px;
+    min-width: 240px;
+    border: 2px solid var(--amt-black);
+    border-radius: 12px;
+    background: var(--amt-offwhite);
+    padding: 10px 12px;
+    text-align: center;
+  }
+
+  .amt-display-label{
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    opacity: 0.9;
+  }
+
+  .amt-time{
+    font-weight: 1000;
+    font-size: 38px;
+    line-height: 1.1;
+    margin: 4px 0 8px 0;
+  }
+
+  .amt-time-secondary{
+    font-size: 30px;
+    opacity: 0.95;
+  }
+
+  .amt-row-bottom{
+    margin-top: 8px;
+  }
+
+  .amt-status{
+    background: var(--amt-pink);
+    color: var(--amt-offwhite);
+    border: 2px solid var(--amt-black);
+    border-radius: 999px;
+    padding: 7px 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 12px;
+  }
+
+  .amt-hint{
+    font-size: 13px;
+    line-height: 1.25;
+    max-width: 520px;
+  }
+
+  .amt-milestones{
+    background: var(--amt-yellow);
+  }
+
+  .amt-grid{
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 12px;
+    margin-top: 10px;
+  }
+
+  @media (max-width: 860px){
+    .amt-grid{ grid-template-columns: repeat(2, minmax(0, 1fr)); }
+    .amt-display{ flex: 1 1 260px; }
+  }
+
+  @media (max-width: 520px){
+    .amt-grid{ grid-template-columns: 1fr; }
+    .amt-time{ font-size: 34px; }
+    .amt-time-secondary{ font-size: 26px; }
+  }
+
+  .amt-timer-card{
+    border: 2px solid var(--amt-black);
+    border-radius: 14px;
+    background: rgba(247,246,243,0.75);
+    padding: 12px;
+    display: grid;
+    gap: 10px;
+  }
+
+  .amt-timer-top{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+  }
+
+  .amt-timer-name{
+    font-weight: 1000;
+    text-transform: uppercase;
+    letter-spacing: 0.4px;
+    font-size: 13px;
+  }
+
+  .amt-toggle{
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-weight: 900;
+    text-transform: uppercase;
+    font-size: 12px;
+  }
+
+  /* toggle switch */
+  .amt-switch{
+    position: relative;
+    width: 44px;
+    height: 26px;
+    background: var(--amt-offwhite);
+    border: 2px solid var(--amt-black);
+    border-radius: 999px;
+    cursor: pointer;
+    flex: 0 0 auto;
+  }
+  .amt-switch::after{
+    content: "";
+    position: absolute;
+    top: 3px;
+    left: 3px;
+    width: 18px;
+    height: 18px;
+    background: var(--amt-pink);
+    border: 2px solid var(--amt-black);
+    border-radius: 50%;
+    transition: left 0.15s ease;
+  }
+  .amt-switch[data-on="true"]{
+    background: var(--amt-yellow);
+  }
+  .amt-switch[data-on="true"]::after{
+    left: 19px;
+    background: var(--amt-orange);
+  }
+
+  .amt-timer-picker{
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+  }
+
+  .amt-timer-display{
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    gap: 10px;
+    padding: 10px 12px;
+    border: 2px solid var(--amt-black);
+    border-radius: 12px;
+    background: var(--amt-offwhite);
+  }
+
+  .amt-timer-display .amt-mini{
+    font-weight: 1000;
+    font-size: 20px;
+  }
+
+  .amt-timer-display .amt-mini-status{
+    font-size: 12px;
+    font-weight: 900;
+    text-transform: uppercase;
+    opacity: 0.85;
+  }
+
+  .amt-timer-card[data-enabled="false"]{
+    opacity: 0.55;
+  }
+
+  .amt-footer{
+    background: rgba(247,246,243,0.65);
+    border-top: 3px solid var(--amt-black);
+    padding: 10px 16px;
+  }
+
+  .amt-footer-note{
+    font-size: 12px;
+    line-height: 1.3;
+  }
+</style>
+
+<script>
+  // This script builds a responsive multi-timer with 1 main elapsed clock + 5 optional milestone chimes.
+  (function () {
+    const rootElement = document.getElementById("amalgam-multitimer");
+    if (!rootElement) return;
+
+    // -------------------------
+    // Utility helpers
+    // -------------------------
+    function pad2(numberValue) {
+      return String(numberValue).padStart(2, "0");
+    }
+
+    function formatMMSS(totalSeconds) {
+      const safeSeconds = Math.max(0, Math.floor(totalSeconds));
+      const minutes = Math.floor(safeSeconds / 60);
+      const seconds = safeSeconds % 60;
+      return `${pad2(minutes)}:${pad2(seconds)}`;
+    }
+
+    function clampInt(value, minValue, maxValue) {
+      const parsed = Number.parseInt(value, 10);
+      if (Number.isNaN(parsed)) return minValue;
+      return Math.min(maxValue, Math.max(minValue, parsed));
+    }
+
+    function buildSelectOptions(selectElement, maxValueInclusive, padWidth = 2) {
+      const fragment = document.createDocumentFragment();
+      for (let i = 0; i <= maxValueInclusive; i++) {
+        const option = document.createElement("option");
+        option.value = String(i);
+        option.textContent = String(i).padStart(padWidth, "0");
+        fragment.appendChild(option);
+      }
+      selectElement.appendChild(fragment);
+    }
+
+    // -------------------------
+    // WebAudio chime (no external file)
+    // Plays a "pleasant" 3-note arpeggio loop for ~5s
+    // -------------------------
+    let audioContext = null;
+
+    function ensureAudioContext() {
+      if (audioContext) return audioContext;
+      const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+      if (!AudioContextClass) return null;
+      audioContext = new AudioContextClass();
+      return audioContext;
+    }
+
+    async function resumeAudioIfSuspended() {
+      const context = ensureAudioContext();
+      if (!context) return;
+      if (context.state === "suspended") {
+        try { await context.resume(); } catch (e) {}
+      }
+    }
+
+    function playChimeForFiveSeconds() {
+      const context = ensureAudioContext();
+      if (!context) return;
+
+      const now = context.currentTime;
+      const chimeDurationSeconds = 5.0;
+
+      // Master gain to control volume
+      const masterGain = context.createGain();
+      masterGain.gain.setValueAtTime(0.0001, now);
+      masterGain.gain.exponentialRampToValueAtTime(0.35, now + 0.02);
+      masterGain.gain.setValueAtTime(0.35, now + chimeDurationSeconds - 0.25);
+      masterGain.gain.exponentialRampToValueAtTime(0.0001, now + chimeDurationSeconds);
+      masterGain.connect(context.destination);
+
+      // A tiny bit of "softness"
+      const filter = context.createBiquadFilter();
+      filter.type = "lowpass";
+      filter.frequency.setValueAtTime(2200, now);
+      filter.connect(masterGain);
+
+      // Notes (Hz): A5, C#6, E6 (A major)
+      const notesHz = [880, 1108.73, 1318.51];
+      const stepSeconds = 0.22;
+
+      const numberOfSteps = Math.floor(chimeDurationSeconds / stepSeconds);
+
+      for (let stepIndex = 0; stepIndex < numberOfSteps; stepIndex++) {
+        const noteFrequency = notesHz[stepIndex % notesHz.length];
+        const noteStart = now + stepIndex * stepSeconds;
+
+        const oscillator = context.createOscillator();
+        oscillator.type = "sine";
+        oscillator.frequency.setValueAtTime(noteFrequency, noteStart);
+
+        const noteGain = context.createGain();
+        noteGain.gain.setValueAtTime(0.0001, noteStart);
+        noteGain.gain.exponentialRampToValueAtTime(0.7, noteStart + 0.015);
+        noteGain.gain.exponentialRampToValueAtTime(0.0001, noteStart + stepSeconds);
+
+        oscillator.connect(noteGain);
+        noteGain.connect(filter);
+
+        oscillator.start(noteStart);
+        oscillator.stop(noteStart + stepSeconds);
+      }
+    }
+
+    // -------------------------
+    // DOM references
+    // -------------------------
+    const mainMinutesSelect = document.getElementById("amt-main-min");
+    const mainSecondsSelect = document.getElementById("amt-main-sec");
+    const mainElapsedElement = document.getElementById("amt-main-elapsed");
+    const mainRemainingElement = document.getElementById("amt-main-remaining");
+    const statusElement = document.getElementById("amt-status");
+
+    const playButton = document.getElementById("amt-play");
+    const pauseButton = document.getElementById("amt-pause");
+    const stopButton = document.getElementById("amt-stop");
+    const resetButton = document.getElementById("amt-reset");
+
+    const timersContainer = document.getElementById("amt-timers");
+
+    // Populate selects
+    buildSelectOptions(mainMinutesSelect, 99);
+    buildSelectOptions(mainSecondsSelect, 59);
+
+    // Defaults (helpful for improv examples)
+    mainMinutesSelect.value = "15";
+    mainSecondsSelect.value = "0";
+
+    // -------------------------
+    // State
+    // -------------------------
+    const milestoneTimers = [];
+    const milestoneCount = 5;
+
+    let runState = "idle"; // idle | running | paused | finished
+    let mainDurationSeconds = 0;
+    let elapsedSeconds = 0;
+
+    let tickIntervalId = null;
+
+    // -------------------------
+    // Build milestone timer cards
+    // -------------------------
+    function createMilestoneTimer(timerIndex) {
+      const card = document.createElement("div");
+      card.className = "amt-timer-card";
+      card.dataset.timerIndex = String(timerIndex);
+      card.dataset.enabled = "false";
+
+      const topRow = document.createElement("div");
+      topRow.className = "amt-timer-top";
+
+      const name = document.createElement("div");
+      name.className = "amt-timer-name";
+      name.textContent = `TIMER ${timerIndex + 1}`;
+
+      const toggleWrap = document.createElement("div");
+      toggleWrap.className = "amt-toggle";
+
+      const toggleText = document.createElement("span");
+      toggleText.textContent = "OFF";
+
+      const toggleSwitch = document.createElement("div");
+      toggleSwitch.className = "amt-switch";
+      toggleSwitch.setAttribute("role", "switch");
+      toggleSwitch.setAttribute("tabindex", "0");
+      toggleSwitch.setAttribute("aria-checked", "false");
+      toggleSwitch.dataset.on = "false";
+
+      toggleWrap.appendChild(toggleText);
+      toggleWrap.appendChild(toggleSwitch);
+
+      topRow.appendChild(name);
+      topRow.appendChild(toggleWrap);
+
+      const pickerRow = document.createElement("div");
+      pickerRow.className = "amt-timer-picker";
+
+      const minBlock = document.createElement("div");
+      minBlock.className = "amt-picker-block";
+      const minLabel = document.createElement("label");
+      minLabel.className = "amt-small-label";
+      minLabel.textContent = "Minutes";
+      minLabel.setAttribute("for", `amt-t${timerIndex}-min`);
+      const minSelect = document.createElement("select");
+      minSelect.id = `amt-t${timerIndex}-min`;
+      minSelect.className = "amt-select";
+      minSelect.setAttribute("aria-label", `Timer ${timerIndex + 1} minutes`);
+      buildSelectOptions(minSelect, 99);
+      minSelect.value = "3";
+      minBlock.appendChild(minLabel);
+      minBlock.appendChild(minSelect);
+
+      const secBlock = document.createElement("div");
+      secBlock.className = "amt-picker-block";
+      const secLabel = document.createElement("label");
+      secLabel.className = "amt-small-label";
+      secLabel.textContent = "Seconds";
+      secLabel.setAttribute("for", `amt-t${timerIndex}-sec`);
+      const secSelect = document.createElement("select");
+      secSelect.id = `amt-t${timerIndex}-sec`;
+      secSelect.className = "amt-select";
+      secSelect.setAttribute("aria-label", `Timer ${timerIndex + 1} seconds`);
+      buildSelectOptions(secSelect, 59);
+      secSelect.value = "0";
+      secBlock.appendChild(secLabel);
+      secBlock.appendChild(secSelect);
+
+      pickerRow.appendChild(minBlock);
+      pickerRow.appendChild(secBlock);
+
+      const displayRow = document.createElement("div");
+      displayRow.className = "amt-timer-display";
+
+      const displayTime = document.createElement("div");
+      displayTime.className = "amt-mini";
+      displayTime.textContent = "00:00";
+
+      const displayStatus = document.createElement("div");
+      displayStatus.className = "amt-mini-status";
+      displayStatus.textContent = "Disabled";
+
+      displayRow.appendChild(displayTime);
+      displayRow.appendChild(displayStatus);
+
+      card.appendChild(topRow);
+      card.appendChild(pickerRow);
+      card.appendChild(displayRow);
+
+      function setToggle(isOn) {
+        const onValue = Boolean(isOn);
+        toggleSwitch.dataset.on = onValue ? "true" : "false";
+        toggleSwitch.setAttribute("aria-checked", onValue ? "true" : "false");
+        toggleText.textContent = onValue ? "ON" : "OFF";
+        card.dataset.enabled = onValue ? "true" : "false";
+
+        const timerState = milestoneTimers[timerIndex];
+        timerState.enabled = onValue;
+
+        updateMilestoneDisplay(timerIndex);
+      }
+
+      function toggle() {
+        const currentValue = toggleSwitch.dataset.on === "true";
+        setToggle(!currentValue);
+      }
+
+      toggleSwitch.addEventListener("click", toggle);
+      toggleSwitch.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          toggle();
+        }
+      });
+
+      // When time changes, update preview + state
+      function readTargetSeconds() {
+        const minutes = clampInt(minSelect.value, 0, 99);
+        const seconds = clampInt(secSelect.value, 0, 59);
+        return minutes * 60 + seconds;
+      }
+
+      function onTimeChange() {
+        milestoneTimers[timerIndex].targetSeconds = readTargetSeconds();
+        updateMilestoneDisplay(timerIndex);
+      }
+
+      minSelect.addEventListener("change", onTimeChange);
+      secSelect.addEventListener("change", onTimeChange);
+
+      // Initialize state for this timer
+      milestoneTimers[timerIndex] = {
+        enabled: false,
+        targetSeconds: readTargetSeconds(),
+        fired: false,
+        card,
+        displayTime,
+        displayStatus,
+        minSelect,
+        secSelect
+      };
+
+      updateMilestoneDisplay(timerIndex);
+
+      return card;
+    }
+
+    function updateMilestoneDisplay(timerIndex) {
+      const timerState = milestoneTimers[timerIndex];
+      const target = timerState.targetSeconds;
+
+      timerState.displayTime.textContent = formatMMSS(target);
+
+      if (!timerState.enabled) {
+        timerState.displayStatus.textContent = "Disabled";
+        return;
+      }
+
+      if (runState === "running" || runState === "paused") {
+        if (timerState.fired) {
+          timerState.displayStatus.textContent = "Fired";
+        } else if (elapsedSeconds >= target) {
+          timerState.displayStatus.textContent = "Due";
+        } else {
+          timerState.displayStatus.textContent = "Armed";
+        }
+        return;
+      }
+
+      timerState.displayStatus.textContent = "Armed";
+    }
+
+    for (let i = 0; i < milestoneCount; i++) {
+      const card = createMilestoneTimer(i);
+      timersContainer.appendChild(card);
+    }
+
+    // Suggested defaults for improv use-case
+    // Timer 1: 3:00, Timer 2: 13:00, others off
+    milestoneTimers[0].minSelect.value = "3";
+    milestoneTimers[0].secSelect.value = "0";
+    milestoneTimers[0].targetSeconds = 180;
+    milestoneTimers[0].enabled = true;
+    milestoneTimers[0].card.dataset.enabled = "true";
+    milestoneTimers[0].card.querySelector(".amt-switch").dataset.on = "true";
+    milestoneTimers[0].card.querySelector(".amt-switch").setAttribute("aria-checked", "true");
+    milestoneTimers[0].card.querySelector(".amt-toggle span").textContent = "ON";
+
+    milestoneTimers[1].minSelect.value = "13";
+    milestoneTimers[1].secSelect.value = "0";
+    milestoneTimers[1].targetSeconds = 780;
+    milestoneTimers[1].enabled = true;
+    milestoneTimers[1].card.dataset.enabled = "true";
+    milestoneTimers[1].card.querySelector(".amt-switch").dataset.on = "true";
+    milestoneTimers[1].card.querySelector(".amt-switch").setAttribute("aria-checked", "true");
+    milestoneTimers[1].card.querySelector(".amt-toggle span").textContent = "ON";
+
+    for (let i = 0; i < milestoneCount; i++) updateMilestoneDisplay(i);
+
+    // -------------------------
+    // Main timer mechanics (elapsed up to duration)
+    // -------------------------
+    function readMainDurationSeconds() {
+      const minutes = clampInt(mainMinutesSelect.value, 0, 99);
+      const seconds = clampInt(mainSecondsSelect.value, 0, 59);
+      return minutes * 60 + seconds;
+    }
+
+    function updateMainDisplay() {
+      mainElapsedElement.textContent = formatMMSS(elapsedSeconds);
+      const remaining = Math.max(0, mainDurationSeconds - elapsedSeconds);
+      mainRemainingElement.textContent = formatMMSS(remaining);
+    }
+
+    function setStatus(text) {
+      statusElement.textContent = text;
+    }
+
+    function disableInputsWhileRunning(shouldDisable) {
+      const disableValue = Boolean(shouldDisable);
+
+      mainMinutesSelect.disabled = disableValue;
+      mainSecondsSelect.disabled = disableValue;
+
+      for (const timerState of milestoneTimers) {
+        timerState.minSelect.disabled = disableValue;
+        timerState.secSelect.disabled = disableValue;
+      }
+    }
+
+    function resetAll() {
+      runState = "idle";
+      if (tickIntervalId) window.clearInterval(tickIntervalId);
+      tickIntervalId = null;
+
+      elapsedSeconds = 0;
+      mainDurationSeconds = readMainDurationSeconds();
+
+      for (const timerState of milestoneTimers) {
+        timerState.fired = false;
+      }
+
+      disableInputsWhileRunning(false);
+      updateMainDisplay();
+      for (let i = 0; i < milestoneCount; i++) updateMilestoneDisplay(i);
+      setStatus("Ready");
+    }
+
+    function stopRun() {
+      runState = "idle";
+      if (tickIntervalId) window.clearInterval(tickIntervalId);
+      tickIntervalId = null;
+
+      elapsedSeconds = 0;
+
+      for (const timerState of milestoneTimers) {
+        timerState.fired = false;
+      }
+
+      disableInputsWhileRunning(false);
+      updateMainDisplay();
+      for (let i = 0; i < milestoneCount; i++) updateMilestoneDisplay(i);
+      setStatus("Stopped");
+    }
+
+    function pauseRun() {
+      if (runState !== "running") return;
+      runState = "paused";
+      if (tickIntervalId) window.clearInterval(tickIntervalId);
+      tickIntervalId = null;
+      setStatus("Paused");
+      for (let i = 0; i < milestoneCount; i++) updateMilestoneDisplay(i);
+    }
+
+    function finishRun() {
+      runState = "finished";
+      if (tickIntervalId) window.clearInterval(tickIntervalId);
+      tickIntervalId = null;
+
+      disableInputsWhileRunning(false);
+      setStatus("Finished");
+      updateMainDisplay();
+      for (let i = 0; i < milestoneCount; i++) updateMilestoneDisplay(i);
+    }
+
+    function maybeFireMilestones() {
+      for (const timerState of milestoneTimers) {
+        if (!timerState.enabled) continue;
+        if (timerState.fired) continue;
+        if (elapsedSeconds >= timerState.targetSeconds) {
+          timerState.fired = true;
+          // Overlaps allowed per your preference
+          playChimeForFiveSeconds();
+        }
+      }
+    }
+
+    function startOrResume() {
+      mainDurationSeconds = readMainDurationSeconds();
+
+      if (mainDurationSeconds <= 0) {
+        setStatus("Set a main duration first");
+        return;
+      }
+
+      if (runState === "idle" || runState === "finished") {
+        elapsedSeconds = 0;
+        for (const timerState of milestoneTimers) timerState.fired = false;
+      }
+
+      runState = "running";
+      disableInputsWhileRunning(true);
+      setStatus("Running");
+
+      updateMainDisplay();
+      for (let i = 0; i < milestoneCount; i++) updateMilestoneDisplay(i);
+
+      if (tickIntervalId) window.clearInterval(tickIntervalId);
+
+      const tickMs = 250; // smooth-ish updates without heavy CPU
+      let lastTimestampMs = Date.now();
+
+      tickIntervalId = window.setInterval(() => {
+        if (runState !== "running") return;
+
+        const nowMs = Date.now();
+        const deltaSeconds = (nowMs - lastTimestampMs) / 1000;
+        lastTimestampMs = nowMs;
+
+        // accumulate elapsed in whole seconds to avoid drift in display
+        // while still using a smooth-ish tick loop
+        const nextElapsedSeconds = Math.min(mainDurationSeconds, elapsedSeconds + deltaSeconds);
+
+        const previousWholeSeconds = Math.floor(elapsedSeconds);
+        elapsedSeconds = nextElapsedSeconds;
+        const currentWholeSeconds = Math.floor(elapsedSeconds);
+
+        if (currentWholeSeconds !== previousWholeSeconds) {
+          // only check milestones when second boundary crosses
+          maybeFireMilestones();
+        }
+
+        updateMainDisplay();
+
+        if (elapsedSeconds >= mainDurationSeconds) {
+          // main timer finished; also chime at end
+          playChimeForFiveSeconds();
+          finishRun();
+        }
+      }, tickMs);
+    }
+
+    // -------------------------
+    // Events
+    // -------------------------
+    mainMinutesSelect.addEventListener("change", () => {
+      if (runState === "idle") {
+        mainDurationSeconds = readMainDurationSeconds();
+        updateMainDisplay();
+      }
+    });
+
+    mainSecondsSelect.addEventListener("change", () => {
+      if (runState === "idle") {
+        mainDurationSeconds = readMainDurationSeconds();
+        updateMainDisplay();
+      }
+    });
+
+    playButton.addEventListener("click", async () => {
+      await resumeAudioIfSuspended(); // unlock audio on first interaction
+      startOrResume();
+    });
+
+    pauseButton.addEventListener("click", pauseRun);
+    stopButton.addEventListener("click", stopRun);
+    resetButton.addEventListener("click", resetAll);
+
+    // Initialize
+    resetAll();
+  })();
+</script>
