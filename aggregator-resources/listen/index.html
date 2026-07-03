@@ -1,0 +1,1193 @@
+﻿<!doctype html>
+<!-- This file renders a podcast discovery page with category rails and a featured hero player. -->
+<!-- It loads podcast artwork first, then fetches the latest episode metadata on demand through Google Apps Script. -->
+<!-- Audio playback runs inline in the hero so users can keep browsing cards while listening. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amalgam Improv | Listen</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    /* Theme variables used across layout, cards, and status elements. */
+    :root {
+      --offwhite: #f7f6f3;
+      --yellow: #ffe974;
+      --orange: #e55937;
+      --pink: #bd005b;
+      --teal: #1f7a8c;
+      --ink: #111;
+      --muted: rgba(0, 0, 0, 0.66);
+      --line: rgba(0, 0, 0, 0.18);
+      --card: rgba(247, 246, 243, 0.95);
+      --shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Global reset and document base typography/background. */
+    * { box-sizing: border-box; }
+
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 500px at 8% -8%, #ffe97455, transparent 60%),
+        radial-gradient(700px 420px at 108% 10%, #bd005b22, transparent 60%),
+        radial-gradient(700px 420px at -6% 100%, #1f7a8c20, transparent 58%),
+        var(--offwhite);
+    }
+
+    /* Main page container and sticky header. */
+    .page {
+      width: min(1450px, 96vw);
+      margin: 0 auto;
+      padding: 0 0 2.5rem;
+    }
+
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.75rem 0;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(247, 246, 243, 0.94), rgba(247, 246, 243, 0.72));
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      margin-bottom: 0.72rem;
+    }
+
+    /* Header branding and status indicator area. */
+    .brand-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    .brand {
+      margin: 0;
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      color: var(--pink);
+    }
+
+    .tag {
+      font-size: 0.75rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--pink);
+      box-shadow: 0 0 0 5px rgba(189, 0, 91, 0.18);
+      flex-shrink: 0;
+    }
+
+    .status-spinner {
+      width: 12px;
+      height: 12px;
+      border-radius: 50%;
+      border: 2px solid rgba(229, 89, 55, 0.25);
+      border-top-color: var(--orange);
+      border-right-color: var(--orange);
+      animation: spin 700ms linear infinite;
+      flex-shrink: 0;
+      display: none;
+    }
+
+    .status-spinner.active {
+      display: inline-block;
+    }
+
+    /* Featured hero card and metadata presentation. */
+    .hero {
+      background: linear-gradient(130deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.76));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 0.95rem;
+      display: grid;
+      grid-template-columns: minmax(240px, 28%) 1fr;
+    }
+
+    .hero-art {
+      position: relative;
+      background:
+        linear-gradient(160deg, rgba(31, 122, 140, 0.26), rgba(189, 0, 91, 0.18)),
+        var(--hero-image, linear-gradient(145deg, #f9e89a, #f7f6f3));
+      background-size: cover;
+      background-position: center;
+      min-height: 220px;
+    }
+
+    .hero-body {
+      padding: 0.95rem 1rem;
+      display: grid;
+      gap: 0.55rem;
+      align-content: center;
+    }
+
+    .hero-kicker {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .hero-title {
+      margin: 0;
+      font-size: clamp(1.12rem, 2.8vw, 1.62rem);
+      line-height: 1.15;
+    }
+
+    .hero-meta {
+      margin: 0;
+      color: #33403f;
+      font-size: 0.9rem;
+    }
+
+    .hero-sub {
+      margin: 0;
+      color: #384342;
+      font-size: 0.9rem;
+      line-height: 1.34;
+      max-width: 80ch;
+    }
+
+    /* Action buttons and embedded hero player area. */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.52rem;
+      margin-top: 0.2rem;
+    }
+
+    .hero-player {
+      margin-top: 0.35rem;
+      padding-top: 0.5rem;
+      border-top: 1px solid rgba(0, 0, 0, 0.12);
+      display: grid;
+      gap: 0.45rem;
+    }
+
+    .hero-player.hidden {
+      display: none;
+    }
+
+    .hero-player-meta {
+      margin: 0;
+      font-size: 0.8rem;
+      color: #444f4f;
+    }
+
+    button, a.btn {
+      border: 1px solid rgba(0, 0, 0, 0.24);
+      border-radius: 10px;
+      padding: 0.53rem 0.8rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.34rem;
+      transition: transform 120ms ease, filter 120ms ease;
+    }
+
+    button:hover, a.btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+    }
+
+    .btn-primary { background: var(--pink); border-color: transparent; color: #fff; }
+    .btn-secondary { background: rgba(255, 233, 116, 0.62); color: #3b2b00; }
+    .btn-soft { background: #f2efe8; color: var(--ink); }
+
+    /* Section headings and horizontal rails. */
+    .section-label {
+      margin: 1rem 0 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    .row { margin: 0.45rem 0 0.95rem; }
+
+    .rail-shell { position: relative; }
+
+    .rail {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(236px, 17vw);
+      gap: 0.6rem;
+      overflow-x: auto;
+      padding: 0.2rem 2.5rem;
+      scroll-snap-type: x proximity;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.28) transparent;
+    }
+
+    .rail::-webkit-scrollbar { height: 8px; }
+    .rail::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.26); border-radius: 999px; }
+
+    /* Scroll rail navigation arrows. */
+    .nav {
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 58px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.72);
+      color: #40283a;
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav.prev { left: 0; }
+    .nav.next { right: 0; }
+
+    /* Podcast cards and empty state styling. */
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      scroll-snap-align: start;
+      min-height: 218px;
+      cursor: pointer;
+      transition: transform 130ms ease, border-color 130ms ease;
+    }
+
+    .card:hover { transform: translateY(-2px); border-color: rgba(189, 0, 91, 0.4); }
+    .card.loading { opacity: 0.58; pointer-events: none; }
+
+    .cover {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(145deg, #f7ce7f, #f4f0e5);
+    }
+
+    .card-body {
+      padding: 0.52rem;
+      display: grid;
+      gap: 0.33rem;
+    }
+
+    .card-title {
+      margin: 0;
+      font-size: 0.82rem;
+      line-height: 1.24;
+      max-height: 2.5em;
+      overflow: hidden;
+      font-weight: 700;
+    }
+
+    .card-meta {
+      margin: 0;
+      font-size: 0.72rem;
+      color: #405050;
+      line-height: 1.2;
+    }
+
+    .card-meta strong { color: #572541; }
+
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.58);
+      min-height: 140px;
+      padding: 0.7rem;
+      display: grid;
+      gap: 0.4rem;
+      align-content: center;
+      font-size: 0.84rem;
+      color: #413b3f;
+    }
+
+    /* Search and filter controls inside the reference-list pop-out. */
+    .reference-controls {
+      display: grid;
+      grid-template-columns: minmax(220px, 1.4fr) minmax(160px, 0.8fr) minmax(160px, 0.8fr);
+      gap: 0.65rem;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 246, 243, 0.82);
+    }
+
+    .reference-control {
+      display: grid;
+      gap: 0.26rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #45353f;
+    }
+
+    .reference-control input,
+    .reference-control select {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.22);
+      border-radius: 9px;
+      padding: 0.48rem 0.55rem;
+      font: inherit;
+      background: #fffdf9;
+      color: var(--ink);
+    }
+
+    .reference-table-wrap {
+      max-height: min(62vh, 620px);
+      overflow: auto;
+      padding: 0.75rem;
+    }
+
+    .reference-table {
+      width: 100%;
+      border-collapse: collapse;
+      min-width: 820px;
+      font-size: 0.78rem;
+    }
+
+    .reference-table th,
+    .reference-table td {
+      border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+      padding: 0.58rem 0.5rem;
+      text-align: left;
+      vertical-align: top;
+    }
+
+    .reference-table th {
+      position: sticky;
+      top: 0;
+      z-index: 1;
+      background: #fffdf9;
+      color: #442530;
+      font-size: 0.72rem;
+      text-transform: uppercase;
+      letter-spacing: 0.06em;
+    }
+
+    .reference-table td:first-child {
+      font-weight: 700;
+      color: #2b2330;
+    }
+
+    .reference-table a {
+      color: #552747;
+      font-weight: 700;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(85, 39, 71, 0.42);
+    }
+
+    /* Footer and player controls. */
+    .footer-note {
+      margin-top: 1.1rem;
+      color: #4e5558;
+      font-size: 0.72rem;
+      line-height: 1.3;
+    }
+
+    audio {
+      width: 100%;
+      border-radius: 10px;
+      background: #f3eee6;
+    }
+
+    .player-actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.5rem;
+    }
+
+    /* Full-screen modal shell for the source reference table. */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 20;
+    }
+
+    .modal.open { display: flex; }
+
+    .modal-card {
+      width: min(1100px, 95vw);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: #fffdf9;
+      overflow: hidden;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+    }
+
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.6rem;
+      align-items: center;
+      padding: 0.6rem 0.72rem;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(120deg, rgba(255, 233, 116, 0.35), rgba(247, 246, 243, 0.95));
+    }
+
+    .modal-title {
+      margin: 0;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #442530;
+      line-height: 1.3;
+    }
+
+    .close {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(189, 0, 91, 0.08);
+      border: 1px solid rgba(189, 0, 91, 0.28);
+      color: #7b0b45;
+    }
+
+    /* Mobile layout adjustments. */
+    @media (max-width: 840px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-art { min-height: 160px; }
+      .rail {
+        grid-auto-columns: minmax(230px, 80vw);
+        padding: 0.2rem 2.1rem;
+      }
+      .nav { width: 28px; height: 54px; }
+      .reference-controls { grid-template-columns: 1fr; }
+    }
+
+    /* Spinner animation for async loading status. */
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to { transform: rotate(360deg); }
+    }
+  </style>
+</head>
+<body>
+  <div class="page">
+    <!-- Top navigation bar with dynamic loading status text/spinner. -->
+    <header class="topbar">
+      <div class="brand-wrap">
+        <h1 class="brand">LISTEN</h1>
+        <div class="tag">Improv Podcast Resources</div>
+      </div>
+      <div class="status">
+        <div class="dot"></div>
+        <span id="statusSpinner" class="status-spinner" aria-hidden="true"></span>
+        <span id="statusText">Loading podcast feeds...</span>
+      </div>
+    </header>
+
+    <!-- Featured episode card with inline player controls. -->
+    <section class="hero" id="hero">
+      <div class="hero-art" id="heroArt"></div>
+      <div class="hero-body">
+        <p class="hero-kicker">Featured Latest Episode</p>
+        <h2 class="hero-title" id="heroTitle">Fetching improv podcast episodes...</h2>
+        <p class="hero-meta" id="heroMeta">22 podcasts: entertainment + learning resources</p>
+        <p class="hero-sub" id="heroSub">Each podcast contributes one most-recent episode to keep this fast: pick one and borrow one move, one premise pattern, or one teaching idea into your next session.</p>
+        <div class="actions">
+          <button id="heroPlayBtn" class="btn-primary" disabled>Play Episode</button>
+          <button id="referenceListBtn" class="btn-secondary" type="button">Reference List</button>
+          <a id="heroPodcastBtn" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Open Source Link</a>
+        </div>
+        <div id="heroPlayer" class="hero-player hidden">
+          <p id="heroPlayerMeta" class="hero-player-meta"></p>
+          <audio id="heroAudioPlayer" controls preload="none"></audio>
+          <div class="player-actions">
+            <a id="heroEpisodeLink" class="btn btn-soft" href="#" target="_blank" rel="noopener">Open Episode Page</a>
+            <a id="heroFeedLink" class="btn btn-soft" href="#" target="_blank" rel="noopener">Open Podcast Feed</a>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Entertainment category rail. -->
+    <h2 class="section-label">Entertainment + Fun</h2>
+    <section class="row">
+      <div class="rail-shell">
+        <button class="nav prev" data-target="entRail" aria-label="Scroll left">&lt;</button>
+        <div id="entRail" class="rail"></div>
+        <button class="nav next" data-target="entRail" aria-label="Scroll right">&gt;</button>
+      </div>
+    </section>
+
+    <!-- Learning category rail. -->
+    <h2 class="section-label">Learning + Resources</h2>
+    <section class="row">
+      <div class="rail-shell">
+        <button class="nav prev" data-target="learnRail" aria-label="Scroll left">&lt;</button>
+        <div id="learnRail" class="rail"></div>
+        <button class="nav next" data-target="learnRail" aria-label="Scroll right">&gt;</button>
+      </div>
+    </section>
+
+    <!-- Source documentation note for feed maintenance. -->
+    <p class="footer-note">
+      Sources and feed URLs are maintained in the public <a href="https://airtable.com/appvJnNJbdcXwWSho/shrpu9qmRaoGRuHXl" target="_blank" rel="noopener">Listen Resources table</a>.
+    </p>
+  </div>
+
+  <!-- Source browser modal with podcast-specific search and filters. -->
+  <div id="referenceModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <p class="modal-title">Podcast Reference List</p>
+        <button id="closeReferenceModal" class="close" aria-label="Close">X</button>
+      </div>
+      <div class="reference-controls">
+        <label class="reference-control">
+          Search
+          <input id="referenceSearch" type="search" placeholder="Search podcasts, descriptions, feeds">
+        </label>
+        <label class="reference-control">
+          Category
+          <select id="referenceCategoryFilter"></select>
+        </label>
+        <label class="reference-control">
+          Platform
+          <select id="referencePlatformFilter"></select>
+        </label>
+      </div>
+      <div id="referenceTableWrap" class="reference-table-wrap"></div>
+    </div>
+  </div>
+
+  <script>
+    // Podcast source catalog grouped by category for rail rendering.
+    const AIRTABLE_SOURCE = {
+      baseId: "appvJnNJbdcXwWSho",
+      shareId: "shrpu9qmRaoGRuHXl",
+      publicUrl: "https://airtable.com/appvJnNJbdcXwWSho/shrpu9qmRaoGRuHXl",
+      tableId: "tbl6UOfqTYzWngSMU",
+      tableName: "Listen Resources",
+      fields: {
+        name: "Name",
+        public: "Public",
+        publicationStatus: "Publication Status",
+        sortOrder: "Sort Order",
+        category: "Category",
+        feedUrl: "Feed URL",
+        artworkUrl: "Artwork URL",
+        podcastUrl: "Podcast URL",
+        desc: "Description",
+        platform: "Platform"
+      }
+    };
+
+    let podcasts = [
+      { name: "Comedy Bang Bang: The Podcast", category: "Entertainment + Fun", feedUrl: "https://feeds.simplecast.com/byb4nhvN", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/0b/ca/6e/0bca6ee0-0b2b-5df7-edee-4d9d1b2d4e8a/mza_10749952114435066299.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/comedy-bang-bang-the-podcast/id316045799?uo=4" },
+      { name: "Hello From The Magic Tavern", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/hello-from-magic-tavern", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/15/fc/53/15fc53d9-b510-3471-a9cc-fcdd52ea5ba3/mza_18399377593018408347.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/hello-from-the-magic-tavern/id975078285?uo=4" },
+      { name: "Off Book: The Improvised Musical", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/off-book", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/fc/5a/8c/fc5a8ceb-d4c4-fea4-5480-92535dbaa0b4/mza_13116973706970066408.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/off-book-the-improvised-musical/id1260742439?uo=4" },
+      { name: "improv4humans with Matt Besser", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/improv4humans-with-matt-besser", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/3f/2f/67/3f2f67ee-f6c3-55f9-cb6f-e86fa4ee1ba1/mza_9840724465525061612.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/improv4humans-with-matt-besser/id479820088?uo=4" },
+      { name: "Mission To Zyxx", category: "Entertainment + Fun", feedUrl: "https://feeds.simplecast.com/ZL7iUDiH", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/e6/75/9e/e6759ef6-8fef-9f5b-4fd2-e919d3cc5169/mza_16637259391954026680.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/mission-to-zyxx/id1276705357?uo=4" },
+      { name: "Mega", category: "Entertainment + Fun", feedUrl: "https://feeds.megaphone.fm/mega", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/a6/16/d6/a616d63a-bfa8-ae65-9205-28a2e7de33be/mza_9831917168899911612.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/mega/id1425141892?uo=4" },
+      { name: "The Neighborhood Listen", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/neighborhood-listen", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/02/f1/16/02f11652-1ca4-7abd-f720-a4f28ef6b1d1/mza_15042726264805053774.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/the-neighborhood-listen/id1517151870?uo=4" },
+      { name: "SPONTANEANATION with Paul F. Tompkins", category: "Entertainment + Fun", feedUrl: "https://rss.libsyn.com/shows/593520/destinations/5158160.xml", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/24/aa/25/24aa25ff-6057-c7e2-0b06-22564bfdb8ca/mza_12727857679562315699.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/spontaneanation-with-paul-f-tompkins/id978516099?uo=4" },
+      { name: "Alchemy This", category: "Entertainment + Fun", feedUrl: "https://www.omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/cc758d0c-46fb-4793-bd0e-ae27016ec176/49c8d694-7650-45cb-a80e-ae27016ec189/podcast.rss", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/c8/dd/a1/c8dda1cf-df8e-602d-7c76-4009959ef0d7/mza_258737372294554141.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/alchemy-this/id1438483128?uo=4" },
+      { name: "The Teacher's Lounge: Seasons 1-9", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/60dd5309-db63-4b1a-9051-27e4c72958e5", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts211/v4/1b/1b/f8/1b1bf89b-fb6e-b885-bd69-4c8a3344a162/mza_17270342379952627912.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/the-teachers-lounge-seasons-1-9/id1777965588?uo=4" },
+      { name: "Hey Riddle Riddle", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/hey-riddle-riddle", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/ef/45/9d/ef459df7-557a-73fa-7a47-916bd0584ec9/mza_6525839620399448900.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/hey-riddle-riddle/id1412570127?uo=4" },
+      { name: "Superego", category: "Entertainment + Fun", feedUrl: "https://feeds.acast.com/public/shows/63ed978f24c9da0011c1dcbc", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/a8/20/16/a8201677-9f26-cd70-1b44-3655841fbf2e/mza_10017771251183843718.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/superego/id129558037?uo=4" },
+      { name: "Not Another D&D Podcast", category: "Entertainment + Fun", feedUrl: "https://rss.art19.com/not-another-d-and-d-podcast", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/6a/25/d0/6a25d0b6-4cb3-f993-1973-a39162c3c1e4/mza_3301734807835095822.jpeg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/not-another-d-d-podcast/id1344003690?uo=4" },
+      { name: "Dungeons and Daddies", category: "Entertainment + Fun", feedUrl: "https://feeds.acast.com/public/shows/46e42ca7-4921-5f04-a297-1970e72fd86d", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts116/v4/ef/d0/2c/efd02c53-f7bf-c79c-521d-111050535713/mza_16444589558923712330.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/dungeons-and-daddies/id1450241676?uo=4" },
+      { name: "Artists on Artists on Artists on Artists", category: "Entertainment + Fun", feedUrl: "https://www.omnycontent.com/d/playlist/e73c998e-6e60-432f-8610-ae210140c5b1/6d886f90-58de-4b3f-8ad5-b3e60141e413/ef763190-6833-4cd4-93a3-b3e60141e425/podcast.rss", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/4b/47/6a/4b476a33-9f9f-c574-d6bf-9f2bd160dee8/mza_18350129881872345876.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/artists-on-artists-on-artists-on-artists/id1570368735?uo=4" },
+      { name: "ManDogPod", category: "Entertainment + Fun", feedUrl: "https://anchor.fm/s/5e15bff4/podcast/rss", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/20/b8/ab/20b8ab98-b37f-fbc1-6e0b-be0a86962769/mza_4458137325413184348.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/mandogpod/id1480069613?uo=4" },
+      { name: "Yes, Also", category: "Learning + Resources", feedUrl: "https://anchor.fm/s/f4512e04/podcast/rss", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts221/v4/cb/95/42/cb9542f0-a4a4-edc0-1aa2-1f50ba220ca7/mza_11892338576239051099.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/yes-also/id1740198149?uo=4" },
+      { name: "Improv, Beat by Beat", category: "Learning + Resources", feedUrl: "http://curtisretherford.com/improv/feed/podcast/", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/fe/10/21/fe1021b4-c2fd-1f63-95fd-bdb3d3984e5b/mza_7970713627631782474.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/improv-beat-by-beat/id1249766422?uo=4" },
+      { name: "The Backline", category: "Learning + Resources", feedUrl: "https://thesonarnetwork.com/the-backline/feed/podcast", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts122/v4/ad/82/87/ad8287f9-ad1b-d1f3-1e26-68ffe94c0c98/mza_6546589975261612963.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/the-backline/id900752717?uo=4" },
+      { name: "Improv Nerd With Jimmy Carrane", category: "Learning + Resources", feedUrl: "https://audioboom.com/channels/4956592.rss", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts126/v4/7d/1c/f6/7d1cf6e5-204a-a757-e3f0-f58d62a686de/mza_10371256848737355918.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/improv-nerd-with-jimmy-carrane/id547986680?uo=4" },
+      { name: "The Improv Teachers", category: "Learning + Resources", feedUrl: "https://feeds.soundcloud.com/users/soundcloud:users:260383645/sounds.rss", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts71/v4/54/d7/2d/54d72da5-d03c-dca9-a4ca-a8bf34d95a5d/mza_6072955793784843987.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/the-improv-teachers/id1166558526?uo=4" },
+      { name: "The Improv Chronicle Podcast", category: "Learning + Resources", feedUrl: "https://feeds.acast.com/public/shows/5e8632bd3b02af33142a20da", artworkUrl: "https://is1-ssl.mzstatic.com/image/thumb/Podcasts125/v4/50/b2/36/50b236d0-cd3c-8cd2-f660-57d0a6c57f14/mza_14792540225635620212.jpg/600x600bb.jpg", podcastUrl: "https://podcasts.apple.com/us/podcast/the-improv-chronicle-podcast/id1474460772?uo=4" }
+    ];
+
+    // Google Apps Script endpoint and cache settings for on-demand feed retrieval.
+    const GOOGLE_SCRIPT_FEED_ENDPOINT = "https://script.google.com/macros/s/AKfycbx3zhc1bWtyRpp6Qlix8H9HYFIWaFL01YNuP5SuZDKodX7yGaNHYhePnAFEMbqF1FZR/exec";
+    const CACHE_KEY = "amalgam_podcast_latest_cache_v1";
+    const CACHE_TTL_MS = 12 * 60 * 60 * 1000;
+    const FEED_FETCH_TIMEOUT_MS = 9000;
+
+    // DOM references for status, hero content, rails, and inline player.
+    const statusText = document.getElementById("statusText");
+    const statusSpinner = document.getElementById("statusSpinner");
+    const heroArt = document.getElementById("heroArt");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroMeta = document.getElementById("heroMeta");
+    const heroSub = document.getElementById("heroSub");
+    const heroPlayBtn = document.getElementById("heroPlayBtn");
+    const referenceListBtn = document.getElementById("referenceListBtn");
+    const heroPodcastBtn = document.getElementById("heroPodcastBtn");
+    const heroPlayer = document.getElementById("heroPlayer");
+    const heroPlayerMeta = document.getElementById("heroPlayerMeta");
+    const heroAudioPlayer = document.getElementById("heroAudioPlayer");
+    const heroEpisodeLink = document.getElementById("heroEpisodeLink");
+    const heroFeedLink = document.getElementById("heroFeedLink");
+    const entRail = document.getElementById("entRail");
+    const learnRail = document.getElementById("learnRail");
+    const referenceModal = document.getElementById("referenceModal");
+    const closeReferenceModalBtn = document.getElementById("closeReferenceModal");
+    const referenceSearch = document.getElementById("referenceSearch");
+    const referenceCategoryFilter = document.getElementById("referenceCategoryFilter");
+    const referencePlatformFilter = document.getElementById("referencePlatformFilter");
+    const referenceTableWrap = document.getElementById("referenceTableWrap");
+    let episodeCache = loadCache();
+
+    // Status helper to keep spinner and message in sync.
+    function setStatusLoading(isLoading, text) {
+      if (typeof text === "string") statusText.textContent = text;
+      statusSpinner.classList.toggle("active", !!isLoading);
+    }
+
+    function airtableEmbedUrl() {
+      return `https://airtable.com/embed/${AIRTABLE_SOURCE.baseId}/${AIRTABLE_SOURCE.shareId}`;
+    }
+
+    function decodeAirtablePath(encodedPath) {
+      return JSON.parse(`"${encodedPath}"`);
+    }
+
+    function airtableColumnByName(tableSchema, fieldName) {
+      return tableSchema.columns.find((column) => column.name === fieldName);
+    }
+
+    function airtableValue(row, tableSchema, fieldName) {
+      const column = airtableColumnByName(tableSchema, fieldName);
+      if (!column) return "";
+      const value = row.cellValuesByColumnId[column.id];
+      if (column.type === "select") {
+        return column.typeOptions?.choices?.[value]?.name || "";
+      }
+      return value || "";
+    }
+
+    async function fetchAirtableTable() {
+      const embedResponse = await fetch(airtableEmbedUrl(), { cache: "no-store" });
+      if (!embedResponse.ok) throw new Error("Airtable embed request failed");
+
+      const embedHtml = await embedResponse.text();
+      const urlMatch = embedHtml.match(/urlWithParams:\s*"([^"]+)"/s);
+      if (!urlMatch) throw new Error("Airtable shared read URL not found");
+
+      const readUrl = new URL(`https://airtable.com${decodeAirtablePath(urlMatch[1])}`);
+      const params = JSON.parse(readUrl.searchParams.get("stringifiedObjectParams"));
+      params.includeDataForTableIds = [AIRTABLE_SOURCE.tableId];
+      params.allowMsgpackOfResult = false;
+      readUrl.searchParams.set("stringifiedObjectParams", JSON.stringify(params));
+      readUrl.searchParams.delete("requestId");
+      readUrl.searchParams.set("x-time-zone", Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago");
+      readUrl.searchParams.set("x-airtable-application-id", AIRTABLE_SOURCE.baseId);
+      readUrl.searchParams.set("x-user-locale", "en");
+
+      const response = await fetch(readUrl, {
+        cache: "no-store",
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      });
+      if (!response.ok) throw new Error("Airtable table request failed");
+
+      const payload = await response.json();
+      const tableSchema = payload.data.tableSchemas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
+      const tableData = payload.data.tableDatas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
+      if (!tableSchema || !tableData) throw new Error("Airtable table data missing");
+
+      return tableData.rows
+        .map((row) => {
+          const fields = AIRTABLE_SOURCE.fields;
+          return {
+            name: airtableValue(row, tableSchema, fields.name),
+            public: airtableValue(row, tableSchema, fields.public),
+            publicationStatus: airtableValue(row, tableSchema, fields.publicationStatus),
+            sortOrder: airtableValue(row, tableSchema, fields.sortOrder),
+            category: airtableValue(row, tableSchema, fields.category),
+            feedUrl: airtableValue(row, tableSchema, fields.feedUrl),
+            artworkUrl: airtableValue(row, tableSchema, fields.artworkUrl),
+            podcastUrl: airtableValue(row, tableSchema, fields.podcastUrl),
+            desc: airtableValue(row, tableSchema, fields.desc),
+            platform: airtableValue(row, tableSchema, fields.platform)
+          };
+        })
+        .filter((podcast) => podcast.public === true && podcast.publicationStatus === "Active" && podcast.name && podcast.feedUrl)
+        .sort((a, b) => (Number(a.sortOrder) || 9999) - (Number(b.sortOrder) || 9999));
+    }
+
+    async function loadPodcastsFromAirtable() {
+      try {
+        const airtablePodcasts = await fetchAirtableTable();
+        if (airtablePodcasts.length) {
+          podcasts = airtablePodcasts;
+          setStatusLoading(false, `Loaded ${podcasts.length} podcasts from Airtable.`);
+        }
+      } catch (error) {
+        setStatusLoading(false, "Using built-in podcast list; Airtable source is available.");
+      }
+    }
+
+    // Converts publish date into a relative time label.
+    function relativeTime(input) {
+      const date = new Date(input);
+      if (Number.isNaN(date.valueOf())) return "Unknown date";
+      const diffMs = date.getTime() - Date.now();
+      const abs = Math.abs(diffMs);
+      const mins = Math.round(abs / 60000);
+      const hours = Math.round(abs / 3600000);
+      const days = Math.round(abs / 86400000);
+      const months = Math.round(abs / (86400000 * 30));
+      const years = Math.round(abs / (86400000 * 365));
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      if (mins < 60) return rtf.format(Math.sign(diffMs) * mins, "minute");
+      if (hours < 24) return rtf.format(Math.sign(diffMs) * hours, "hour");
+      if (days < 30) return rtf.format(Math.sign(diffMs) * days, "day");
+      if (months < 12) return rtf.format(Math.sign(diffMs) * months, "month");
+      return rtf.format(Math.sign(diffMs) * years, "year");
+    }
+
+    // XML helper utilities for RSS/Atom parsing.
+    function findDescendantsByLocalName(parent, localName) {
+      return Array.from(parent.getElementsByTagName("*")).filter((n) => n.localName === localName);
+    }
+
+    function firstNode(parent, localName) {
+      const nodes = findDescendantsByLocalName(parent, localName);
+      return nodes.length ? nodes[0] : null;
+    }
+
+    function firstText(parent, localNames) {
+      for (const localName of localNames) {
+        const node = firstNode(parent, localName);
+        if (node && node.textContent && node.textContent.trim()) return node.textContent.trim();
+      }
+      return "";
+    }
+
+    function firstAttr(parent, localName, attr) {
+      const node = firstNode(parent, localName);
+      return node ? (node.getAttribute(attr) || "") : "";
+    }
+
+    // Local storage cache lifecycle helpers.
+    function loadCache() {
+      try {
+        const raw = localStorage.getItem(CACHE_KEY);
+        const parsed = raw ? JSON.parse(raw) : {};
+        return parsed && typeof parsed === "object" ? parsed : {};
+      } catch {
+        return {};
+      }
+    }
+
+    function saveCache() {
+      try {
+        localStorage.setItem(CACHE_KEY, JSON.stringify(episodeCache));
+      } catch {
+        return;
+      }
+    }
+
+    // Cache access helpers for latest episode payloads.
+    function getCachedEpisode(feedUrl) {
+      const cached = episodeCache[feedUrl];
+      if (!cached || !cached.cachedAt || !cached.episode) return null;
+      if (Date.now() - cached.cachedAt > CACHE_TTL_MS) return null;
+      return cached.episode;
+    }
+
+    function setCachedEpisode(feedUrl, episode) {
+      episodeCache[feedUrl] = { cachedAt: Date.now(), episode };
+      saveCache();
+    }
+
+    // Parses a feed response into a normalized latest-episode object.
+    function parseFeed(feedText, podcast) {
+      const doc = new DOMParser().parseFromString(feedText, "application/xml");
+      if (doc.querySelector("parsererror")) return [];
+
+      const channel = firstNode(doc, "channel") || doc;
+      const coverFromImage = firstText(channel, ["url"]);
+      const coverFromItunes = firstAttr(channel, "image", "href");
+      const cover = podcast.artworkUrl || coverFromItunes || coverFromImage || "";
+
+      const item = findDescendantsByLocalName(doc, "item")[0] || findDescendantsByLocalName(doc, "entry")[0];
+      if (!item) return [];
+
+      const title = firstText(item, ["title"]) || "Untitled episode";
+      const publishedRaw = firstText(item, ["pubDate", "published", "updated"]);
+      const episodeLinkNode = firstNode(item, "link");
+      const link = episodeLinkNode ? (episodeLinkNode.getAttribute("href") || episodeLinkNode.textContent.trim()) : "";
+      const enclosureNode = firstNode(item, "enclosure") || findDescendantsByLocalName(item, "link").find((n) => (n.getAttribute("rel") || "").toLowerCase() === "enclosure");
+      const audioUrl = enclosureNode ? (enclosureNode.getAttribute("url") || enclosureNode.getAttribute("href") || "") : "";
+
+      return [{
+        podcastName: podcast.name,
+        category: podcast.category,
+        feedUrl: podcast.feedUrl,
+        podcastUrl: podcast.podcastUrl || podcast.feedUrl,
+        title,
+        publishedRaw,
+        published: new Date(publishedRaw),
+        publishedLabel: relativeTime(publishedRaw),
+        link,
+        audioUrl,
+        cover
+      }];
+    }
+
+    // Normalizes Google Apps Script episode payloads to the browser UI shape.
+    function hydrateEpisode(rawEpisode, podcast) {
+      const publishedRaw = rawEpisode.publishedRaw || rawEpisode.publishedIso || "";
+      return {
+        podcastName: rawEpisode.podcastName || podcast.name,
+        category: rawEpisode.category || podcast.category,
+        feedUrl: rawEpisode.feedUrl || podcast.feedUrl,
+        podcastUrl: rawEpisode.podcastUrl || podcast.podcastUrl || podcast.feedUrl,
+        title: rawEpisode.title || "Untitled episode",
+        publishedRaw,
+        published: new Date(rawEpisode.publishedIso || publishedRaw),
+        publishedLabel: relativeTime(rawEpisode.publishedIso || publishedRaw),
+        link: rawEpisode.link || "",
+        audioUrl: rawEpisode.audioUrl || "",
+        cover: rawEpisode.cover || podcast.artworkUrl || ""
+      };
+    }
+
+    // Fetches a feed through the Google Apps Script endpoint with timeout protection.
+    async function fetchFeed(podcast) {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), FEED_FETCH_TIMEOUT_MS);
+      try {
+        const response = await fetch(GOOGLE_SCRIPT_FEED_ENDPOINT, {
+          method: "POST",
+          headers: {
+            "Content-Type": "text/plain;charset=utf-8"
+          },
+          body: JSON.stringify({ podcasts: [podcast] }),
+          cache: "no-store",
+          signal: controller.signal
+        });
+        if (!response.ok) throw new Error(`Google Script response not ok (${response.status})`);
+        const payload = await response.json();
+        if (!payload || payload.ok !== true) throw new Error(payload && payload.error ? payload.error : "Google Script request failed");
+        const rawEpisode = Array.isArray(payload.episodes) && payload.episodes.length ? payload.episodes[0] : null;
+        if (!rawEpisode) throw new Error("No episodes returned");
+        return [hydrateEpisode(rawEpisode, podcast)];
+      } finally {
+        clearTimeout(timeoutId);
+      }
+    }
+
+    // Builds a clickable podcast card that lazy-loads latest episode data.
+    function createPodcastCard(podcast) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.innerHTML = `
+        <img class="cover" loading="lazy" src="${podcast.artworkUrl || ""}" alt="">
+        <div class="card-body">
+          <p class="card-title">${podcast.name}</p>
+          <p class="card-meta"><strong>${podcast.category}</strong> - Click to load latest episode</p>
+        </div>
+      `;
+
+      const cover = card.querySelector(".cover");
+      cover.addEventListener("error", () => {
+        cover.style.background = "linear-gradient(145deg, #f7ce7f, #f4f0e5)";
+        cover.removeAttribute("src");
+      });
+
+      const handler = () => loadLatestEpisodeForPodcast(podcast, card);
+      card.addEventListener("click", handler);
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          handler();
+        }
+      });
+      return card;
+    }
+
+    // Wires left/right arrow buttons for smooth horizontal rail scrolling.
+    function wireNav(container) {
+      const buttons = container.querySelectorAll(".nav");
+      buttons.forEach((button) => {
+        if (button.dataset.wired === "1") return;
+        button.dataset.wired = "1";
+        button.addEventListener("click", () => {
+          const target = document.getElementById(button.dataset.target);
+          if (!target) return;
+          const dir = button.classList.contains("next") ? 1 : -1;
+          target.scrollBy({ left: dir * 760, behavior: "smooth" });
+        });
+      });
+    }
+
+    // Renders each category rail and its empty state fallback.
+    function renderPodcastRail(rail, podcastList) {
+      rail.innerHTML = "";
+      podcastList.forEach((podcast) => rail.appendChild(createPodcastCard(podcast)));
+      if (!podcastList.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No podcasts found for this category.";
+        rail.appendChild(empty);
+      }
+    }
+
+    function addSelectOptions(select, options, allLabel) {
+      select.innerHTML = "";
+      const allOption = document.createElement("option");
+      allOption.value = "";
+      allOption.textContent = allLabel;
+      select.appendChild(allOption);
+      options.forEach((option) => {
+        const item = document.createElement("option");
+        item.value = option;
+        item.textContent = option;
+        select.appendChild(item);
+      });
+    }
+
+    function uniqueSorted(values) {
+      return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    }
+
+    function escapeHtml(value) {
+      return String(value || "").replace(/[&<>"']/g, (char) => ({
+        "&": "&amp;",
+        "<": "&lt;",
+        ">": "&gt;",
+        "\"": "&quot;",
+        "'": "&#39;"
+      }[char]));
+    }
+
+    function linkCell(url, label) {
+      if (!url) return "";
+      return `<a href="${escapeHtml(url)}" target="_blank" rel="noopener">${escapeHtml(label)}</a>`;
+    }
+
+    // Refreshes podcast-specific filter options for the reference modal.
+    function populateReferenceFilters() {
+      const currentCategory = referenceCategoryFilter.value;
+      const currentPlatform = referencePlatformFilter.value;
+      addSelectOptions(referenceCategoryFilter, uniqueSorted(podcasts.map((podcast) => podcast.category || "")), "All categories");
+      addSelectOptions(referencePlatformFilter, uniqueSorted(podcasts.map((podcast) => podcast.platform || "")), "All platforms");
+      referenceCategoryFilter.value = currentCategory;
+      referencePlatformFilter.value = currentPlatform;
+    }
+
+    // Renders every visible podcast source as a searchable reference table.
+    function renderReferenceTable() {
+      const searchTerm = referenceSearch.value.trim().toLowerCase();
+      const category = referenceCategoryFilter.value;
+      const platform = referencePlatformFilter.value;
+      const filteredPodcasts = podcasts.filter((podcast) => {
+        if (category && podcast.category !== category) return false;
+        if (platform && podcast.platform !== platform) return false;
+        if (!searchTerm) return true;
+        const searchableText = [
+          podcast.name,
+          podcast.category,
+          podcast.platform,
+          podcast.desc,
+          podcast.feedUrl,
+          podcast.podcastUrl
+        ].join(" ").toLowerCase();
+        return searchableText.includes(searchTerm);
+      });
+
+      if (!filteredPodcasts.length) {
+        referenceTableWrap.innerHTML = `<div class="empty">No podcast references match these filters.</div>`;
+        return;
+      }
+
+      const rows = filteredPodcasts.map((podcast) => `
+        <tr>
+          <td>${escapeHtml(podcast.name)}</td>
+          <td>${escapeHtml(podcast.category)}</td>
+          <td>${escapeHtml(podcast.platform || "")}</td>
+          <td>${escapeHtml(podcast.desc || "")}</td>
+          <td>${linkCell(podcast.feedUrl, "Feed")}</td>
+          <td>${linkCell(podcast.podcastUrl || podcast.feedUrl, "Open")}</td>
+        </tr>
+      `).join("");
+
+      referenceTableWrap.innerHTML = `
+        <table class="reference-table">
+          <thead>
+            <tr>
+              <th>Podcast</th>
+              <th>Category</th>
+              <th>Platform</th>
+              <th>Description</th>
+              <th>Feed</th>
+              <th>Source</th>
+            </tr>
+          </thead>
+          <tbody>${rows}</tbody>
+        </table>
+      `;
+    }
+
+    function openReferenceList() {
+      populateReferenceFilters();
+      renderReferenceTable();
+      referenceModal.classList.add("open");
+      referenceModal.setAttribute("aria-hidden", "false");
+      referenceSearch.focus();
+    }
+
+    function closeReferenceList() {
+      referenceModal.classList.remove("open");
+      referenceModal.setAttribute("aria-hidden", "true");
+    }
+
+    // Sets hero state for a podcast before episode details are loaded.
+    function setHeroToPodcast(podcast) {
+      if (!podcast) return;
+      heroArt.style.setProperty("--hero-image", podcast.artworkUrl ? `url(${podcast.artworkUrl})` : "linear-gradient(145deg, #f9e89a, #f7f6f3)");
+      heroTitle.textContent = podcast.name;
+      heroMeta.textContent = `${podcast.category} - Click Play Episode to load latest`;
+      heroSub.textContent = "Fast mode: podcast covers load first. Episode details and audio load only when you click a single show.";
+      heroPlayer.classList.add("hidden");
+      heroPlayBtn.disabled = false;
+      heroPlayBtn.onclick = () => loadLatestEpisodeForPodcast(podcast);
+      heroPodcastBtn.href = podcast.podcastUrl || podcast.feedUrl;
+    }
+
+    // Sets hero state for a loaded episode and play behavior.
+    function setHeroToEpisode(episode) {
+      if (!episode) return;
+      heroArt.style.setProperty("--hero-image", episode.cover ? `url(${episode.cover})` : "linear-gradient(145deg, #f9e89a, #f7f6f3)");
+      heroTitle.textContent = episode.title;
+      heroMeta.textContent = `${episode.podcastName} - ${episode.category} - ${episode.publishedLabel}`;
+      heroSub.textContent = "Study one bold choice from this episode and one structure note you can use in your next scene, jam, or class exercise.";
+      heroPlayBtn.disabled = false;
+      heroPlayBtn.onclick = () => openEpisode(episode, true);
+      heroPodcastBtn.href = episode.podcastUrl || episode.feedUrl;
+    }
+
+    // Loads the inline hero audio player and supporting links.
+    function openEpisode(episode, autoplay = true) {
+      heroPlayer.classList.remove("hidden");
+      heroPlayerMeta.textContent = `${episode.publishedRaw || "Date unavailable"}${episode.audioUrl ? " - Audio available" : " - No enclosure in feed"}`;
+      if (episode.audioUrl) {
+        if (heroAudioPlayer.src !== episode.audioUrl) {
+          heroAudioPlayer.src = episode.audioUrl;
+        }
+        heroAudioPlayer.style.display = "block";
+        if (autoplay) heroAudioPlayer.play().catch(() => {});
+      } else {
+        heroAudioPlayer.pause();
+        heroAudioPlayer.src = "";
+        heroAudioPlayer.style.display = "none";
+      }
+      heroEpisodeLink.href = episode.link || episode.feedUrl;
+      heroFeedLink.href = episode.podcastUrl || episode.feedUrl;
+    }
+
+    // Loads latest episode with cache-first strategy and updates UI state.
+    async function loadLatestEpisodeForPodcast(podcast, card = null) {
+      if (card && card.dataset.loading === "1") return;
+      if (card) {
+        card.dataset.loading = "1";
+        card.classList.add("loading");
+      }
+
+      setStatusLoading(true, `Loading latest episode: ${podcast.name}`);
+
+      let episode = getCachedEpisode(podcast.feedUrl);
+      if (!episode) {
+        const episodes = await fetchFeed(podcast);
+        if (episodes.length) {
+          episode = episodes[0];
+          setCachedEpisode(podcast.feedUrl, episode);
+        }
+      }
+
+      if (card) {
+        card.dataset.loading = "0";
+        card.classList.remove("loading");
+      }
+
+      if (!episode) {
+        setStatusLoading(false, `Could not load latest episode for ${podcast.name}`);
+        heroPodcastBtn.href = podcast.podcastUrl || podcast.feedUrl;
+        return;
+      }
+
+      setHeroToEpisode(episode);
+      openEpisode(episode);
+      setStatusLoading(false, `Loaded: ${podcast.name}`);
+    }
+
+    // Initializes rails, default hero selection, and initial status.
+    async function init() {
+      await loadPodcastsFromAirtable();
+      wireNav(document);
+      const entertainment = podcasts.filter((p) => p.category === "Entertainment + Fun");
+      const learning = podcasts.filter((p) => p.category === "Learning + Resources");
+      renderPodcastRail(entRail, entertainment);
+      renderPodcastRail(learnRail, learning);
+      populateReferenceFilters();
+      renderReferenceTable();
+      setHeroToPodcast(entertainment[0] || learning[0] || null);
+      setStatusLoading(false, "Ready. Click any podcast card to load its latest episode.");
+    }
+
+    // Wires reference-list controls and close shortcuts.
+    referenceListBtn.addEventListener("click", openReferenceList);
+    closeReferenceModalBtn.addEventListener("click", closeReferenceList);
+    referenceSearch.addEventListener("input", renderReferenceTable);
+    referenceCategoryFilter.addEventListener("change", renderReferenceTable);
+    referencePlatformFilter.addEventListener("change", renderReferenceTable);
+    referenceModal.addEventListener("click", (event) => {
+      if (event.target === referenceModal) closeReferenceList();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") closeReferenceList();
+    });
+
+    // Start application.
+    init();
+  </script>
+</body>
+</html>
+

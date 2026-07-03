@@ -1,0 +1,1529 @@
+<!doctype html>
+<!--
+  This page aggregates recent uploads from top improv channels into one Watch dashboard.
+  Feeds load in bounded parallel requests with timeout protection, then rows render as they enter view.
+  Playback keeps one always-visible inline player, with an optional pop-out modal for larger viewing.
+-->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amalgam Improv | Watch</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;700&family=Bebas+Neue&display=swap" rel="stylesheet">
+  <style>
+    /* Theme color tokens shared across the page. */
+    :root {
+      --offwhite: #f7f6f3;
+      --yellow: #ffe974;
+      --orange: #e55937;
+      --pink: #bd005b;
+      --teal: #1f7a8c;
+      --ink: #111;
+      --muted: rgba(0, 0, 0, 0.66);
+      --line: rgba(0, 0, 0, 0.18);
+      --card: rgba(247, 246, 243, 0.95);
+      --shadow: 0 10px 26px rgba(0, 0, 0, 0.12);
+    }
+
+    /* Global box sizing keeps spacing predictable. */
+    * { box-sizing: border-box; }
+
+    /* Base page typography and layered background texture. */
+    html, body {
+      margin: 0;
+      min-height: 100%;
+      font-family: "Space Grotesk", "Avenir Next", "Segoe UI", sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(900px 500px at 8% -8%, #ffe97455, transparent 60%),
+        radial-gradient(700px 420px at 108% 10%, #bd005b22, transparent 60%),
+        radial-gradient(700px 420px at -6% 100%, #1f7a8c20, transparent 58%),
+        var(--offwhite);
+    }
+
+    /* Main layout container for desktop and mobile widths. */
+    .page {
+      width: min(1450px, 96vw);
+      margin: 0 auto;
+      padding: 0 0 2.5rem;
+    }
+
+    /* Sticky header with live loading status. */
+    .topbar {
+      position: sticky;
+      top: 0;
+      z-index: 12;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 0.7rem;
+      padding: 0.75rem 0;
+      backdrop-filter: blur(10px);
+      background: linear-gradient(180deg, rgba(247, 246, 243, 0.94), rgba(247, 246, 243, 0.72));
+      border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+      margin-bottom: 0.72rem;
+    }
+
+    /* Brand and subtitle alignment in the top bar. */
+    .brand-wrap {
+      display: flex;
+      align-items: baseline;
+      gap: 0.55rem;
+      flex-wrap: wrap;
+    }
+
+    /* Main page title styling. */
+    .brand {
+      margin: 0;
+      font-family: "Bebas Neue", Impact, sans-serif;
+      font-size: clamp(2rem, 5vw, 2.8rem);
+      line-height: 0.9;
+      letter-spacing: 0.04em;
+      color: var(--pink);
+    }
+
+    /* Lightweight context label beside the title. */
+    .tag {
+      font-size: 0.75rem;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* Status copy and dot indicator next to the title. */
+    .status {
+      display: flex;
+      align-items: center;
+      gap: 0.45rem;
+      font-size: 0.8rem;
+      color: var(--muted);
+      text-align: right;
+    }
+
+    /* Animated-looking status dot used while loading channels. */
+    .dot {
+      width: 9px;
+      height: 9px;
+      border-radius: 999px;
+      background: var(--pink);
+      box-shadow: 0 0 0 5px rgba(189, 0, 91, 0.18);
+      flex-shrink: 0;
+    }
+
+    /* Featured hero card with an always-visible inline player. */
+    .hero {
+      background: linear-gradient(130deg, rgba(255, 255, 255, 0.9), rgba(255, 255, 255, 0.76));
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: var(--shadow);
+      overflow: hidden;
+      margin-bottom: 0.9rem;
+      display: grid;
+      grid-template-columns: minmax(360px, 62%) 1fr;
+    }
+
+    /* Left column shell for inline playback and inline fallback controls. */
+    .hero-art {
+      position: relative;
+      background: #000;
+      min-height: 100%;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-start;
+    }
+
+    /* Additional hook class for the inline player area. */
+    .hero-player-shell { isolation: isolate; }
+
+    /* Placeholder shown until the hero iframe receives a video. */
+    .hero-loading-overlay {
+      position: absolute;
+      top: 0;
+      left: 0;
+      right: 0;
+      aspect-ratio: 16 / 9;
+      display: grid;
+      place-items: center;
+      gap: 0.65rem;
+      background: #050505;
+      color: #f7f6f3;
+      z-index: 2;
+      pointer-events: none;
+    }
+
+    .hero-loading-overlay.is-hidden { display: none; }
+
+    .hero-loading-content {
+      display: grid;
+      justify-items: center;
+      gap: 0.65rem;
+      font-size: 0.92rem;
+      font-weight: 700;
+    }
+
+    .hero-loading-spinner {
+      width: 36px;
+      height: 36px;
+      border: 4px solid rgba(255, 255, 255, 0.24);
+      border-top-color: var(--pink);
+      border-radius: 50%;
+      animation: hero-spin 0.8s linear infinite;
+    }
+
+    @keyframes hero-spin {
+      to { transform: rotate(360deg); }
+    }
+
+    /* Hero text stack and selected-video action button layout. */
+    .hero-body {
+      padding: 0.95rem 1rem;
+      display: grid;
+      gap: 0.55rem;
+      align-content: center;
+    }
+
+    /* Small uppercase heading above the hero title. */
+    .hero-kicker {
+      margin: 0;
+      text-transform: uppercase;
+      letter-spacing: 0.12em;
+      font-size: 0.7rem;
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    /* Responsive title size for the featured video. */
+    .hero-title {
+      margin: 0;
+      font-size: clamp(1.12rem, 2.8vw, 1.62rem);
+      line-height: 1.15;
+    }
+
+    /* Hero metadata line with channel and publish info. */
+    .hero-meta {
+      margin: 0;
+      color: #33403f;
+      font-size: 0.9rem;
+    }
+
+    /* Hero helper text that explains how to use the page. */
+    .hero-sub {
+      margin: 0;
+      color: #384342;
+      font-size: 0.9rem;
+      line-height: 1.34;
+      max-width: 80ch;
+    }
+
+    /* Shared action button row. */
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 0.52rem;
+      margin-top: 0.2rem;
+    }
+
+    /* Base button styling shared by links and buttons. */
+    button, a.btn {
+      border: 1px solid rgba(0, 0, 0, 0.24);
+      border-radius: 10px;
+      padding: 0.53rem 0.8rem;
+      font: inherit;
+      font-weight: 700;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 0.34rem;
+      transition: transform 120ms ease, filter 120ms ease;
+      color: var(--ink);
+      background: #f2efe8;
+    }
+
+    /* Hover treatment for all clickable action controls. */
+    button:hover, a.btn:hover {
+      transform: translateY(-1px);
+      filter: brightness(0.98);
+    }
+
+    /* Button color variants for primary and secondary emphasis. */
+    .btn-primary { background: var(--pink); border-color: transparent; color: #fff; }
+    .btn-secondary { background: rgba(255, 233, 116, 0.62); color: #3b2b00; }
+    .btn-soft { background: #f2efe8; color: var(--ink); }
+
+    /* Section heading above each major content block. */
+    .section-label {
+      margin: 1rem 0 0.4rem;
+      text-transform: uppercase;
+      letter-spacing: 0.09em;
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+    }
+
+    /* Individual group row wrapper spacing. */
+    .row { margin: 0.45rem 0 0.95rem; }
+
+    /* Group row header layout and spacing. */
+    .row-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.7rem;
+      align-items: baseline;
+      margin-bottom: 0.45rem;
+      flex-wrap: wrap;
+    }
+
+    /* Resource filter controls inside the source-list pop-out. */
+    .resource-filters {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 0.65rem;
+      padding: 0.75rem;
+      border-bottom: 1px solid var(--line);
+      background: rgba(247, 246, 243, 0.82);
+    }
+
+    .resource-filter {
+      display: grid;
+      gap: 0.26rem;
+      font-size: 0.74rem;
+      font-weight: 700;
+      color: #45353f;
+    }
+
+    .resource-filter select {
+      width: 100%;
+      border: 1px solid rgba(0, 0, 0, 0.22);
+      border-radius: 9px;
+      padding: 0.48rem 0.55rem;
+      font: inherit;
+      background: #fffdf9;
+      color: var(--ink);
+    }
+
+    .resource-list {
+      max-height: min(62vh, 620px);
+      overflow: auto;
+      display: grid;
+      gap: 0.52rem;
+      padding: 0.75rem;
+    }
+
+    .resource-item {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.76);
+      padding: 0.7rem;
+      display: grid;
+      gap: 0.38rem;
+    }
+
+    .resource-item h3 {
+      margin: 0;
+      font-size: 0.95rem;
+      color: #2b2330;
+    }
+
+    .resource-meta {
+      margin: 0;
+      color: #405050;
+      font-size: 0.78rem;
+      line-height: 1.3;
+    }
+
+    .resource-item .actions {
+      margin-top: 0.1rem;
+    }
+
+    /* Group title and location text styling. */
+    .row-title {
+      margin: 0;
+      font-size: 1.02rem;
+      font-weight: 700;
+      color: #2b2330;
+    }
+
+    /* Smaller location tag next to group name. */
+    .row-title small {
+      color: var(--muted);
+      font-size: 0.78em;
+      margin-left: 0.4rem;
+      font-weight: 600;
+    }
+
+    /* Action links for channel and upload list. */
+    .row-links {
+      display: flex;
+      gap: 0.5rem;
+      flex-wrap: wrap;
+    }
+
+    /* Underlined row links for quick navigation. */
+    .text-link {
+      color: #552747;
+      font-size: 0.78rem;
+      text-decoration: none;
+      border-bottom: 1px dashed rgba(85, 39, 71, 0.42);
+    }
+
+    /* Positioning shell for horizontal rails and nav arrows. */
+    .rail-shell { position: relative; }
+
+    /* Horizontal scrolling grid for video cards. */
+    .rail {
+      display: grid;
+      grid-auto-flow: column;
+      grid-auto-columns: minmax(236px, 17vw);
+      gap: 0.6rem;
+      overflow-x: auto;
+      padding: 0.2rem 2.5rem;
+      scroll-snap-type: x proximity;
+      scrollbar-width: thin;
+      scrollbar-color: rgba(0, 0, 0, 0.28) transparent;
+    }
+
+    .rail::-webkit-scrollbar { height: 8px; }
+    .rail::-webkit-scrollbar-thumb { background: rgba(0, 0, 0, 0.26); border-radius: 999px; }
+
+    /* Left and right rail navigation arrows. */
+    .nav {
+      position: absolute;
+      top: 45%;
+      transform: translateY(-50%);
+      width: 32px;
+      height: 58px;
+      border-radius: 10px;
+      border: 1px solid rgba(0, 0, 0, 0.2);
+      background: rgba(255, 255, 255, 0.72);
+      color: #40283a;
+      font-size: 1.05rem;
+      display: grid;
+      place-items: center;
+      cursor: pointer;
+      z-index: 2;
+      backdrop-filter: blur(8px);
+    }
+
+    .nav.prev { left: 0; }
+    .nav.next { right: 0; }
+
+    /* Core card frame for each video item. */
+    .card {
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: var(--card);
+      overflow: hidden;
+      box-shadow: 0 6px 16px rgba(0, 0, 0, 0.08);
+      scroll-snap-align: start;
+      min-height: 218px;
+      cursor: pointer;
+      transition: transform 130ms ease, border-color 130ms ease;
+    }
+
+    /* Hover raise effect for cards. */
+    .card:hover { transform: translateY(-2px); border-color: rgba(189, 0, 91, 0.4); }
+
+    /* Thumbnail image container and fallback background. */
+    .cover {
+      width: 100%;
+      aspect-ratio: 1 / 1;
+      object-fit: cover;
+      display: block;
+      background: linear-gradient(145deg, #f7ce7f, #f4f0e5);
+    }
+
+    /* Text block below each thumbnail. */
+    .card-body {
+      padding: 0.52rem;
+      display: grid;
+      gap: 0.33rem;
+    }
+
+    /* Video title line clamped for compact cards. */
+    .card-title {
+      margin: 0;
+      font-size: 0.82rem;
+      line-height: 1.24;
+      max-height: 2.5em;
+      overflow: hidden;
+      font-weight: 700;
+    }
+
+    /* Metadata line with group and relative publish date. */
+    .card-meta {
+      margin: 0;
+      font-size: 0.72rem;
+      color: #405050;
+      line-height: 1.2;
+    }
+
+    /* Emphasis styling for channel name inside meta line. */
+    .card-meta strong { color: #572541; }
+
+    /* Empty-state card used for load failures and deferred notices. */
+    .empty {
+      border: 1px dashed var(--line);
+      border-radius: 12px;
+      background: rgba(255, 255, 255, 0.58);
+      min-height: 140px;
+      padding: 0.7rem;
+      display: grid;
+      gap: 0.4rem;
+      align-content: center;
+      font-size: 0.84rem;
+      color: #413b3f;
+    }
+
+    /* Footnote text under the video rails. */
+    .footer-note {
+      margin-top: 1.1rem;
+      color: #4e5558;
+      font-size: 0.72rem;
+      line-height: 1.3;
+    }
+
+    /* Full-screen modal shell for video playback. */
+    .modal {
+      position: fixed;
+      inset: 0;
+      background: rgba(17, 17, 17, 0.72);
+      display: none;
+      align-items: center;
+      justify-content: center;
+      padding: 1rem;
+      z-index: 20;
+    }
+
+    /* Shows the modal when playback is active. */
+    .modal.open { display: flex; }
+
+    /* Modal panel that contains player and fallback controls. */
+    .modal-card {
+      width: min(1100px, 95vw);
+      border-radius: 14px;
+      border: 1px solid rgba(255, 255, 255, 0.42);
+      background: #fffdf9;
+      overflow: hidden;
+      box-shadow: 0 18px 36px rgba(0, 0, 0, 0.24);
+    }
+
+    /* Header strip inside modal with close button. */
+    .modal-head {
+      display: flex;
+      justify-content: space-between;
+      gap: 0.6rem;
+      align-items: center;
+      padding: 0.6rem 0.72rem;
+      border-bottom: 1px solid var(--line);
+      background: linear-gradient(120deg, rgba(255, 233, 116, 0.35), rgba(247, 246, 243, 0.95));
+    }
+
+    /* Modal title showing group and video name. */
+    .modal-title {
+      margin: 0;
+      font-size: 0.86rem;
+      font-weight: 700;
+      color: #442530;
+      line-height: 1.3;
+    }
+
+    /* Compact close button in the modal header. */
+    .close {
+      width: 32px;
+      height: 32px;
+      border-radius: 9px;
+      background: rgba(189, 0, 91, 0.08);
+      border: 1px solid rgba(189, 0, 91, 0.28);
+      color: #7b0b45;
+    }
+
+    /* Embedded YouTube player area. */
+    .player {
+      width: 100%;
+      aspect-ratio: 16 / 9;
+      border: 0;
+      display: block;
+      background: #000;
+    }
+
+    /* Retry and direct-link controls shown under the player. */
+    .player-fallback {
+      display: none;
+      gap: 0.5rem;
+      padding: 0.7rem;
+      border-top: 1px solid var(--line);
+      background: rgba(247, 246, 243, 0.82);
+      align-items: center;
+      justify-content: space-between;
+      flex-wrap: wrap;
+    }
+
+    /* Makes fallback controls visible when playback needs help. */
+    .player-fallback.is-visible { display: flex; }
+
+    /* Small helper text next to fallback action buttons. */
+    .player-fallback p {
+      margin: 0;
+      font-size: 0.79rem;
+      color: #4a4e52;
+    }
+
+    /* Responsive rules keep rails and hero readable on phones. */
+    @media (max-width: 840px) {
+      .hero { grid-template-columns: 1fr; }
+      .hero-art { min-height: auto; }
+      .rail {
+        grid-auto-columns: minmax(230px, 80vw);
+        padding: 0.2rem 2.1rem;
+      }
+      .nav { width: 28px; height: 54px; }
+      .resource-filters { grid-template-columns: 1fr; }
+    }
+  </style>
+</head>
+<body>
+  <!-- Main page container for header, hero, and all video rails. -->
+  <div class="page">
+    <!-- Sticky header with page title and loading progress text. -->
+    <header class="topbar">
+      <div class="brand-wrap">
+        <h1 class="brand">WATCH</h1>
+        <div class="tag">Improv video resources</div>
+      </div>
+      <div class="status">
+        <div class="dot"></div>
+        <span id="statusText">Loading recent uploads...</span>
+      </div>
+    </header>
+
+    <!-- Featured hero block with always-on inline player and selected video details. -->
+    <section class="hero" id="hero">
+      <div class="hero-art hero-player-shell">
+        <iframe
+          id="mainPlayerFrame"
+          class="player"
+          title="Selected YouTube video player"
+          src=""
+          allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+          referrerpolicy="strict-origin-when-cross-origin"
+          allowfullscreen></iframe>
+        <div id="heroLoadingOverlay" class="hero-loading-overlay" aria-live="polite">
+          <div class="hero-loading-content">
+            <span class="hero-loading-spinner" aria-hidden="true"></span>
+            <span>Loading video</span>
+          </div>
+        </div>
+        <div id="inlinePlayerFallback" class="player-fallback">
+          <p id="inlinePlayerFallbackText">Select a video to start playback.</p>
+          <div class="actions">
+            <a id="inlineWatchBtn" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Open on YouTube</a>
+            <button id="inlineRetryBtn" class="btn-soft" type="button">Retry Inline</button>
+          </div>
+        </div>
+      </div>
+      <div class="hero-body">
+        <p class="hero-kicker">Now Playing</p>
+        <h2 id="heroTitle" class="hero-title">Fetching improv channels...</h2>
+        <p id="heroMeta" class="hero-meta">15 groups across major improv scenes</p>
+        <p id="heroSub" class="hero-sub">This page pulls recent videos from major improv organizations so you can study form, pacing, and bold move choices.</p>
+        <div class="actions">
+          <button id="heroPlayBtn" class="btn-primary" disabled>Pop Out Player</button>
+          <button id="resourceListBtn" class="btn-secondary" type="button">Resource List</button>
+          <a id="heroWatchBtn" class="btn btn-soft" href="#" target="_blank" rel="noopener">Watch on YouTube</a>
+          <a id="heroChannelBtn" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Open Channel</a>
+        </div>
+      </div>
+    </section>
+
+    <!-- Video type rows are injected here during initialization. -->
+    <div id="rows"></div>
+
+    <!-- Context note about source documentation and proxy fallback behavior. -->
+    <p class="footer-note">
+      Channel list and IDs are maintained in the public <a href="https://airtable.com/appvJnNJbdcXwWSho/shrpu9qmRaoGRuHXl" target="_blank" rel="noopener">Improv video base</a>.
+    </p>
+  </div>
+
+  <!-- Playback modal with embedded player and direct YouTube fallback controls. -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <p id="modalTitle" class="modal-title">Now playing</p>
+        <button id="closeModal" class="close" aria-label="Close">X</button>
+      </div>
+      <iframe
+        id="modalPlayerFrame"
+        class="player"
+        title="YouTube video player"
+        src=""
+        allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+        referrerpolicy="strict-origin-when-cross-origin"
+        allowfullscreen></iframe>
+      <div id="modalPlayerFallback" class="player-fallback">
+        <p id="modalPlayerFallbackText">If the embed stalls, use Open on YouTube or Retry Embed.</p>
+        <div class="actions">
+          <a id="modalWatchBtn" class="btn btn-secondary" href="#" target="_blank" rel="noopener">Open on YouTube</a>
+          <button id="modalRetryBtn" class="btn-soft" type="button">Retry Embed</button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- Source browser modal with filters for channel, type, and location. -->
+  <div id="resourceModal" class="modal" aria-hidden="true">
+    <div class="modal-card">
+      <div class="modal-head">
+        <p class="modal-title">Resource List</p>
+        <button id="closeResourceModal" class="close" aria-label="Close">X</button>
+      </div>
+      <div class="resource-filters">
+        <label class="resource-filter">
+          YouTube Channel
+          <select id="resourceChannelFilter"></select>
+        </label>
+        <label class="resource-filter">
+          Video Type
+          <select id="resourceTypeFilter"></select>
+        </label>
+        <label class="resource-filter">
+          Location
+          <select id="resourceLocationFilter"></select>
+        </label>
+      </div>
+      <div id="resourceList" class="resource-list"></div>
+    </div>
+  </div>
+
+  <script>
+    // Static channel list used to build rows and fetch recent uploads.
+    const AIRTABLE_SOURCE = {
+      baseId: "appvJnNJbdcXwWSho",
+      shareId: "shrpu9qmRaoGRuHXl",
+      publicUrl: "https://airtable.com/appvJnNJbdcXwWSho/shrpu9qmRaoGRuHXl",
+      tableId: "tblWG12Sv7Ur3Wqv8",
+      tableName: "Watch Resources",
+      fields: {
+        name: "Name",
+        public: "Public",
+        publicationStatus: "Publication Status",
+        improvVideoType: "improv_video_type",
+        sortOrder: "Sort Order",
+        location: "Location",
+        channelId: "YouTube Channel ID",
+        channelUrl: "Channel URL",
+        uploadsPlaylistUrl: "Uploads Playlist URL",
+        category: "Category",
+        desc: "Description"
+      }
+    };
+
+    let groups = [
+      { name: "The Second City", location: "Chicago, Toronto, NYC", channelId: "UCzkcuUgsMln4y_aSxhE0H-g", improvVideoType: ["Short"] },
+      { name: "Upright Citizens Brigade (UCB)", location: "New York, Los Angeles", channelId: "UC33mB2wpioTCG4_nICJ3upQ", improvVideoType: ["Set"] },
+      { name: "The Groundlings", location: "Los Angeles", channelId: "UCbASIjWl8MFXCFK9X5CBmfA", improvVideoType: ["Sketch"] },
+      { name: "Boom Chicago", location: "Amsterdam", channelId: "UCzPXWF7yFul9eTR4lNC52dA", improvVideoType: ["Short"] },
+      { name: "The Annoyance Theatre", location: "Chicago", channelId: "UCQ9x3AdOk674ilL7CdCNnbQ", improvVideoType: ["Short"] },
+      { name: "Magnet Theater", location: "New York City", channelId: "UCLSkEVrumvoCMHSU5dvZvNw", improvVideoType: ["Short"] },
+      { name: "BATS Improv", location: "San Francisco", channelId: "UCnsiX_2XoTaF1ISWlltE22g", improvVideoType: ["Short"] },
+      { name: "ImprovBoston", location: "Boston", channelId: "UCfLcRdPsxAF36atdL_MNrnQ", improvVideoType: ["Short"] },
+      { name: "Washington Improv Theater (WIT)", location: "Washington, DC", channelId: "UC9xVhtSdd4aIh-pGPQaof_w", improvVideoType: ["Set"] },
+      { name: "HUGE Theater", location: "Minneapolis", channelId: "UCL92YZrm4wr12vS72npH3Qw", improvVideoType: ["Set"] },
+      { name: "Impro Theatre", location: "Los Angeles", channelId: "UC9ER2KsZENbueozTg7WqvCw", improvVideoType: ["Podcast"] },
+      { name: "CSz Worldwide (ComedySportz)", location: "Milwaukee origin, global network", channelId: "UC2fnjTifsNCI39kfrHsGp5g", improvVideoType: ["Short"] },
+      { name: "Unexpected Productions", location: "Seattle", channelId: "UCm-gAI-HSzMaZjHRdRHMUFA", improvVideoType: ["Set"] },
+      { name: "Logan Square Improv", location: "Chicago", channelId: "UCjjzkZlNFHe94h9KqfyEvrw", improvVideoType: ["Set"] },
+      { name: "WGIS", location: "", channelId: "UClyXVLmssvzJCXP6vs8ZMAQ", improvVideoType: ["Set"] },
+      { name: "Dynasty Typewriter", location: "Los Angeles", channelId: "UCwSDhz_hLh-3M6oxn5qDG-Q", improvVideoType: ["Short"] },
+      { name: "Ben Schwartz and Friends", location: "", channelId: "UCPq6mxMBlGfnPAG1LTnpwOA", improvVideoType: ["Short"] },
+      { name: "Whose Line Is It Anyway?", location: "", channelId: "UCKg_ZFByYTINckLG76cjUEg", improvVideoType: ["Short"] }
+    ];
+
+    // Paste the deployed Google Apps Script /exec URL here after publishing watch_feed_proxy_google_apps_script.gs.
+    const GOOGLE_SCRIPT_FEED_ENDPOINT = "https://script.google.com/macros/s/AKfycbwMUCpqz2q0FMft2g6iN--DagUAgdjwtiLwTRUdYOoPXzcyjcMma9qll7fqhJ8iWE-z/exec";
+
+    // Ordered fallback list of CORS proxies used only until the Google Apps Script endpoint is configured.
+    const FEED_PROXY_BUILDERS = [
+      (feedUrl) => `https://api.allorigins.win/raw?url=${encodeURIComponent(feedUrl)}`,
+      (feedUrl) => `https://corsproxy.io/?${encodeURIComponent(feedUrl)}`
+    ];
+
+    // Performance and reliability tuning constants for loading and rendering.
+    const DEFAULT_HERO_CHANNEL_ID = "UC33mB2wpioTCG4_nICJ3upQ";
+    const MAX_PER_GROUP = 1;
+    const MAX_CONCURRENT_FEEDS = 5;
+    const FEED_FETCH_TIMEOUT_MS = 9000;
+    const CARD_RENDER_BATCH_SIZE = 8;
+    const VIDEO_TYPE_SECTIONS = [
+      { type: "Set", title: "Improv Sets", railId: "setsRail", emptyText: "No full sets loaded yet." },
+      { type: "Short", title: "Shorts", railId: "shortsRail", emptyText: "No shorts loaded yet." },
+      { type: "Sketch", title: "Sketch", railId: "sketchRail", emptyText: "No sketch videos loaded yet." },
+      { type: "Podcast", title: "Video Podcasts", railId: "podcastRail", emptyText: "No video podcasts loaded yet." }
+    ];
+
+    // DOM references reused across the page lifecycle.
+    const rowsRoot = document.getElementById("rows");
+    const statusText = document.getElementById("statusText");
+    const mainPlayerFrame = document.getElementById("mainPlayerFrame");
+    const heroLoadingOverlay = document.getElementById("heroLoadingOverlay");
+    const inlinePlayerFallback = document.getElementById("inlinePlayerFallback");
+    const inlinePlayerFallbackText = document.getElementById("inlinePlayerFallbackText");
+    const inlineWatchBtn = document.getElementById("inlineWatchBtn");
+    const inlineRetryBtn = document.getElementById("inlineRetryBtn");
+    const heroTitle = document.getElementById("heroTitle");
+    const heroMeta = document.getElementById("heroMeta");
+    const heroSub = document.getElementById("heroSub");
+    const heroPlayBtn = document.getElementById("heroPlayBtn");
+    const resourceListBtn = document.getElementById("resourceListBtn");
+    const heroWatchBtn = document.getElementById("heroWatchBtn");
+    const heroChannelBtn = document.getElementById("heroChannelBtn");
+
+    const modal = document.getElementById("modal");
+    const modalTitle = document.getElementById("modalTitle");
+    const closeModalBtn = document.getElementById("closeModal");
+    const modalPlayerFrame = document.getElementById("modalPlayerFrame");
+    const modalPlayerFallback = document.getElementById("modalPlayerFallback");
+    const modalPlayerFallbackText = document.getElementById("modalPlayerFallbackText");
+    const modalWatchBtn = document.getElementById("modalWatchBtn");
+    const modalRetryBtn = document.getElementById("modalRetryBtn");
+    const resourceModal = document.getElementById("resourceModal");
+    const closeResourceModalBtn = document.getElementById("closeResourceModal");
+    const resourceChannelFilter = document.getElementById("resourceChannelFilter");
+    const resourceTypeFilter = document.getElementById("resourceTypeFilter");
+    const resourceLocationFilter = document.getElementById("resourceLocationFilter");
+    const resourceList = document.getElementById("resourceList");
+
+    // Runtime state for selected video and modal playback.
+    let activeVideo = null;
+    let heroSeededFromDefaultChannel = false;
+    let feedLoadErrors = [];
+
+    function airtableEmbedUrl() {
+      return `https://airtable.com/embed/${AIRTABLE_SOURCE.baseId}/${AIRTABLE_SOURCE.shareId}`;
+    }
+
+    function decodeAirtablePath(encodedPath) {
+      return JSON.parse(`"${encodedPath}"`);
+    }
+
+    function airtableColumnByName(tableSchema, fieldName) {
+      return tableSchema.columns.find((column) => column.name === fieldName);
+    }
+
+    function airtableValue(row, tableSchema, fieldName) {
+      const column = airtableColumnByName(tableSchema, fieldName);
+      if (!column) return "";
+      const value = row.cellValuesByColumnId[column.id];
+      if (column.type === "select") {
+        return column.typeOptions?.choices?.[value]?.name || "";
+      }
+      if (column.type === "multiSelect" || column.type === "multipleSelects") {
+        if (!Array.isArray(value)) return [];
+        return value.map((choiceId) => column.typeOptions?.choices?.[choiceId]?.name || choiceId).filter(Boolean);
+      }
+      return value || "";
+    }
+
+    // Airtable resources without manual video-type review stay out of the watch feed.
+    function hasReviewedVideoType(group) {
+      return Array.isArray(group.improvVideoType)
+        ? group.improvVideoType.length > 0
+        : Boolean(group.improvVideoType);
+    }
+
+    function groupVideoTypes(group) {
+      if (Array.isArray(group.improvVideoType)) return group.improvVideoType.filter(Boolean);
+      return group.improvVideoType ? [group.improvVideoType] : [];
+    }
+
+    function primaryVideoType(group) {
+      return groupVideoTypes(group)[0] || "";
+    }
+
+    async function fetchAirtableTable() {
+      const embedResponse = await fetch(airtableEmbedUrl(), { cache: "no-store" });
+      if (!embedResponse.ok) throw new Error("Airtable embed request failed");
+
+      const embedHtml = await embedResponse.text();
+      const urlMatch = embedHtml.match(/urlWithParams:\s*"([^"]+)"/s);
+      if (!urlMatch) throw new Error("Airtable shared read URL not found");
+
+      const readUrl = new URL(`https://airtable.com${decodeAirtablePath(urlMatch[1])}`);
+      const params = JSON.parse(readUrl.searchParams.get("stringifiedObjectParams"));
+      params.includeDataForTableIds = [AIRTABLE_SOURCE.tableId];
+      params.allowMsgpackOfResult = false;
+      readUrl.searchParams.set("stringifiedObjectParams", JSON.stringify(params));
+      readUrl.searchParams.delete("requestId");
+      readUrl.searchParams.set("x-time-zone", Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago");
+      readUrl.searchParams.set("x-airtable-application-id", AIRTABLE_SOURCE.baseId);
+      readUrl.searchParams.set("x-user-locale", "en");
+
+      const response = await fetch(readUrl, {
+        cache: "no-store",
+        headers: { "X-Requested-With": "XMLHttpRequest" }
+      });
+      if (!response.ok) throw new Error("Airtable table request failed");
+
+      const payload = await response.json();
+      const tableSchema = payload.data.tableSchemas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
+      const tableData = payload.data.tableDatas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
+      if (!tableSchema || !tableData) throw new Error("Airtable table data missing");
+
+      return tableData.rows
+        .map((row) => {
+          const fields = AIRTABLE_SOURCE.fields;
+          return {
+            name: airtableValue(row, tableSchema, fields.name),
+            public: airtableValue(row, tableSchema, fields.public),
+            publicationStatus: airtableValue(row, tableSchema, fields.publicationStatus),
+            improvVideoType: airtableValue(row, tableSchema, fields.improvVideoType),
+            sortOrder: airtableValue(row, tableSchema, fields.sortOrder),
+            location: airtableValue(row, tableSchema, fields.location),
+            channelId: airtableValue(row, tableSchema, fields.channelId),
+            channelUrl: airtableValue(row, tableSchema, fields.channelUrl),
+            uploadsPlaylistUrl: airtableValue(row, tableSchema, fields.uploadsPlaylistUrl),
+            category: airtableValue(row, tableSchema, fields.category),
+            desc: airtableValue(row, tableSchema, fields.desc)
+          };
+        })
+        .filter((group) => group.public === true && group.publicationStatus === "Active" && group.name && group.channelId && hasReviewedVideoType(group))
+        .sort((a, b) => (Number(a.sortOrder) || 9999) - (Number(b.sortOrder) || 9999));
+    }
+
+    async function loadGroupsFromAirtable() {
+      try {
+        const airtableGroups = await fetchAirtableTable();
+        if (airtableGroups.length) {
+          groups = airtableGroups;
+          statusText.textContent = `Loaded ${groups.length} channels from Airtable...`;
+        }
+      } catch (error) {
+        statusText.textContent = "Using built-in channel list; Airtable source is available.";
+      }
+    }
+
+    // Schedules render chunks during idle windows to keep the UI responsive.
+    function scheduleIdleTask(task) {
+      if (typeof window.requestIdleCallback === "function") {
+        window.requestIdleCallback(() => task(), { timeout: 300 });
+        return;
+      }
+      window.setTimeout(task, 0);
+    }
+
+    // Formats publish timestamps into user-friendly relative time labels.
+    function timeAgo(date) {
+      if (!(date instanceof Date) || Number.isNaN(date.valueOf())) return "Unknown date";
+      const diffMs = date.getTime() - Date.now();
+      const abs = Math.abs(diffMs);
+      const mins = Math.round(abs / 60000);
+      const hours = Math.round(abs / 3600000);
+      const days = Math.round(abs / 86400000);
+      const months = Math.round(abs / (86400000 * 30));
+      const years = Math.round(abs / (86400000 * 365));
+      const rtf = new Intl.RelativeTimeFormat("en", { numeric: "auto" });
+      if (mins < 60) return rtf.format(Math.sign(diffMs) * mins, "minute");
+      if (hours < 24) return rtf.format(Math.sign(diffMs) * hours, "hour");
+      if (days < 30) return rtf.format(Math.sign(diffMs) * days, "day");
+      if (months < 12) return rtf.format(Math.sign(diffMs) * months, "month");
+      return rtf.format(Math.sign(diffMs) * years, "year");
+    }
+
+    // Reads XML nodes by local name so namespace prefixes do not break parsing.
+    function textByLocalName(parent, localName) {
+      const node = Array.from(parent.getElementsByTagName("*")).find((n) => n.localName === localName);
+      return node ? node.textContent.trim() : "";
+    }
+
+    // Parses a channel feed into normalized video records used by cards and hero.
+    function parseFeed(feedText, group) {
+      const doc = new DOMParser().parseFromString(feedText, "application/xml");
+      if (doc.querySelector("parsererror")) return [];
+      const entries = Array.from(doc.getElementsByTagName("entry"));
+      return entries.slice(0, MAX_PER_GROUP).map((entry) => {
+        const videoId = textByLocalName(entry, "videoId");
+        const title = textByLocalName(entry, "title") || "Untitled";
+        const publishedRaw = textByLocalName(entry, "published");
+        const published = new Date(publishedRaw);
+        return {
+          groupName: group.name,
+          location: group.location || "Location not listed",
+          channelId: group.channelId,
+          channelUrl: group.channelUrl || `https://www.youtube.com/channel/${group.channelId}`,
+          uploadsPlaylistUrl: group.uploadsPlaylistUrl || `https://www.youtube.com/playlist?list=UU${group.channelId.slice(2)}`,
+          improvVideoType: groupVideoTypes(group),
+          primaryVideoType: primaryVideoType(group),
+          videoId,
+          title,
+          publishedRaw,
+          published,
+          publishedLabel: timeAgo(published),
+          thumbnail: `https://i.ytimg.com/vi/${videoId}/hqdefault.jpg`,
+          watchUrl: `https://www.youtube.com/watch?v=${videoId}`
+        };
+      }).filter((v) => v.videoId);
+    }
+
+    // Fetches one feed through a single proxy with timeout protection.
+    async function fetchFeedViaProxy(group, buildProxyUrl) {
+      const feedUrl = `https://www.youtube.com/feeds/videos.xml?channel_id=${group.channelId}`;
+      const controller = new AbortController();
+      const timeoutId = window.setTimeout(() => controller.abort(), FEED_FETCH_TIMEOUT_MS);
+      try {
+        const response = await fetch(buildProxyUrl(feedUrl), {
+          cache: "default",
+          signal: controller.signal
+        });
+        if (!response.ok) throw new Error("Proxy response not ok");
+        const text = await response.text();
+        const parsed = parseFeed(text, group);
+        if (!parsed.length) throw new Error("Feed parse returned no entries");
+        return parsed;
+      } finally {
+        window.clearTimeout(timeoutId);
+      }
+    }
+
+    // Races all proxies and returns the first successful channel feed parse.
+    async function fetchFeed(group) {
+      const attempts = FEED_PROXY_BUILDERS.map((buildProxyUrl) => fetchFeedViaProxy(group, buildProxyUrl));
+      if (typeof Promise.any === "function") {
+        try {
+          return await Promise.any(attempts);
+        } catch {
+          return [];
+        }
+      }
+      const settled = await Promise.allSettled(attempts);
+      const firstSuccess = settled.find((result) => result.status === "fulfilled");
+      return firstSuccess ? firstSuccess.value : [];
+    }
+
+    function hasGoogleScriptFeedEndpoint() {
+      return /^https:\/\/script\.google\.com\/macros\/s\/[^/]+\/exec$/.test(GOOGLE_SCRIPT_FEED_ENDPOINT.trim());
+    }
+
+    // Normalizes Google Apps Script video payloads to the same browser shape as XML-parsed videos.
+    function hydrateScriptVideo(rawVideo) {
+      const published = new Date(rawVideo.publishedRaw);
+      return {
+        groupName: rawVideo.groupName || "Unknown channel",
+        location: rawVideo.location || "Location not listed",
+        channelId: rawVideo.channelId,
+        channelUrl: rawVideo.channelUrl || `https://www.youtube.com/channel/${rawVideo.channelId}`,
+        uploadsPlaylistUrl: rawVideo.uploadsPlaylistUrl || `https://www.youtube.com/playlist?list=UU${rawVideo.channelId.slice(2)}`,
+        improvVideoType: Array.isArray(rawVideo.improvVideoType) ? rawVideo.improvVideoType : [],
+        primaryVideoType: rawVideo.primaryVideoType || (Array.isArray(rawVideo.improvVideoType) ? rawVideo.improvVideoType[0] : ""),
+        videoId: rawVideo.videoId,
+        title: rawVideo.title || "Untitled",
+        publishedRaw: rawVideo.publishedRaw || "",
+        published,
+        publishedLabel: timeAgo(published),
+        thumbnail: rawVideo.thumbnail || `https://i.ytimg.com/vi/${rawVideo.videoId}/hqdefault.jpg`,
+        watchUrl: rawVideo.watchUrl || `https://www.youtube.com/watch?v=${rawVideo.videoId}`,
+        isShort: Boolean(rawVideo.isShort),
+        description: rawVideo.description || "",
+        views: rawVideo.views || ""
+      };
+    }
+
+    // Loads all feeds through the server-side Google Apps Script proxy to avoid browser CORS failures.
+    async function loadFeedsViaGoogleScript() {
+      const response = await fetch(GOOGLE_SCRIPT_FEED_ENDPOINT.trim(), {
+        method: "POST",
+        headers: {
+          "Content-Type": "text/plain;charset=utf-8"
+        },
+        body: JSON.stringify({
+          maxPerGroup: MAX_PER_GROUP,
+          groups: groups.map((group) => ({
+            name: group.name,
+            location: group.location,
+            channelId: group.channelId,
+            channelUrl: group.channelUrl,
+            uploadsPlaylistUrl: group.uploadsPlaylistUrl,
+            improvVideoType: groupVideoTypes(group)
+          }))
+        }),
+        cache: "no-store"
+      });
+
+      if (!response.ok) throw new Error(`Google Apps Script response not ok (${response.status})`);
+      const payload = await response.json();
+      if (!payload || payload.ok !== true) {
+        throw new Error(payload && payload.error ? payload.error : "Google Apps Script feed request failed");
+      }
+
+      feedLoadErrors = Array.isArray(payload.errors) ? payload.errors : [];
+      const results = Array.from({ length: groups.length }, () => []);
+      const groupIndexByChannelId = new Map(groups.map((group, index) => [group.channelId, index]));
+
+      (payload.videos || []).map(hydrateScriptVideo).forEach((video) => {
+        const index = groupIndexByChannelId.get(video.channelId);
+        if (index === undefined) return;
+        results[index].push(video);
+      });
+
+      const defaultIndex = groupIndexByChannelId.get(DEFAULT_HERO_CHANNEL_ID);
+      if (defaultIndex !== undefined && results[defaultIndex][0] && !activeVideo) {
+        heroSeededFromDefaultChannel = true;
+        selectVideo(results[defaultIndex][0], { autoplay: false });
+      }
+
+      return results;
+    }
+
+    // Builds a clickable card that loads the selected video into the main player.
+    function buildCard(video) {
+      const card = document.createElement("article");
+      card.className = "card";
+      card.tabIndex = 0;
+      card.setAttribute("role", "button");
+      card.innerHTML = `
+        <img class="cover" loading="lazy" src="${video.thumbnail}" alt="">
+        <div class="card-body">
+          <p class="card-title">${video.groupName}</p>
+          <p class="card-meta"><strong>${video.primaryVideoType || "Video"}</strong> - Latest: ${video.title} - ${video.publishedLabel}</p>
+        </div>
+      `;
+      const cover = card.querySelector(".cover");
+      cover.addEventListener("error", () => {
+        cover.removeAttribute("src");
+      });
+
+      const play = () => selectVideo(video, { autoplay: true });
+      card.addEventListener("click", play);
+      card.addEventListener("keydown", (event) => {
+        if (event.key === "Enter" || event.key === " ") {
+          event.preventDefault();
+          play();
+        }
+      });
+      return card;
+    }
+
+    // Returns an empty-state fallback card with direct playlist access.
+    function buildEmptyCard(group) {
+      const wrapper = document.createElement("div");
+      wrapper.className = "empty";
+      const uploadsPlaylistId = `UU${group.channelId.slice(2)}`;
+      wrapper.innerHTML = `
+        <div>Could not load the recent feed right now for <strong>${group.name}</strong>.</div>
+        <a class="btn btn-soft" href="https://www.youtube.com/playlist?list=${uploadsPlaylistId}" target="_blank" rel="noopener">Open Uploads Playlist</a>
+      `;
+      return wrapper;
+    }
+
+    // Creates fixed row shells for reviewed video types.
+    function buildTypeRowShell(config) {
+      const section = document.createElement("section");
+      section.className = "row";
+      section.innerHTML = `
+        <h2 class="section-label">${config.title}</h2>
+        <div class="rail-shell">
+          <button class="nav prev" data-target="${config.railId}" aria-label="Scroll left">&lt;</button>
+          <div id="${config.railId}" class="rail">
+            <div class="empty">Loading ${config.title.toLowerCase()}...</div>
+          </div>
+          <button class="nav next" data-target="${config.railId}" aria-label="Scroll right">&gt;</button>
+        </div>
+      `;
+      return section;
+    }
+
+    // Wires left/right rail buttons for smooth horizontal scrolling.
+    function wireRailNav(container) {
+      const buttons = container.querySelectorAll(".nav");
+      buttons.forEach((button) => {
+        if (button.dataset.wired === "1") return;
+        button.dataset.wired = "1";
+        button.addEventListener("click", () => {
+          const target = document.getElementById(button.dataset.target);
+          if (!target) return;
+          const dir = button.classList.contains("next") ? 1 : -1;
+          target.scrollBy({ left: dir * 760, behavior: "smooth" });
+        });
+      });
+    }
+
+    // Sets selected-video metadata and action links shown beside the inline player.
+    function setHero(video) {
+      if (!video) return;
+      heroTitle.textContent = video.title;
+      heroMeta.textContent = `${video.groupName} - ${video.primaryVideoType || "Video"} - ${video.location} - ${video.publishedLabel}`;
+      heroSub.textContent = "Use this as your bold-move study feed: watch a clip, identify one risk you noticed, and run that risk in your next rep.";
+      heroPlayBtn.disabled = false;
+      heroPlayBtn.onclick = popOutPlayer;
+      heroChannelBtn.href = video.channelUrl;
+      heroWatchBtn.href = video.watchUrl;
+      inlineWatchBtn.href = video.watchUrl;
+      modalWatchBtn.href = video.watchUrl;
+      modalTitle.textContent = `${video.groupName}: ${video.title}`;
+    }
+
+    // Checks if this page context provides secure referrer/origin embed identity.
+    function isSecurePlaybackContext() {
+      return location.protocol === "https:" || location.hostname === "localhost" || location.hostname === "127.0.0.1";
+    }
+
+    // Builds an embed URL with origin metadata and optional autoplay behavior.
+    function buildEmbedUrl(videoId, autoplay = true) {
+      const params = new URLSearchParams({
+        autoplay: autoplay ? "1" : "0",
+        rel: "0",
+        playsinline: "1",
+        enablejsapi: "1"
+      });
+      if (location.origin && location.origin !== "null") {
+        params.set("origin", location.origin);
+      }
+      return `https://www.youtube.com/embed/${videoId}?${params.toString()}`;
+    }
+
+    // Shows inline fallback controls with context-aware playback guidance.
+    function showInlineFallback(message) {
+      inlinePlayerFallbackText.textContent = message;
+      inlinePlayerFallback.classList.add("is-visible");
+    }
+
+    // Shows modal fallback controls with context-aware playback guidance.
+    function showModalFallback(message) {
+      modalPlayerFallbackText.textContent = message;
+      modalPlayerFallback.classList.add("is-visible");
+    }
+
+    // Keeps a visible hero placeholder while the selected iframe is loading.
+    function showHeroLoading() {
+      heroLoadingOverlay.classList.remove("is-hidden");
+    }
+
+    function hideHeroLoading() {
+      heroLoadingOverlay.classList.add("is-hidden");
+    }
+
+    // Hides modal fallback controls when the pop-out player closes.
+    function hideModalFallback() {
+      modalPlayerFallback.classList.remove("is-visible");
+    }
+
+    // Loads the selected video into the inline player area.
+    function loadInlineEmbed(autoplay = true) {
+      if (!activeVideo) return;
+      showHeroLoading();
+      mainPlayerFrame.src = buildEmbedUrl(activeVideo.videoId, autoplay);
+    }
+
+    // Loads the selected video into the pop-out modal player.
+    function loadModalEmbed() {
+      if (!activeVideo) return;
+      modalPlayerFrame.src = buildEmbedUrl(activeVideo.videoId, true);
+    }
+
+    // Sends a pause command to the inline player before opening the pop-out.
+    function pauseInlinePlayer() {
+      if (!mainPlayerFrame.contentWindow) return;
+      mainPlayerFrame.contentWindow.postMessage(JSON.stringify({
+        event: "command",
+        func: "pauseVideo",
+        args: []
+      }), "*");
+    }
+
+    // Selects a video from any card and updates the persistent inline player.
+    function selectVideo(video, options = {}) {
+      const autoplay = options.autoplay !== false;
+      activeVideo = video;
+      setHero(video);
+      loadInlineEmbed(autoplay);
+      if (modal.classList.contains("open")) {
+        loadModalEmbed();
+      }
+      if (isSecurePlaybackContext()) {
+        showInlineFallback("Need a bigger view? Use Pop Out Player. If inline playback stalls, Retry Inline or Open on YouTube.");
+        return;
+      }
+      showInlineFallback("This page is not on HTTPS, so YouTube may block embeds (Error 153). Use Open on YouTube.");
+    }
+
+    // Opens the optional larger modal player for the currently selected video.
+    function popOutPlayer() {
+      if (!activeVideo) return;
+      pauseInlinePlayer();
+      loadModalEmbed();
+      modal.classList.add("open");
+      modal.setAttribute("aria-hidden", "false");
+      if (isSecurePlaybackContext()) {
+        showModalFallback("If playback stalls, use Open on YouTube or Retry Embed.");
+        return;
+      }
+      showModalFallback("This page is not on HTTPS, so YouTube may block embeds (Error 153). Use Open on YouTube.");
+    }
+
+    // Retries inline playback for the currently selected video.
+    function retryInlinePlayback() {
+      if (!activeVideo) return;
+      mainPlayerFrame.src = "";
+      window.setTimeout(() => {
+        loadInlineEmbed(true);
+      }, 120);
+    }
+
+    // Retries pop-out playback for the currently selected video.
+    function retryModalPlayback() {
+      if (!activeVideo) return;
+      modalPlayerFrame.src = "";
+      window.setTimeout(() => {
+        loadModalEmbed();
+      }, 120);
+    }
+
+    // Closes the optional modal without clearing the selected inline video.
+    function closePlayer() {
+      modalPlayerFrame.src = "";
+      hideModalFallback();
+      modal.classList.remove("open");
+      modal.setAttribute("aria-hidden", "true");
+    }
+
+    // Appends cards in small batches to reduce long blocking render work.
+    function appendCardsInBatches(rail, videos, batchSize = CARD_RENDER_BATCH_SIZE) {
+      let cursor = 0;
+      function appendNextBatch() {
+        const fragment = document.createDocumentFragment();
+        for (let i = 0; i < batchSize && cursor < videos.length; i += 1) {
+          fragment.appendChild(buildCard(videos[cursor]));
+          cursor += 1;
+        }
+        rail.appendChild(fragment);
+        if (cursor < videos.length) {
+          scheduleIdleTask(appendNextBatch);
+        }
+      }
+      appendNextBatch();
+    }
+
+    // Renders fixed video-type rails after all reviewed source feeds have loaded.
+    function renderTypeRails(videos) {
+      VIDEO_TYPE_SECTIONS.forEach((section) => {
+        const rail = document.getElementById(section.railId);
+        if (!rail) return;
+        const sectionVideos = videos.filter((video) => video.improvVideoType.includes(section.type));
+        const sectionSourceIds = new Set(groups.filter((group) => groupVideoTypes(group).includes(section.type)).map((group) => group.channelId));
+        const failedSourceCount = feedLoadErrors.filter((error) => sectionSourceIds.has(error.channelId)).length;
+        rail.innerHTML = "";
+        if (!sectionVideos.length) {
+          const empty = document.createElement("div");
+          empty.className = "empty";
+          empty.textContent = failedSourceCount
+            ? `${section.emptyText} ${failedSourceCount} source feed${failedSourceCount === 1 ? "" : "s"} failed.`
+            : section.emptyText;
+          rail.appendChild(empty);
+          return;
+        }
+        appendCardsInBatches(rail, sectionVideos);
+      });
+    }
+
+    function addSelectOptions(select, options, allLabel) {
+      select.innerHTML = "";
+      const allOption = document.createElement("option");
+      allOption.value = "";
+      allOption.textContent = allLabel;
+      select.appendChild(allOption);
+      options.forEach((option) => {
+        const item = document.createElement("option");
+        item.value = option.value;
+        item.textContent = option.label;
+        select.appendChild(item);
+      });
+    }
+
+    function uniqueSorted(values) {
+      return Array.from(new Set(values.filter(Boolean))).sort((a, b) => a.localeCompare(b));
+    }
+
+    function populateResourceFilters() {
+      addSelectOptions(
+        resourceChannelFilter,
+        groups.map((group) => ({ value: group.channelId, label: group.name })),
+        "All channels"
+      );
+      addSelectOptions(
+        resourceTypeFilter,
+        VIDEO_TYPE_SECTIONS.map((section) => ({ value: section.type, label: section.title })),
+        "All video types"
+      );
+      addSelectOptions(
+        resourceLocationFilter,
+        uniqueSorted(groups.map((group) => group.location || "")).map((location) => ({ value: location, label: location })),
+        "All locations"
+      );
+    }
+
+    function renderResourceList() {
+      const channelId = resourceChannelFilter.value;
+      const videoType = resourceTypeFilter.value;
+      const location = resourceLocationFilter.value;
+      const filteredGroups = groups.filter((group) => {
+        if (channelId && group.channelId !== channelId) return false;
+        if (videoType && !groupVideoTypes(group).includes(videoType)) return false;
+        if (location && group.location !== location) return false;
+        return true;
+      });
+
+      resourceList.innerHTML = "";
+      if (!filteredGroups.length) {
+        const empty = document.createElement("div");
+        empty.className = "empty";
+        empty.textContent = "No resources match these filters.";
+        resourceList.appendChild(empty);
+        return;
+      }
+
+      filteredGroups.forEach((group) => {
+        const item = document.createElement("article");
+        item.className = "resource-item";
+        const channelUrl = group.channelUrl || `https://www.youtube.com/channel/${group.channelId}`;
+        const uploadsUrl = group.uploadsPlaylistUrl || `https://www.youtube.com/playlist?list=UU${group.channelId.slice(2)}`;
+        item.innerHTML = `
+          <h3>${group.name}</h3>
+          <p class="resource-meta">${groupVideoTypes(group).join(", ")}${group.location ? ` - ${group.location}` : ""}</p>
+          <div class="actions">
+            <a class="btn btn-secondary" href="${channelUrl}" target="_blank" rel="noopener">Open Channel</a>
+            <a class="btn btn-soft" href="${uploadsUrl}" target="_blank" rel="noopener">Uploads</a>
+          </div>
+        `;
+        resourceList.appendChild(item);
+      });
+    }
+
+    function openResourceList() {
+      populateResourceFilters();
+      renderResourceList();
+      resourceModal.classList.add("open");
+      resourceModal.setAttribute("aria-hidden", "false");
+    }
+
+    function closeResourceList() {
+      resourceModal.classList.remove("open");
+      resourceModal.setAttribute("aria-hidden", "true");
+    }
+
+    // Loads feeds using bounded parallel workers and updates progress status.
+    async function loadFeedsInParallel() {
+      if (hasGoogleScriptFeedEndpoint()) {
+        statusText.textContent = `Loading ${groups.length} resources...`;
+        try {
+          return await loadFeedsViaGoogleScript();
+        } catch (error) {
+          feedLoadErrors = groups.map((group) => ({
+            groupName: group.name,
+            channelId: group.channelId,
+            message: error.message || "Google Apps Script feed request failed"
+          }));
+          statusText.textContent = "Google Apps Script feed load failed; trying direct fallback...";
+        }
+      } else {
+        statusText.textContent = "Google Apps Script endpoint is not set; using browser fallback.";
+      }
+
+      const results = Array.from({ length: groups.length }, () => []);
+      const workerCount = Math.min(MAX_CONCURRENT_FEEDS, groups.length);
+      let nextIndex = 0;
+      let completed = 0;
+      const fallbackErrors = [];
+
+      async function worker() {
+        while (true) {
+          const index = nextIndex;
+          nextIndex += 1;
+          if (index >= groups.length) return;
+          const group = groups[index];
+          const videos = await fetchFeed(group);
+          results[index] = videos;
+          if (!videos.length) {
+            fallbackErrors.push({
+              groupName: group.name,
+              channelId: group.channelId,
+              message: "No videos returned through browser fallback"
+            });
+          }
+          if (group.channelId === DEFAULT_HERO_CHANNEL_ID && videos[0] && !activeVideo) {
+            heroSeededFromDefaultChannel = true;
+            selectVideo(videos[0], { autoplay: false });
+          }
+          completed += 1;
+          statusText.textContent = `Loaded ${completed}/${groups.length} channels...`;
+        }
+      }
+
+      await Promise.all(Array.from({ length: workerCount }, () => worker()));
+      feedLoadErrors = fallbackErrors;
+      return results;
+    }
+
+    // Boots the page: shell render, parallel feed fetch, hero, and aggregate rail.
+    async function init() {
+      await loadGroupsFromAirtable();
+      const workerCount = Math.min(MAX_CONCURRENT_FEEDS, groups.length);
+      statusText.textContent = `Loading ${groups.length} channels with ${workerCount} workers...`;
+
+      VIDEO_TYPE_SECTIONS.forEach((section) => {
+        rowsRoot.appendChild(buildTypeRowShell(section));
+      });
+      wireRailNav(document);
+      populateResourceFilters();
+      renderResourceList();
+
+      const groupResults = await loadFeedsInParallel();
+      const allVideos = [];
+      groupResults.forEach((videos) => {
+        videos.forEach((video) => allVideos.push(video));
+      });
+
+      allVideos.sort((a, b) => b.published - a.published);
+      renderTypeRails(allVideos);
+      if (!heroSeededFromDefaultChannel && !activeVideo && allVideos[0]) {
+        selectVideo(allVideos[0], { autoplay: false });
+      }
+      if (!isSecurePlaybackContext()) {
+        const errorSummary = feedLoadErrors.length ? ` ${feedLoadErrors.length} feeds failed.` : "";
+        statusText.textContent = `Loaded ${allVideos.length} videos.${errorSummary} Open this page over HTTPS for more reliable embeds.`;
+        return;
+      }
+      const errorSummary = feedLoadErrors.length ? `; ${feedLoadErrors.length} feeds failed` : "";
+      statusText.textContent = `Loaded ${allVideos.length} videos from ${groups.length} improv channels${errorSummary}`;
+    }
+
+    // Wires inline and modal retry controls plus modal close shortcuts.
+    closeModalBtn.addEventListener("click", closePlayer);
+    mainPlayerFrame.addEventListener("load", hideHeroLoading);
+    inlineRetryBtn.addEventListener("click", retryInlinePlayback);
+    modalRetryBtn.addEventListener("click", retryModalPlayback);
+    resourceListBtn.addEventListener("click", openResourceList);
+    closeResourceModalBtn.addEventListener("click", closeResourceList);
+    resourceChannelFilter.addEventListener("change", renderResourceList);
+    resourceTypeFilter.addEventListener("change", renderResourceList);
+    resourceLocationFilter.addEventListener("change", renderResourceList);
+    modal.addEventListener("click", (event) => {
+      if (event.target === modal) closePlayer();
+    });
+    resourceModal.addEventListener("click", (event) => {
+      if (event.target === resourceModal) closeResourceList();
+    });
+    window.addEventListener("keydown", (event) => {
+      if (event.key === "Escape") {
+        closePlayer();
+        closeResourceList();
+      }
+    });
+
+    // Starts loading feeds and rendering rows immediately.
+    init();
+  </script>
+</body>
+</html>
