@@ -20,6 +20,7 @@ Utility projects are published as widgets with a `widget.js` loader. Squarespace
 - `event-feeds/all-show-dates/`
 - `event-feeds/big-honey-events/`
 - `event-feeds/half-baked-dates/`
+- `event-feeds/home-calendar/`
 - `event-feeds/pop-culture-improv-dates/`
 - `event-feeds/sci-prov-dates/`
 - `event-feeds/story-prov-dates/`
@@ -37,6 +38,14 @@ Use event-feed pages in Squarespace Code Blocks with iframes.
   src="https://benrushscience.github.io/amalgam-improv-embeds/event-feeds/all-show-dates/"
   style="width:100%; height:700px; border:0;"
   title="All Show Dates">
+</iframe>
+```
+
+```html
+<iframe
+  src="https://benrushscience.github.io/amalgam-improv-embeds/event-feeds/home-calendar/"
+  style="width:100%; height:850px; border:0;"
+  title="Amalgam Improv Event Calendar">
 </iframe>
 ```
 

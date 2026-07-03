@@ -1,0 +1,822 @@
+<!--
+  Amalgam Improv home calendar.
+
+  Squarespace should embed this page from GitHub Pages with an iframe:
+  https://benrushscience.github.io/amalgam-improv-embeds/event-feeds/home-calendar/
+
+  The page fetches the public Airtable-backed RSS feed on load, so event changes
+  in Airtable appear after the RSS source and visitor browser refresh.
+-->
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amalgam Improv Home Calendar</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #211f1f;
+      --muted: #625c56;
+      --line: #ded7ce;
+      --page: #fffdfa;
+      --soft: #f6f1eb;
+      --soft-strong: #ebe1d6;
+      --accent: #006a6a;
+      --accent-dark: #004f4f;
+      --warm: #a14d2f;
+      --focus: #f0b429;
+      font-family: Arial, Helvetica, sans-serif;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      background: transparent;
+      color: var(--ink);
+      margin: 0;
+      padding: 0;
+    }
+
+    button,
+    a {
+      font: inherit;
+    }
+
+    .calendar-app {
+      margin: 0 auto;
+      max-width: 1180px;
+      padding: 10px;
+    }
+
+    .calendar-header {
+      align-items: end;
+      display: flex;
+      gap: 16px;
+      justify-content: space-between;
+      margin-bottom: 14px;
+    }
+
+    .calendar-kicker {
+      color: var(--warm);
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0;
+      margin: 0 0 4px;
+      text-transform: uppercase;
+    }
+
+    h1,
+    h2,
+    p {
+      margin-top: 0;
+    }
+
+    h1 {
+      font-size: clamp(1.55rem, 4vw, 2.25rem);
+      line-height: 1.1;
+      margin-bottom: 0;
+    }
+
+    .calendar-controls {
+      align-items: center;
+      display: grid;
+      gap: 8px;
+      grid-template-columns: 40px minmax(145px, auto) 40px;
+    }
+
+    .month-heading {
+      font-weight: 700;
+      margin: 0;
+      text-align: center;
+    }
+
+    .icon-button,
+    .event-chip,
+    .list-button,
+    .dialog-close,
+    .event-link {
+      border-radius: 6px;
+    }
+
+    .icon-button {
+      align-items: center;
+      background: var(--page);
+      border: 1px solid var(--line);
+      color: var(--ink);
+      cursor: pointer;
+      display: inline-flex;
+      font-size: 1.6rem;
+      height: 40px;
+      justify-content: center;
+      line-height: 1;
+      width: 40px;
+    }
+
+    .calendar-frame {
+      background: var(--page);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+    }
+
+    .calendar-message {
+      color: var(--muted);
+      margin: 0;
+      padding: 16px;
+    }
+
+    .calendar-frame[data-status="ready"] .calendar-message {
+      display: none;
+    }
+
+    .weekdays,
+    .month-grid {
+      display: grid;
+      grid-template-columns: repeat(7, minmax(0, 1fr));
+    }
+
+    .weekdays {
+      background: var(--soft);
+      border-bottom: 1px solid var(--line);
+      color: var(--muted);
+      font-size: 0.82rem;
+      font-weight: 700;
+      text-align: center;
+    }
+
+    .weekdays span {
+      padding: 9px 4px;
+    }
+
+    .day-cell {
+      border-bottom: 1px solid var(--line);
+      border-right: 1px solid var(--line);
+      min-height: 132px;
+      padding: 8px;
+    }
+
+    .day-cell:nth-child(7n) {
+      border-right: 0;
+    }
+
+    .day-cell.is-outside-month {
+      background: #faf7f3;
+      color: #79716b;
+    }
+
+    .day-number {
+      display: block;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .event-chip {
+      background: #e6f3f1;
+      border: 1px solid #a8d8d2;
+      color: var(--accent-dark);
+      cursor: pointer;
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      line-height: 1.25;
+      margin: 4px 0;
+      padding: 6px 7px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .event-chip-time {
+      color: var(--muted);
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 600;
+      margin-top: 2px;
+    }
+
+    .upcoming {
+      margin-top: 18px;
+    }
+
+    .upcoming h2 {
+      font-size: 1.2rem;
+      margin-bottom: 10px;
+    }
+
+    .upcoming-list {
+      display: grid;
+      gap: 10px;
+      grid-template-columns: repeat(auto-fit, minmax(245px, 1fr));
+    }
+
+    .list-button {
+      background: var(--page);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      min-height: 112px;
+      padding: 14px;
+      text-align: left;
+      width: 100%;
+    }
+
+    .list-date {
+      color: var(--warm);
+      display: block;
+      font-size: 0.82rem;
+      font-weight: 700;
+      margin-bottom: 5px;
+    }
+
+    .list-title {
+      display: block;
+      font-weight: 800;
+      line-height: 1.25;
+    }
+
+    .list-location {
+      color: var(--muted);
+      display: block;
+      font-size: 0.9rem;
+      margin-top: 6px;
+    }
+
+    .event-dialog {
+      border: 0;
+      border-radius: 8px;
+      box-shadow: 0 18px 60px rgb(0 0 0 / 0.28);
+      color: var(--ink);
+      max-width: min(680px, calc(100vw - 28px));
+      padding: 0;
+      width: 100%;
+    }
+
+    .event-dialog::backdrop {
+      background: rgb(20 18 16 / 0.58);
+    }
+
+    .dialog-close {
+      background: var(--page);
+      border: 1px solid var(--line);
+      cursor: pointer;
+      font-size: 1.7rem;
+      height: 40px;
+      line-height: 1;
+      position: absolute;
+      right: 12px;
+      top: 12px;
+      width: 40px;
+    }
+
+    .dialog-content {
+      padding: 24px;
+    }
+
+    .dialog-date {
+      color: var(--warm);
+      font-weight: 800;
+      margin: 0 48px 6px 0;
+    }
+
+    .dialog-content h2 {
+      font-size: 1.65rem;
+      line-height: 1.15;
+      margin: 0 48px 16px 0;
+    }
+
+    .event-meta {
+      border-top: 1px solid var(--line);
+      display: grid;
+      gap: 0;
+      margin: 0 0 16px;
+    }
+
+    .event-meta div {
+      border-bottom: 1px solid var(--line);
+      display: grid;
+      gap: 12px;
+      grid-template-columns: 96px 1fr;
+      padding: 10px 0;
+    }
+
+    .event-meta dt {
+      color: var(--muted);
+      font-weight: 800;
+    }
+
+    .event-meta dd {
+      margin: 0;
+    }
+
+    .event-description {
+      line-height: 1.55;
+    }
+
+    .event-description p {
+      margin-bottom: 12px;
+    }
+
+    .event-description a {
+      word-break: break-word;
+    }
+
+    .event-link {
+      background: var(--accent);
+      color: #fff;
+      display: inline-flex;
+      font-weight: 800;
+      margin-top: 16px;
+      padding: 12px 16px;
+      text-decoration: none;
+    }
+
+    .icon-button:focus-visible,
+    .event-chip:focus-visible,
+    .list-button:focus-visible,
+    .dialog-close:focus-visible,
+    .event-link:focus-visible {
+      outline: 3px solid var(--focus);
+      outline-offset: 2px;
+    }
+
+    .icon-button:hover,
+    .event-chip:hover,
+    .list-button:hover {
+      border-color: var(--accent);
+    }
+
+    @media (max-width: 760px) {
+      .calendar-header {
+        align-items: stretch;
+        display: grid;
+      }
+
+      .calendar-controls {
+        grid-template-columns: 40px 1fr 40px;
+      }
+
+      .weekdays {
+        display: none;
+      }
+
+      .month-grid {
+        grid-template-columns: 1fr;
+      }
+
+      .day-cell,
+      .day-cell:nth-child(7n) {
+        border-right: 0;
+        min-height: 0;
+      }
+
+      .day-cell.is-outside-month {
+        display: none;
+      }
+
+      .event-meta div {
+        gap: 3px;
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="calendar-app" aria-labelledby="calendar-title">
+    <header class="calendar-header">
+      <div>
+        <p class="calendar-kicker">Amalgam Improv</p>
+        <h1 id="calendar-title">Event Calendar</h1>
+      </div>
+
+      <nav class="calendar-controls" aria-label="Calendar navigation">
+        <button class="icon-button" type="button" data-prev-month aria-label="Previous month">
+          <span aria-hidden="true">&lsaquo;</span>
+        </button>
+        <p class="month-heading" data-month-heading aria-live="polite"></p>
+        <button class="icon-button" type="button" data-next-month aria-label="Next month">
+          <span aria-hidden="true">&rsaquo;</span>
+        </button>
+      </nav>
+    </header>
+
+    <section class="calendar-frame" data-status="loading" aria-label="Monthly event calendar">
+      <p class="calendar-message" data-calendar-message>Loading events...</p>
+
+      <div class="weekdays" aria-hidden="true">
+        <span>Sun</span>
+        <span>Mon</span>
+        <span>Tue</span>
+        <span>Wed</span>
+        <span>Thu</span>
+        <span>Fri</span>
+        <span>Sat</span>
+      </div>
+
+      <div class="month-grid" data-month-grid role="grid" aria-label="Calendar days"></div>
+    </section>
+
+    <section class="upcoming" aria-labelledby="upcoming-title">
+      <h2 id="upcoming-title">Upcoming Events</h2>
+      <div data-upcoming-list></div>
+    </section>
+
+    <dialog class="event-dialog" data-event-dialog aria-labelledby="dialog-title">
+      <form method="dialog">
+        <button class="dialog-close" value="close" aria-label="Close event details">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </form>
+
+      <article class="dialog-content">
+        <p class="dialog-date" data-dialog-date></p>
+        <h2 id="dialog-title" data-dialog-title></h2>
+
+        <dl class="event-meta">
+          <div>
+            <dt>Date</dt>
+            <dd data-dialog-date-meta></dd>
+          </div>
+          <div>
+            <dt>Time</dt>
+            <dd data-dialog-time></dd>
+          </div>
+          <div>
+            <dt>Location</dt>
+            <dd data-dialog-location></dd>
+          </div>
+          <div>
+            <dt>Type</dt>
+            <dd data-dialog-type></dd>
+          </div>
+        </dl>
+
+        <div class="event-description" data-dialog-description></div>
+        <a class="event-link" data-dialog-link href="#" target="_blank" rel="noopener noreferrer">Event details and tickets</a>
+      </article>
+    </dialog>
+  </main>
+
+  <script>
+    // ---------- Configuration ----------
+    const rssUrl =
+      'https://script.google.com/macros/s/AKfycbyKAy9w0-nFU9FLYFxLAonIssaUnAgImseLr7NICtXvCe1wnd-yiI3h29fDN7ipH0_mSg/exec';
+
+    const timeZone = 'America/Chicago';
+    const maxUpcomingCards = 6;
+    const maxEventsToLoad = 200;
+
+    // Leave this empty to match the current calendar feed. Add 'private' here
+    // if the homepage should hide records marked Website RSS Display = Private.
+    const excludedCategories = new Set([]);
+
+    // ---------- Element references ----------
+    const calendarFrame = document.querySelector('[data-status]');
+    const calendarMessage = document.querySelector('[data-calendar-message]');
+    const monthHeading = document.querySelector('[data-month-heading]');
+    const monthGrid = document.querySelector('[data-month-grid]');
+    const upcomingList = document.querySelector('[data-upcoming-list]');
+    const eventDialog = document.querySelector('[data-event-dialog]');
+
+    const dialogFields = {
+      title: document.querySelector('[data-dialog-title]'),
+      date: document.querySelector('[data-dialog-date]'),
+      dateMeta: document.querySelector('[data-dialog-date-meta]'),
+      time: document.querySelector('[data-dialog-time]'),
+      location: document.querySelector('[data-dialog-location]'),
+      type: document.querySelector('[data-dialog-type]'),
+      description: document.querySelector('[data-dialog-description]'),
+      link: document.querySelector('[data-dialog-link]')
+    };
+
+    const state = {
+      events: [],
+      visibleMonth: startOfMonth(new Date())
+    };
+
+    document.querySelector('[data-prev-month]').addEventListener('click', () => {
+      state.visibleMonth = addMonths(state.visibleMonth, -1);
+      renderCalendar();
+    });
+
+    document.querySelector('[data-next-month]').addEventListener('click', () => {
+      state.visibleMonth = addMonths(state.visibleMonth, 1);
+      renderCalendar();
+    });
+
+    loadEvents();
+
+    // ---------- Fetch and normalize the RSS feed ----------
+    async function loadEvents() {
+      try {
+        const response = await fetch(`${rssUrl}?_=${Date.now()}`, {
+          headers: { Accept: 'application/rss+xml, text/xml, */*' }
+        });
+
+        if (!response.ok) {
+          throw new Error(`RSS request returned ${response.status}`);
+        }
+
+        const xmlText = await response.text();
+        const xmlDoc = new DOMParser().parseFromString(xmlText, 'text/xml');
+
+        const parseError = xmlDoc.querySelector('parsererror');
+        if (parseError) {
+          throw new Error('RSS response was not valid XML');
+        }
+
+        const now = startOfDay(new Date());
+        state.events = Array.from(xmlDoc.querySelectorAll('item'))
+          .map(normalizeRssItem)
+          .filter(Boolean)
+          .filter(event => event.startDate >= now)
+          .filter(event => !event.categories.some(category => excludedCategories.has(category)))
+          .sort((a, b) => a.startDate - b.startDate)
+          .slice(0, maxEventsToLoad);
+
+        const firstUpcoming = state.events[0];
+        if (firstUpcoming) {
+          state.visibleMonth = startOfMonth(firstUpcoming.startDate);
+        }
+
+        calendarFrame.dataset.status = 'ready';
+        renderCalendar();
+        renderUpcomingEvents();
+      } catch (error) {
+        console.error('Unable to load Amalgam events', error);
+        calendarFrame.dataset.status = 'error';
+        calendarMessage.textContent = 'Events are temporarily unavailable.';
+      }
+    }
+
+    function normalizeRssItem(itemNode) {
+      const descriptionHtml = sanitizeDescription(getText(itemNode, 'description'));
+      const pubDate = parseDate(getText(itemNode, 'pubDate'));
+
+      if (!pubDate) {
+        return null;
+      }
+
+      const categories = Array.from(itemNode.querySelectorAll('category'))
+        .map(node => (node.textContent || '').trim())
+        .filter(Boolean);
+
+      const meta = extractDescriptionMeta(descriptionHtml);
+      const link = getText(itemNode, 'link') || extractFirstLink(descriptionHtml);
+
+      return {
+        title: getText(itemNode, 'title') || 'Untitled event',
+        link,
+        startDate: pubDate,
+        dateKey: meta.date || dateKeyFromDate(pubDate),
+        dateLabel: meta.date || formatDate(pubDate, 'short'),
+        fullDateLabel: formatDate(pubDate, 'full'),
+        timeLabel: meta.time || formatTime(pubDate),
+        location: meta.location || 'Location TBA',
+        type: meta.type || categories.find(category => !isWebsiteDisplayCategory(category)) || 'Event',
+        categories: categories.map(category => category.toLowerCase()),
+        descriptionHtml: removeMetaParagraphs(descriptionHtml)
+      };
+    }
+
+    // ---------- Rendering ----------
+    function renderCalendar() {
+      renderMonthHeading();
+      renderMonthGrid();
+    }
+
+    function renderMonthHeading() {
+      monthHeading.textContent = new Intl.DateTimeFormat('en-US', {
+        month: 'long',
+        year: 'numeric'
+      }).format(state.visibleMonth);
+    }
+
+    function renderMonthGrid() {
+      monthGrid.innerHTML = '';
+
+      const firstGridDate = startOfWeek(state.visibleMonth);
+      const finalMonthDate = endOfMonth(state.visibleMonth);
+      const totalDays = Math.ceil((daysBetween(firstGridDate, finalMonthDate) + 1) / 7) * 7;
+
+      for (let index = 0; index < totalDays; index += 1) {
+        const date = addDays(firstGridDate, index);
+        const dayEvents = eventsForDate(date);
+        const dayCell = document.createElement('section');
+        const dayLabelId = `day-${dateKeyFromDate(date)}`;
+
+        dayCell.className = 'day-cell';
+        dayCell.setAttribute('role', 'gridcell');
+        dayCell.setAttribute('aria-labelledby', dayLabelId);
+
+        if (date.getMonth() !== state.visibleMonth.getMonth()) {
+          dayCell.classList.add('is-outside-month');
+        }
+
+        const dayNumber = document.createElement('span');
+        dayNumber.className = 'day-number';
+        dayNumber.id = dayLabelId;
+        dayNumber.textContent = String(date.getDate());
+        dayCell.append(dayNumber);
+
+        dayEvents.forEach(event => {
+          const eventButton = document.createElement('button');
+          eventButton.className = 'event-chip';
+          eventButton.type = 'button';
+          eventButton.setAttribute(
+            'aria-label',
+            `${event.title}, ${event.fullDateLabel}, ${event.timeLabel}, ${event.location}`
+          );
+          eventButton.innerHTML = `${escapeHtml(event.title)}<span class="event-chip-time">${escapeHtml(event.timeLabel)}</span>`;
+          eventButton.addEventListener('click', () => openEventDialog(event));
+          dayCell.append(eventButton);
+        });
+
+        monthGrid.append(dayCell);
+      }
+    }
+
+    function renderUpcomingEvents() {
+      const upcomingEvents = state.events.slice(0, maxUpcomingCards);
+
+      if (upcomingEvents.length === 0) {
+        upcomingList.innerHTML = '<p class="calendar-message">No upcoming events are listed yet.</p>';
+        return;
+      }
+
+      const list = document.createElement('div');
+      list.className = 'upcoming-list';
+
+      upcomingEvents.forEach(event => {
+        const button = document.createElement('button');
+        button.className = 'list-button';
+        button.type = 'button';
+        button.innerHTML = `
+          <span class="list-date">${escapeHtml(formatDate(event.startDate, 'compact'))} &middot; ${escapeHtml(event.timeLabel)}</span>
+          <span class="list-title">${escapeHtml(event.title)}</span>
+          <span class="list-location">${escapeHtml(event.location)}</span>
+        `;
+        button.addEventListener('click', () => openEventDialog(event));
+        list.append(button);
+      });
+
+      upcomingList.replaceChildren(list);
+    }
+
+    function openEventDialog(event) {
+      dialogFields.title.textContent = event.title;
+      dialogFields.date.textContent = event.fullDateLabel;
+      dialogFields.dateMeta.textContent = event.dateLabel;
+      dialogFields.time.textContent = event.timeLabel;
+      dialogFields.location.textContent = event.location;
+      dialogFields.type.textContent = event.type;
+      dialogFields.description.innerHTML = event.descriptionHtml || '<p>More details coming soon.</p>';
+
+      if (event.link) {
+        dialogFields.link.href = event.link;
+        dialogFields.link.hidden = false;
+      } else {
+        dialogFields.link.hidden = true;
+      }
+
+      if (typeof eventDialog.showModal === 'function') {
+        eventDialog.showModal();
+      } else {
+        eventDialog.setAttribute('open', '');
+      }
+    }
+
+    // ---------- Description parsing ----------
+    function extractDescriptionMeta(descriptionHtml) {
+      return {
+        date: extractStrongLabel(descriptionHtml, 'Date'),
+        time: extractStrongLabel(descriptionHtml, 'Time'),
+        location: extractStrongLabel(descriptionHtml, 'Location'),
+        type: extractStrongLabel(descriptionHtml, 'Type')
+      };
+    }
+
+    function extractStrongLabel(descriptionHtml, label) {
+      const pattern = new RegExp(`<strong>\\s*${label}:\\s*<\\/strong>\\s*([^<]+)`, 'i');
+      const match = descriptionHtml.match(pattern);
+      return match ? decodeEntities(match[1]).trim() : '';
+    }
+
+    function removeMetaParagraphs(descriptionHtml) {
+      return (descriptionHtml || '')
+        .replace(/<p>\s*<strong>\s*Date:\s*<\/strong>[\s\S]*?<\/p>/gi, '')
+        .replace(/<p>\s*<a\b[\s\S]*?Event link[\s\S]*?<\/a>\s*<\/p>/gi, '')
+        .trim();
+    }
+
+    function sanitizeDescription(descriptionHtml) {
+      return (descriptionHtml || '')
+        .replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '')
+        .replace(/<iframe\b[^<]*(?:(?!<\/iframe>)<[^<]*)*<\/iframe>/gi, '')
+        .replace(/\son\w+="[^"]*"/gi, '')
+        .replace(/\son\w+='[^']*'/gi, '')
+        .replace(/javascript:/gi, '');
+    }
+
+    function extractFirstLink(descriptionHtml) {
+      const match = (descriptionHtml || '').match(/<a[^>]+href=["']([^"']+)["']/i);
+      return match ? decodeEntities(match[1]).trim() : '';
+    }
+
+    function isWebsiteDisplayCategory(category) {
+      return ['public', 'private', 'shows', 'workshops and jams'].includes(String(category || '').toLowerCase());
+    }
+
+    // ---------- Date helpers ----------
+    function parseDate(value) {
+      const date = new Date(value);
+      return Number.isNaN(date.getTime()) ? null : date;
+    }
+
+    function formatDate(date, style) {
+      const optionsByStyle = {
+        full: { weekday: 'long', month: 'long', day: 'numeric', year: 'numeric' },
+        short: { month: 'short', day: 'numeric', year: 'numeric' },
+        compact: { weekday: 'short', month: 'short', day: 'numeric' }
+      };
+
+      return new Intl.DateTimeFormat('en-US', {
+        ...optionsByStyle[style],
+        timeZone
+      }).format(date);
+    }
+
+    function formatTime(date) {
+      return new Intl.DateTimeFormat('en-US', {
+        hour: 'numeric',
+        minute: '2-digit',
+        timeZone
+      }).format(date);
+    }
+
+    function startOfMonth(date) {
+      return new Date(date.getFullYear(), date.getMonth(), 1);
+    }
+
+    function endOfMonth(date) {
+      return new Date(date.getFullYear(), date.getMonth() + 1, 0);
+    }
+
+    function startOfWeek(date) {
+      return addDays(date, -date.getDay());
+    }
+
+    function startOfDay(date) {
+      return new Date(date.getFullYear(), date.getMonth(), date.getDate());
+    }
+
+    function addDays(date, days) {
+      const next = new Date(date);
+      next.setDate(next.getDate() + days);
+      return next;
+    }
+
+    function addMonths(date, months) {
+      return new Date(date.getFullYear(), date.getMonth() + months, 1);
+    }
+
+    function daysBetween(start, end) {
+      const millisecondsPerDay = 24 * 60 * 60 * 1000;
+      return Math.round((startOfDay(end) - startOfDay(start)) / millisecondsPerDay);
+    }
+
+    function dateKeyFromDate(date) {
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      return `${year}-${month}-${day}`;
+    }
+
+    function eventsForDate(date) {
+      const dateKey = dateKeyFromDate(date);
+      return state.events.filter(event => event.dateKey === dateKey);
+    }
+
+    // ---------- Text helpers ----------
+    function getText(parentNode, selector) {
+      const node = parentNode.querySelector(selector);
+      return node ? (node.textContent || '').trim() : '';
+    }
+
+    function decodeEntities(value) {
+      const textarea = document.createElement('textarea');
+      textarea.innerHTML = value || '';
+      return textarea.value;
+    }
+
+    function escapeHtml(value) {
+      return String(value || '')
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+  </script>
+</body>
+</html>
