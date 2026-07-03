@@ -58,6 +58,7 @@
 
     const maxEventsToShow = 200;
     const defaultEventDurationMinutes = 120;
+    const maxDaysInAdvanceToShow = 61;
 
     // Only allow Workshops + Jams
     const allowedEventTypes = new Set(['workshop', 'jam']);
@@ -160,6 +161,10 @@
       .then(xml => new DOMParser().parseFromString(xml, 'text/xml'))
       .then(doc => {
         const now = new Date();
+        const latestEventDate = new Date(
+          now.getTime() + maxDaysInAdvanceToShow * 24 * 60 * 60 * 1000
+        );
+
         const items = Array.from(doc.querySelectorAll('item')).map(node => {
           const title = getText(node, 'title');
           const link = getText(node, 'link');
@@ -170,6 +175,7 @@
           const cleanDesc = removeTypeLines(rawDesc);
 
           if (!pubDate || pubDate < now) return null;
+          if (pubDate > latestEventDate) return null;
           if (!hasAllowedType(categories)) return null;
 
           const end = new Date(pubDate.getTime() + defaultEventDurationMinutes * 60000);
