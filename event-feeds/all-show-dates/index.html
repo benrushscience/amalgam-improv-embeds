@@ -94,6 +94,8 @@
       // Also handle any plain-text remnants (in case tags differ)
       cleaned = cleaned.replace(/Type:\s*[^\n<]+/gi, '');
       cleaned = cleaned.replace(/Website RSS Display:\s*[^\n<]+/gi, '');
+      cleaned = cleaned.replace(/<p>\s*<a\b[^>]*>\s*Event link\s*<\/a>\s*<\/p>/gi, '');
+      cleaned = cleaned.replace(/<a\b[^>]*>\s*Event link\s*<\/a>/gi, '');
 
       // Tidy multiple breaks/empty paragraphs
       cleaned = cleaned

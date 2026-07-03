@@ -92,6 +92,8 @@
         .replace(/<strong>\s*Website RSS Display:\s*<\/strong>.*?(<br\/>|<\/p>)/gi, '')
         .replace(/Type:\s*[^\n<]+/gi, '')
         .replace(/Website RSS Display:\s*[^\n<]+/gi, '')
+        .replace(/<p>\s*<a\b[^>]*>\s*Event link\s*<\/a>\s*<\/p>/gi, '')
+        .replace(/<a\b[^>]*>\s*Event link\s*<\/a>/gi, '')
         .replace(/(<br\/>\s*){2,}/g, '<br/>')
         .replace(/<p>\s*<\/p>/gi, '')
         .trim();
