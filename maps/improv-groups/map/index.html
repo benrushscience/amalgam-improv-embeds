@@ -32,30 +32,26 @@
 
     <div id="filterPanelBody">
       <label class="filter-group">
-        <span>Category</span>
-        <select id="categoryFilter">
-          <option value="">All categories</option>
+        <select id="categoryFilter" aria-label="Category" title="Category">
+          <option value="">Category</option>
         </select>
       </label>
 
       <label class="filter-group">
-        <span>Country</span>
-        <select id="countryFilter">
-          <option value="">All countries</option>
+        <select id="countryFilter" aria-label="Country" title="Country">
+          <option value="">Country</option>
         </select>
       </label>
 
       <label class="filter-group">
-        <span>State / Region</span>
-        <select id="stateFilter">
-          <option value="">All states / regions</option>
+        <select id="stateFilter" aria-label="State / Region" title="State / Region">
+          <option value="">State / Region</option>
         </select>
       </label>
 
       <label class="filter-group">
-        <span>City</span>
-        <select id="cityFilter">
-          <option value="">All cities</option>
+        <select id="cityFilter" aria-label="City" title="City">
+          <option value="">City</option>
         </select>
       </label>
 
@@ -164,8 +160,7 @@
     margin-bottom: 12px;
   }
 
-  .filter-kicker,
-  .filter-group span {
+  .filter-kicker {
     display: block;
     font-size: 12px;
     font-weight: 700;
@@ -225,7 +220,9 @@
   }
 
   #filterPanelBody {
-    display: block;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 8px;
   }
 
   /* Collapse the panel down to its header so the map has more room on small screens. */
@@ -235,12 +232,11 @@
 
   .filter-group {
     display: block;
-    margin-bottom: 12px;
+    min-width: 0;
   }
 
   .filter-group select {
     width: 100%;
-    margin-top: 6px;
     padding: 10px 12px;
     border: 1px solid rgba(255,255,255,0.18);
     border-radius: 10px;
@@ -255,7 +251,8 @@
   }
 
   #filterStatus {
-    margin-top: 12px;
+    grid-column: 1 / -1;
+    margin-top: 4px;
     font-size: 13px;
     color: rgba(255,255,255,0.92);
   }
@@ -576,7 +573,7 @@
   }
 
   function getCountryPlaceholder(hasCountryData) {
-    return hasCountryData ? 'All countries' : 'No country data in source';
+    return hasCountryData ? 'Country' : 'No country data';
   }
 
   // Support common category header variants from Airtable/CSV exports.
@@ -630,7 +627,7 @@
         }, [])
       )
     );
-    setSelectOptions(categoryFilter, 'All categories', categories, categories.includes(selectedCategory) ? selectedCategory : '');
+    setSelectOptions(categoryFilter, 'Category', categories, categories.includes(selectedCategory) ? selectedCategory : '');
 
     const countries = uniqueSorted(
       allEntries
@@ -648,7 +645,7 @@
         .filter(entry => !countryFilter.value || entry.countryLabel === countryFilter.value)
         .map(entry => entry.stateLabel)
     );
-    setSelectOptions(stateFilter, 'All states / regions', states, states.includes(selectedState) ? selectedState : '');
+    setSelectOptions(stateFilter, 'State / Region', states, states.includes(selectedState) ? selectedState : '');
 
     const cities = uniqueSorted(
       allEntries
@@ -657,7 +654,7 @@
         .filter(entry => !stateFilter.value || entry.stateLabel === stateFilter.value)
         .map(entry => entry.cityLabel)
     );
-    setSelectOptions(cityFilter, 'All cities', cities, cities.includes(selectedCity) ? selectedCity : '');
+    setSelectOptions(cityFilter, 'City', cities, cities.includes(selectedCity) ? selectedCity : '');
   }
 
   function matchesFilters(entry) {
