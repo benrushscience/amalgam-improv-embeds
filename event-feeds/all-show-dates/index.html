@@ -252,7 +252,7 @@
         filteredItems.sort((a, b) => a.startDate - b.startDate);
 
         const visibleItems = filteredItems.slice(0, maxEventsToShow);
-        const eventsPerLoad = 1;
+        const eventsPerLoad = 5;
         let visibleEventCount = 0;
         const feedEl = document.getElementById('rss-feed');
 

@@ -252,7 +252,7 @@
           .sort((a, b) => a.pubDate - b.pubDate);
 
         const visibleItems = items.slice(0, maxEventsToShow);
-        const eventsPerLoad = 1;
+        const eventsPerLoad = 5;
         let visibleEventCount = 0;
 
         function renderEvent(ev, index) {
