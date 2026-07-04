@@ -378,6 +378,11 @@
     font-weight: 700;
   }
 
+  #groupListTableApp .group-category-cell {
+    overflow-wrap: anywhere;
+    word-break: normal;
+  }
+
   #groupListTableApp .group-description-cell {
     max-width: none;
     color: var(--group-muted);
@@ -698,7 +703,7 @@
           return (
             '<tr>' +
             '<td class="group-name-cell">' + escapeHtml(group.name || 'Untitled Group') + '</td>' +
-            '<td>' + escapeHtml(group.category || '') + '</td>' +
+            '<td class="group-category-cell">' + escapeHtml(group.category || '') + '</td>' +
             '<td>' + escapeHtml(group.city || '') + '</td>' +
             '<td>' + escapeHtml(group.state || '') + '</td>' +
             '<td>' + escapeHtml(group.country || '') + '</td>' +
@@ -768,6 +773,7 @@
         '.group-popout-table th,.group-popout-table td{padding:14px 16px;text-align:left;vertical-align:top;border-bottom:1px solid rgba(0,0,0,0.2);}',
         '.group-popout-table th{background:#000;color:#FFE974;font-weight:700;}',
         '.group-popout-table tbody tr:nth-child(even){background:rgba(255,255,255,0.28);}',
+        '.group-popout-table .group-category-cell{overflow-wrap:anywhere;word-break:normal;}',
         '.group-popout-table a{color:#BD005B;text-decoration-thickness:1px;text-underline-offset:2px;word-break:break-word;font-weight:700;}',
         '.group-popout-description{max-width:460px;color:#272727;}',
         '@media (max-width:640px){body{padding:16px;}.group-popout-shell{padding:18px;}}',
