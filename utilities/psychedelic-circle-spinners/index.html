@@ -1,0 +1,220 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amalgam Psychedelic Circle Spinners</title>
+  <style>
+    /* ---------- Brand tokens and page layout ---------- */
+    :root {
+      --off-white: #f7f6f3;
+      --pale-yellow: #ffe974;
+      --red-orange: #e55937;
+      --deep-pink: #bd005b;
+      --black: #000000;
+      --ring-size: 76px;
+      --ring-line: 4px;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--off-white);
+      color: var(--black);
+      font-family: "Avenir Next", Montserrat, "Trebuchet MS", Arial, sans-serif;
+      margin: 0;
+      padding: 32px 20px 48px;
+    }
+
+    main { margin: 0 auto; max-width: 1024px; }
+
+    h1 { font-size: clamp(1.9rem, 4vw, 3rem); line-height: 1; margin: 0; }
+
+    .intro { line-height: 1.5; margin: 12px 0 28px; max-width: 680px; }
+
+    .spinner-grid {
+      display: grid;
+      gap: 16px;
+      grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    }
+
+    .spinner-card {
+      background: var(--pale-yellow);
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      min-height: 174px;
+      padding: 16px;
+    }
+
+    .spinner-stage {
+      align-items: center;
+      display: grid;
+      height: 106px;
+      justify-items: center;
+    }
+
+    .spinner-card h2 { font-size: 1rem; margin: 12px 0 0; }
+
+    /* ---------- Shared concentric-circle building blocks ---------- */
+    .spinner {
+      color: var(--deep-pink);
+      height: var(--ring-size);
+      position: relative;
+      width: var(--ring-size);
+    }
+
+    .circle,
+    .circle::before,
+    .circle::after {
+      border: var(--ring-line) solid currentColor;
+      border-radius: 50%;
+      content: "";
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .circle { height: 100%; width: 100%; }
+    .circle::before { height: 68%; width: 68%; }
+    .circle::after { height: 34%; width: 34%; }
+
+    .dot {
+      background: currentColor;
+      border-radius: 50%;
+      height: 14%;
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      width: 14%;
+    }
+
+    /* 01: A close relative of the original bullseye, breathing outward. */
+    .spinner--pulse .circle { animation: ring-pulse 1.25s ease-in-out infinite; }
+    .spinner--pulse .circle::before { animation: ring-pulse 1.25s ease-in-out 0.14s infinite; }
+    .spinner--pulse .circle::after { animation: ring-pulse 1.25s ease-in-out 0.28s infinite; }
+    .spinner--pulse .dot { animation: dot-pulse 1.25s ease-in-out infinite; }
+
+    /* 02: The outer ring opens and closes like a waving echo. */
+    .spinner--echo .circle { animation: echo-ring 1.5s ease-in-out infinite; }
+    .spinner--echo .circle::before { animation: echo-ring 1.5s ease-in-out 0.18s infinite reverse; }
+    .spinner--echo .circle::after { animation: echo-ring 1.5s ease-in-out 0.36s infinite; }
+    .spinner--echo .dot { animation: dot-pulse 1.5s ease-in-out infinite; }
+
+    /* 03: Three bullseyes orbit a shared center. */
+    .spinner--orbit { animation: full-spin 1.7s linear infinite; }
+    .spinner--orbit .circle { height: 62%; width: 62%; }
+    .spinner--orbit .circle::before { height: 63%; width: 63%; }
+    .spinner--orbit .circle::after { height: 30%; width: 30%; }
+    .spinner--orbit .circle:nth-child(1) { left: 50%; top: 14%; }
+    .spinner--orbit .circle:nth-child(2) { left: 19%; top: 70%; }
+    .spinner--orbit .circle:nth-child(3) { left: 81%; top: 70%; }
+
+    /* 04: Nested circles travel around the center on different beats. */
+    .spinner--rolling .circle { animation: rolling-ring 1.1s ease-in-out infinite; }
+    .spinner--rolling .circle::before { animation: rolling-ring 1.1s ease-in-out 0.16s infinite reverse; }
+    .spinner--rolling .circle::after { animation: rolling-ring 1.1s ease-in-out 0.32s infinite; }
+    .spinner--rolling .dot { animation: dot-pulse 1.1s ease-in-out infinite; }
+
+    /* 05: Two concentric-circle patches counter-rotate. */
+    .spinner--double::before,
+    .spinner--double::after {
+      border: var(--ring-line) solid currentColor;
+      border-radius: 50%;
+      content: "";
+      height: 60%;
+      position: absolute;
+      top: 20%;
+      width: 60%;
+    }
+    .spinner--double::before { animation: slide-left 1.2s ease-in-out infinite; left: 0; }
+    .spinner--double::after { animation: slide-right 1.2s ease-in-out infinite; right: 0; }
+    .spinner--double .circle { animation: full-spin 1.4s linear infinite; height: 58%; width: 58%; }
+    .spinner--double .circle::before { height: 58%; width: 58%; }
+    .spinner--double .circle::after { height: 28%; width: 28%; }
+
+    /* 06: Four mini rings make a spinning flower, echoing the insignia. */
+    .spinner--flower { animation: full-spin 2s linear infinite; }
+    .spinner--flower .circle { height: 48%; width: 48%; }
+    .spinner--flower .circle::before { height: 58%; width: 58%; }
+    .spinner--flower .circle::after { height: 28%; width: 28%; }
+    .spinner--flower .circle:nth-child(1) { left: 50%; top: 18%; }
+    .spinner--flower .circle:nth-child(2) { left: 82%; top: 50%; }
+    .spinner--flower .circle:nth-child(3) { left: 50%; top: 82%; }
+    .spinner--flower .circle:nth-child(4) { left: 18%; top: 50%; }
+
+    /* 07: A simple bullseye stretches vertically and snaps back. */
+    .spinner--squish .circle { animation: squash 0.95s ease-in-out infinite; }
+    .spinner--squish .circle::before { animation: squash 0.95s ease-in-out 0.12s infinite; }
+    .spinner--squish .circle::after { animation: squash 0.95s ease-in-out 0.24s infinite; }
+    .spinner--squish .dot { animation: dot-pulse 0.95s ease-in-out infinite; }
+
+    /* 08: The center remains steady while rings alternately appear. */
+    .spinner--blink .circle { animation: ring-blink 1.2s steps(2, end) infinite; }
+    .spinner--blink .circle::before { animation: ring-blink 1.2s steps(2, end) 0.2s infinite; }
+    .spinner--blink .circle::after { animation: ring-blink 1.2s steps(2, end) 0.4s infinite; }
+    .spinner--blink .dot { animation: dot-pulse 0.6s ease-in-out infinite; }
+
+    /* 09: A spinning three-quarter ring keeps the psychedelic target center. */
+    .spinner--sweep {
+      animation: full-spin 0.9s linear infinite;
+      background: conic-gradient(currentColor 0deg 280deg, transparent 280deg 360deg);
+      border-radius: 50%;
+      -webkit-mask: radial-gradient(transparent 0 32%, #000 33% 100%);
+      mask: radial-gradient(transparent 0 32%, #000 33% 100%);
+    }
+    .spinner--sweep .circle { animation: full-spin 1.7s linear infinite reverse; height: 72%; width: 72%; }
+    .spinner--sweep .circle::before { height: 55%; width: 55%; }
+    .spinner--sweep .circle::after { height: 25%; width: 25%; }
+
+    /* 10: Two linked circles weave vertically like the patch artwork. */
+    .spinner--patch .circle { height: 63%; width: 63%; }
+    .spinner--patch .circle::before { height: 62%; width: 62%; }
+    .spinner--patch .circle::after { height: 30%; width: 30%; }
+    .spinner--patch .circle:nth-child(1) { animation: patch-top 1.25s ease-in-out infinite; }
+    .spinner--patch .circle:nth-child(2) { animation: patch-bottom 1.25s ease-in-out infinite; }
+
+    /* ---------- Motion definitions ---------- */
+    @keyframes ring-pulse { 50% { opacity: 0.35; transform: translate(-50%, -50%) scale(1.18); } }
+    @keyframes dot-pulse { 50% { transform: translate(-50%, -50%) scale(1.55); } }
+    @keyframes echo-ring { 50% { opacity: 0.18; transform: translate(-50%, -50%) scale(0.42); } }
+    @keyframes full-spin { to { transform: rotate(360deg); } }
+    @keyframes rolling-ring { 25% { transform: translate(-20%, -50%); } 75% { transform: translate(-80%, -50%); } }
+    @keyframes slide-left { 50% { transform: translateX(38%); } }
+    @keyframes slide-right { 50% { transform: translateX(-38%); } }
+    @keyframes squash { 50% { transform: translate(-50%, -50%) scale(1.08, 0.52); } }
+    @keyframes ring-blink { 50% { opacity: 0.18; } }
+    @keyframes patch-top { 50% { transform: translate(-50%, 8%); } }
+    @keyframes patch-bottom { 50% { transform: translate(-50%, -108%); } }
+
+    /* Honor motion preferences while retaining a recognizable brand mark. */
+    @media (prefers-reduced-motion: reduce) {
+      .spinner,
+      .spinner *,
+      .spinner::before,
+      .spinner::after { animation: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Amalgam Psychedelic Circle Spinners</h1>
+    <p class="intro">Ten lightweight loading indicators built from CSS concentric circles. They use Amalgam’s deep pink and need no image request, which keeps embeds quick to load.</p>
+
+    <section class="spinner-grid" aria-label="Animated loading-spinner options">
+      <!-- Each spinner includes visually hidden loading text for assistive technology. -->
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--pulse" role="status" aria-label="Loading"><span class="circle"></span><span class="dot"></span></div></div><h2>1. Bullseye Pulse</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--echo" role="status" aria-label="Loading"><span class="circle"></span><span class="dot"></span></div></div><h2>2. Echo Rings</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--orbit" role="status" aria-label="Loading"><span class="circle"></span><span class="circle"></span><span class="circle"></span></div></div><h2>3. Triple Orbit</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--rolling" role="status" aria-label="Loading"><span class="circle"></span><span class="dot"></span></div></div><h2>4. Rolling Rings</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--double" role="status" aria-label="Loading"><span class="circle"></span></div></div><h2>5. Double Bubble</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--flower" role="status" aria-label="Loading"><span class="circle"></span><span class="circle"></span><span class="circle"></span><span class="circle"></span></div></div><h2>6. Circle Flower</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--squish" role="status" aria-label="Loading"><span class="circle"></span><span class="dot"></span></div></div><h2>7. Squish Target</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--blink" role="status" aria-label="Loading"><span class="circle"></span><span class="dot"></span></div></div><h2>8. Blink Beat</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--sweep" role="status" aria-label="Loading"><span class="circle"></span></div></div><h2>9. Target Sweep</h2></article>
+      <article class="spinner-card"><div class="spinner-stage"><div class="spinner spinner--patch" role="status" aria-label="Loading"><span class="circle"></span><span class="circle"></span></div></div><h2>10. Patch Weave</h2></article>
+    </section>
+  </main>
+</body>
+</html>

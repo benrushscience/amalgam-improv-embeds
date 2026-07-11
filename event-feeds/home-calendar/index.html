@@ -123,10 +123,52 @@
     }
 
     .calendar-message {
+      align-items: center;
       color: var(--muted);
+      display: flex;
+      gap: 10px;
       margin: 0;
       padding: 16px;
     }
+
+    /* Echo Rings spinner inspired by Amalgam's psychedelic circle mark. */
+    .loading-spinner {
+      border: 3px solid #bd005b;
+      border-radius: 50%;
+      color: #bd005b;
+      flex-shrink: 0;
+      height: 32px;
+      position: relative;
+      width: 32px;
+      animation: echo-ring 1.5s ease-in-out infinite;
+    }
+
+    .loading-spinner::before,
+    .loading-spinner::after {
+      border: 3px solid currentColor;
+      border-radius: 50%;
+      content: '';
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .loading-spinner::before {
+      height: 60%;
+      width: 60%;
+      animation: echo-ring-inner 1.5s ease-in-out 0.18s infinite reverse;
+    }
+
+    .loading-spinner::after {
+      height: 25%;
+      width: 25%;
+      animation: echo-ring-inner 1.5s ease-in-out 0.36s infinite;
+    }
+
+    @keyframes echo-ring { 50% { opacity: 0.18; transform: scale(0.42); } }
+    @keyframes echo-ring-inner { 50% { opacity: 0.18; transform: translate(-50%, -50%) scale(0.42); } }
+    @media (prefers-reduced-motion: reduce) { .loading-spinner, .loading-spinner::before, .loading-spinner::after { animation: none; } }
 
     .calendar-frame[data-status="ready"] .calendar-message {
       display: none;
@@ -401,7 +443,10 @@
     </header>
 
     <section class="calendar-frame" data-status="loading" aria-label="Monthly event calendar">
-      <p class="calendar-message" data-calendar-message>Loading events...</p>
+      <p class="calendar-message" data-calendar-message aria-live="polite">
+        <span class="loading-spinner" aria-hidden="true"></span>
+        <span>Loading events...</span>
+      </p>
 
       <div class="weekdays" aria-hidden="true">
         <span>Sun</span>
