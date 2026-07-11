@@ -122,6 +122,48 @@
       overflow: hidden;
     }
 
+    /* Low-opacity Echo Rings add motion while keeping calendar details readable. */
+    .rss-echo-rings {
+      background: linear-gradient(135deg, #fffdf9, #f9e7ef, #fff8d1);
+      background-size: 180% 180%;
+      isolation: isolate;
+      overflow: hidden;
+      position: relative;
+      animation: rss-echo-color-drift 16s ease-in-out infinite;
+    }
+
+    .rss-echo-rings::after {
+      background: repeating-radial-gradient(
+        circle,
+        transparent 0 10px,
+        rgb(189 0 91 / 0.16) 11px 14px,
+        transparent 15px 23px
+      );
+      border-radius: 50%;
+      content: '';
+      height: 240px;
+      pointer-events: none;
+      position: absolute;
+      right: -110px;
+      top: -105px;
+      width: 240px;
+      z-index: 0;
+      animation: rss-echo-expand 11s ease-in-out infinite;
+    }
+
+    .rss-echo-rings > * {
+      position: relative;
+      z-index: 1;
+    }
+
+    @keyframes rss-echo-color-drift { 50% { background-position: 100% 100%; } }
+    @keyframes rss-echo-expand { 50% { opacity: 0.35; transform: scale(1.17); } }
+
+    @media (prefers-reduced-motion: reduce) {
+      .rss-echo-rings,
+      .rss-echo-rings::after { animation: none; }
+    }
+
     .calendar-message {
       align-items: center;
       color: var(--muted);
@@ -442,7 +484,7 @@
       </nav>
     </header>
 
-    <section class="calendar-frame" data-status="loading" aria-label="Monthly event calendar">
+    <section class="calendar-frame rss-echo-rings" data-status="loading" aria-label="Monthly event calendar">
       <p class="calendar-message" data-calendar-message aria-live="polite">
         <span class="loading-spinner" aria-hidden="true"></span>
         <span>Loading events...</span>
