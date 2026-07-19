@@ -25,6 +25,7 @@ Utility projects are published as widgets with a `widget.js` loader. Squarespace
 - `event-feeds/sci-prov-dates/`
 - `event-feeds/story-prov-dates/`
 - `event-feeds/workshops-and-jams-dates/`
+- `homepage-marquee/`
 - `utilities/jam-generator/widget.js`
 - `utilities/multi-timer/widget.js`
 - `utilities/suggestion-generator/widget.js`
@@ -64,6 +65,20 @@ Use these snippets in Squarespace Code Blocks after GitHub Pages is enabled for 
 ```html
 <script src="https://benrushscience.github.io/amalgam-improv-embeds/utilities/suggestion-generator/widget.js"></script>
 ```
+
+## Homepage Marquee
+
+Embed the featured-link marquee in the home-page Code Block with this iframe. Its cards and image paths are maintained in `homepage-marquee/index.html`.
+
+```html
+<iframe
+  src="https://benrushscience.github.io/amalgam-improv-embeds/homepage-marquee/"
+  style="width:100%; height:340px; border:0;"
+  title="Featured Amalgam Improv links">
+</iframe>
+```
+
+On mobile, use a Code Block height of `370px` if Squarespace allows a mobile-specific style. The cards become a horizontally swipeable row.
 
 ## Publishing Workflow
 
