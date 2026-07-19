@@ -18,10 +18,10 @@
     .marquee {
       display: grid;
       grid-template-columns: repeat(3, minmax(0, 1fr));
-      gap: 18px;
+      gap: 20px;
       max-width: 1200px;
       margin: 0 auto;
-      padding: 4px;
+      padding: 8px;
     }
 
     .card {
@@ -29,18 +29,30 @@
       display: block;
       min-height: 320px;
       overflow: hidden;
-      border-radius: 4px;
-      background: #232323;
+      border: 2px solid #bd005b;
+      border-radius: 2px;
+      background: #1c1720;
       color: #fff;
       text-decoration: none;
       isolation: isolate;
+      box-shadow: 0 0 0 3px #ffe974, 0 0 13px rgb(189 0 91 / 0.9), 0 0 28px rgb(189 0 91 / 0.56);
+      animation: neon-breath 4.5s ease-in-out infinite;
     }
+
+    .card:nth-child(2) {
+      border-color: #ffe974;
+      box-shadow: 0 0 0 3px #bd005b, 0 0 13px rgb(255 233 116 / 0.9), 0 0 28px rgb(255 233 116 / 0.56);
+      animation-name: neon-breath-yellow;
+      animation-delay: -1.5s;
+    }
+
+    .card:nth-child(3) { animation-delay: -3s; }
 
     .card::after {
       position: absolute;
       inset: 0;
       z-index: -1;
-      background: linear-gradient(180deg, rgba(0, 0, 0, 0.04) 35%, rgba(0, 0, 0, 0.8));
+      background: linear-gradient(180deg, rgb(189 0 91 / 0.14), transparent 35%, rgb(0 0 0 / 0.86)), linear-gradient(135deg, transparent 60%, rgb(255 233 116 / 0.16));
       content: "";
     }
 
@@ -51,26 +63,30 @@
       width: 100%;
       height: 100%;
       object-fit: cover;
-      transition: transform 250ms ease;
+      transition: transform 280ms ease, filter 280ms ease;
     }
 
     .card:hover img,
-    .card:focus-visible img { transform: scale(1.04); }
+    .card:focus-visible img { filter: saturate(1.15); transform: scale(1.06); }
 
-    .card:focus-visible { outline: 3px solid #6fe3d3; outline-offset: 3px; }
+    .card:hover { transform: translateY(-4px); }
+
+    .card:focus-visible { outline: 3px solid #ffe974; outline-offset: 5px; }
 
     .card-copy {
       position: absolute;
       right: 0;
       bottom: 0;
       left: 0;
-      padding: 22px 20px 18px;
+      padding: 15px 18px 16px;
+      background: linear-gradient(90deg, rgb(28 23 32 / 0.94), rgb(28 23 32 / 0.58));
+      border-top: 2px solid #ffe974;
     }
 
     .eyebrow {
       display: block;
       margin-bottom: 6px;
-      color: #e7e7e7;
+      color: #ffe974;
       font-size: 0.72rem;
       font-weight: 700;
       letter-spacing: 0.09em;
@@ -84,12 +100,20 @@
       line-height: 1.15;
     }
 
+    @keyframes neon-breath {
+      50% { box-shadow: 0 0 0 3px #ffe974, 0 0 19px rgb(189 0 91 / 1), 0 0 36px rgb(189 0 91 / 0.72); }
+    }
+
+    @keyframes neon-breath-yellow {
+      50% { box-shadow: 0 0 0 3px #bd005b, 0 0 19px rgb(255 233 116 / 1), 0 0 36px rgb(255 233 116 / 0.72); }
+    }
+
     @media (max-width: 700px) {
       .marquee {
         display: flex;
-        gap: 14px;
+        gap: 20px;
         overflow-x: auto;
-        padding: 4px 4px 12px;
+        padding: 8px 8px 14px;
         scroll-snap-type: x mandatory;
         scrollbar-width: thin;
       }
@@ -102,7 +126,8 @@
     }
 
     @media (prefers-reduced-motion: reduce) {
-      .card img { transition: none; }
+      .card,
+      .card img { animation: none; transition: none; }
     }
   </style>
 </head>
