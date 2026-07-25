@@ -100,6 +100,28 @@
       line-height: 1.15;
     }
 
+    /* Short event details stay out of the way until a visitor explores a card. */
+    .summary {
+      display: block;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: 0.88rem;
+      line-height: 1.35;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease;
+    }
+
+    .card:hover .summary,
+    .card:focus-visible .summary {
+      max-height: 3em;
+      margin-top: 8px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
     @keyframes neon-breath {
       50% { box-shadow: 0 0 0 3px #ffe974, 0 0 19px rgb(189 0 91 / 1), 0 0 36px rgb(189 0 91 / 0.72); }
     }
@@ -127,7 +149,18 @@
 
     @media (prefers-reduced-motion: reduce) {
       .card,
-      .card img { animation: none; transition: none; }
+      .card img,
+      .summary { animation: none; transition: none; }
+    }
+
+    /* Touch screens do not have hover, so keep the useful event detail visible. */
+    @media (hover: none) {
+      .summary {
+        max-height: 3em;
+        margin-top: 8px;
+        opacity: 1;
+        transform: none;
+      }
     }
   </style>
 </head>
@@ -142,6 +175,7 @@
       {
         title: "Open Jam — July 30",
         eyebrow: "All skill levels",
+        summary: "A low-pressure, all-levels jam where anyone can jump in, play, and meet fellow improvisers.",
         href: "https://www.amalgamimprov.com/shop/p/open-jam-2026-07-30",
         image: "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/e0542139-29c1-4f73-9314-f18b77f756df/Open+Jam+July+Square+2026-07-30.png?format=750w",
         alt: "Open Jam on July 30, 2026"
@@ -149,6 +183,7 @@
       {
         title: "Level 0 Course — August 1",
         eyebrow: "Four-hour introduction",
+        summary: "A friendly four-hour introduction to improv, designed to build confidence, connection, and play.",
         href: "https://www.amalgamimprov.com/shop/p/level-0-course-2026-08-01",
         image: "./assets/Level 0 Course Square 2026-08-01.png",
         alt: "Level 0 Course on August 1, 2026"
@@ -156,6 +191,7 @@
       {
         title: "Half-Baked — August 28",
         eyebrow: "Free improv show",
+        summary: "A free night of bold, creative improv from independent Madison teams at Reverie Baking Co.",
         href: "https://www.amalgamimprov.com/half-baked",
         image: "./assets/Half-Baked Square Image 2026-04-01.jpg",
         alt: "Half-Baked improv show on August 28, 2026"
@@ -170,6 +206,7 @@
         <span class="card-copy">
           <span class="eyebrow">${card.eyebrow}</span>
           <span class="title">${card.title}</span>
+          <span class="summary">${card.summary}</span>
         </span>
       </a>
     `).join("");
