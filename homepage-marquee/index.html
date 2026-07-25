@@ -114,9 +114,32 @@
       transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease;
     }
 
+    .learn-more {
+      display: block;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      color: #ffe974;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      text-transform: uppercase;
+      transform: translateY(6px);
+      transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease;
+    }
+
     .card:hover .summary,
     .card:focus-visible .summary {
       max-height: 3em;
+      margin-top: 8px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card:hover .learn-more,
+    .card:focus-visible .learn-more {
+      max-height: 2em;
       margin-top: 8px;
       opacity: 1;
       transform: translateY(0);
@@ -150,12 +173,14 @@
     @media (prefers-reduced-motion: reduce) {
       .card,
       .card img,
-      .summary { animation: none; transition: none; }
+      .summary,
+      .learn-more { animation: none; transition: none; }
     }
 
     /* Touch screens do not have hover, so keep the useful event detail visible. */
     @media (hover: none) {
-      .summary {
+      .summary,
+      .learn-more {
         max-height: 3em;
         margin-top: 8px;
         opacity: 1;
@@ -207,6 +232,7 @@
           <span class="eyebrow">${card.eyebrow}</span>
           <span class="title">${card.title}</span>
           <span class="summary">${card.summary}</span>
+          <span class="learn-more">Click to learn more</span>
         </span>
       </a>
     `).join("");
