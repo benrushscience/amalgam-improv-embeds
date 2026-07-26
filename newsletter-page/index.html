@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amalgam Improv Newsletter</title>
+  <style>
+    :root {
+      color-scheme: light;
+      font-family: Arial, Helvetica, sans-serif;
+      color: #171717;
+      background: transparent;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+    }
+
+    .newsletter {
+      width: 100%;
+      max-width: 900px;
+      margin: 0 auto;
+    }
+
+    .intro {
+      padding: 8px 20px 28px;
+    }
+
+    h1 {
+      margin: 0 0 18px;
+      color: #bd005b;
+      font-size: clamp(1.75rem, 5vw, 2.75rem);
+      line-height: 1.12;
+    }
+
+    p {
+      margin: 0 0 16px;
+      font-size: 1rem;
+      line-height: 1.65;
+    }
+
+    p:last-child {
+      margin-bottom: 0;
+    }
+
+    .form-frame {
+      display: block;
+      width: 100%;
+      height: 980px;
+      border: 0;
+    }
+
+    @media (max-width: 600px) {
+      .intro {
+        padding-right: 12px;
+        padding-left: 12px;
+      }
+
+      /* Google Forms stacks more tightly on phones, but still needs ample height. */
+      .form-frame {
+        height: 1100px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main class="newsletter">
+    <section class="intro" aria-labelledby="newsletter-heading">
+      <h1 id="newsletter-heading">Join the newsletter to stay up to date with Amalgam!</h1>
+      <p>The newsletter lets you know about upcoming shows, workshops, jams, and event the occasional course. The newsletter is sent on Sunday afternoons and you can unsubscribe if you wish.</p>
+      <p>We use Google Forms for the sign-up as Squarespace forms stink.</p>
+    </section>
+
+    <!-- The generous fixed height prevents a second scrollbar inside the Google Form. -->
+    <iframe
+      class="form-frame"
+      src="https://docs.google.com/forms/d/e/1FAIpQLScnUVZkq3T-VdEizqK2j9-u9Zpufi3PUR7AZdSslISedqJGQA/viewform?embedded=true"
+      title="Amalgam Improv newsletter sign-up form"
+      loading="eager"
+      scrolling="no">
+      Loading…
+    </iframe>
+  </main>
+</body>
+</html>
