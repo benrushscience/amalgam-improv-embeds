@@ -1,0 +1,244 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amalgam Improv Courses Marquee</title>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&display=swap">
+  <style>
+    :root {
+      font-family: Arial, Helvetica, sans-serif;
+      color: #171717;
+      background: transparent;
+    }
+
+    * { box-sizing: border-box; }
+
+    body { margin: 0; }
+
+    .marquee {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 20px;
+      max-width: 1200px;
+      margin: 0 auto;
+      padding: 8px;
+    }
+
+    /* Each product image and card share a 1:1 presentation area. */
+    .card {
+      position: relative;
+      display: block;
+      aspect-ratio: 1;
+      overflow: hidden;
+      border: 2px solid #bd005b;
+      border-radius: 2px;
+      background: #1c1720;
+      color: #fff;
+      text-decoration: none;
+      isolation: isolate;
+      box-shadow: 0 0 0 3px #ffe974, 0 0 13px rgb(189 0 91 / 0.9), 0 0 28px rgb(189 0 91 / 0.56);
+      animation: neon-breath 4.5s ease-in-out infinite;
+    }
+
+    .card:nth-child(2) {
+      border-color: #ffe974;
+      box-shadow: 0 0 0 3px #bd005b, 0 0 13px rgb(255 233 116 / 0.9), 0 0 28px rgb(255 233 116 / 0.56);
+      animation-name: neon-breath-yellow;
+      animation-delay: -1.5s;
+    }
+
+    .card:nth-child(3) { animation-delay: -3s; }
+
+    .card::after {
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(180deg, rgb(189 0 91 / 0.14), transparent 35%, rgb(0 0 0 / 0.86)), linear-gradient(135deg, transparent 60%, rgb(255 233 116 / 0.16));
+      content: "";
+    }
+
+    .card img {
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+      transition: transform 280ms ease, filter 280ms ease;
+    }
+
+    .card:hover img,
+    .card:focus-visible img { filter: saturate(1.15); transform: scale(1.06); }
+
+    .card:hover { transform: translateY(-4px); }
+
+    .card:focus-visible { outline: 3px solid #ffe974; outline-offset: 5px; }
+
+    .card-copy {
+      position: absolute;
+      right: 0;
+      bottom: 0;
+      left: 0;
+      padding: 15px 18px 16px;
+      background: linear-gradient(90deg, rgb(28 23 32 / 0.94), rgb(28 23 32 / 0.58));
+      border-top: 2px solid #ffe974;
+    }
+
+    .eyebrow {
+      display: block;
+      margin-bottom: 6px;
+      color: #ffe974;
+      font-size: 0.72rem;
+      font-weight: 700;
+      letter-spacing: 0.09em;
+      text-transform: uppercase;
+    }
+
+    .title {
+      display: block;
+      font-size: clamp(1.1rem, 1.8vw, 1.45rem);
+      font-weight: 700;
+      line-height: 1.15;
+    }
+
+    .summary {
+      display: block;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: 0.88rem;
+      line-height: 1.35;
+      opacity: 0;
+      transform: translateY(6px);
+      transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease;
+    }
+
+    .learn-more {
+      display: block;
+      max-height: 0;
+      margin-top: 0;
+      overflow: hidden;
+      color: #ffe974;
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.05em;
+      opacity: 0;
+      text-transform: uppercase;
+      transform: translateY(6px);
+      transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease;
+    }
+
+    .card:hover .summary,
+    .card:focus-visible .summary {
+      max-height: 3em;
+      margin-top: 8px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .card:hover .learn-more,
+    .card:focus-visible .learn-more {
+      max-height: 2em;
+      margin-top: 8px;
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    @keyframes neon-breath {
+      50% { box-shadow: 0 0 0 3px #ffe974, 0 0 19px rgb(189 0 91 / 1), 0 0 36px rgb(189 0 91 / 0.72); }
+    }
+
+    @keyframes neon-breath-yellow {
+      50% { box-shadow: 0 0 0 3px #bd005b, 0 0 19px rgb(255 233 116 / 1), 0 0 36px rgb(255 233 116 / 0.72); }
+    }
+
+    @media (max-width: 700px) {
+      .marquee {
+        display: flex;
+        gap: 20px;
+        overflow-x: auto;
+        padding: 8px 8px 14px;
+        scroll-snap-type: x mandatory;
+        scrollbar-width: thin;
+      }
+
+      .card {
+        flex: 0 0 min(82vw, 350px);
+        scroll-snap-align: start;
+      }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .card,
+      .card img,
+      .summary,
+      .learn-more { animation: none; transition: none; }
+    }
+
+    @media (hover: none) {
+      .summary,
+      .learn-more {
+        max-height: 3em;
+        margin-top: 8px;
+        opacity: 1;
+        transform: none;
+      }
+    }
+
+    h1, h2, h3 { font-family: "Oswald", Impact, sans-serif; }
+    p { font-family: "Arimo", Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <section class="marquee" id="marquee" aria-label="Available Amalgam Improv courses"></section>
+
+  <script>
+    // This block is refreshed by the daily Squarespace marquee task. It contains
+    // only public course products dated today or later, each with square artwork.
+    // COURSE_PRODUCTS_START
+    const courseProducts = [
+      {
+            "title": "Level 0 Course — August 1",
+            "eyebrow": "Course · August 1 · $50",
+            "summary": "Level 0 serves to introduce people who are curious about improv but may be hesitant to commit to a multi-week course, are limited on time, are intimidated by…",
+            "href": "https://www.amalgamimprov.com/shop/p/level-0-course-2026-08-01",
+            "image": "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/20e5d5f6-9019-445d-aa25-5ab6ef1f54d3/Level+0+Course+Square+Image.pptx.png",
+            "alt": "Level 0 Course Square Image.pptx.png"
+      },
+      {
+            "title": "Level 0 Course — August 22",
+            "eyebrow": "Course · August 22 · $50",
+            "summary": "Level 0 serves to introduce people who are curious about improv but may be hesitant to commit to a multi-week course, are limited on time, are intimidated by…",
+            "href": "https://www.amalgamimprov.com/shop/p/level-0-course-2026-08-22",
+            "image": "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/3dd4fad7-e89b-4486-83d6-d8de8e0bbf98/Level+0+Course+Square+Image+8-22.png",
+            "alt": "Level 0 Course Square Image 8-22.png"
+      },
+      {
+            "title": "Amalgam Improv Level 1 Course — September 12",
+            "eyebrow": "Course · September 12 · $215",
+            "summary": "Amalgam’s Level 1 Course serves to familiarize improvisers with being on stage, working as a team, and covering the basics of improv like physicality, emotions,…",
+            "href": "https://www.amalgamimprov.com/shop/p/amalgam-improv-level-1-course-2026-09-12",
+            "image": "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/ceb28b48-fc8a-499a-8d51-01429d8c522a/Level+1+Course+Square+Image.png",
+            "alt": "Level 1 Course Square Image.png"
+      }
+];
+    // COURSE_PRODUCTS_END
+
+    // Render cards from the editable product data. _top makes Squarespace load
+    // the selected shop product in the full page rather than inside its iframe.
+    document.querySelector("#marquee").innerHTML = courseProducts.map((product) => `
+      <a class="card" href="${product.href}" target="_top">
+        <img src="${product.image}" alt="${product.alt}" loading="lazy">
+        <span class="card-copy">
+          <span class="eyebrow">${product.eyebrow}</span>
+          <span class="title">${product.title}</span>
+          <span class="summary">${product.summary}</span>
+          <span class="learn-more">Click to learn more</span>
+        </span>
+      </a>
+    `).join("");
+  </script>
+</body>
+</html>
