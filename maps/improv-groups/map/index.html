@@ -1,5 +1,26 @@
 <!-- Filtered improv group map with category, country, state/region, and city controls. -->
 
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&display=swap" />
+<style>
+  /* Amalgam type system: Oswald for headings and Arimo for readable UI/body copy. */
+  :root {
+    --amalgam-heading-font: "Oswald", Impact, sans-serif;
+    --amalgam-body-font: "Arimo", Arial, sans-serif;
+  }
+
+  body,
+  button,
+  input,
+  select,
+  textarea {
+    font-family: var(--amalgam-body-font);
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    font-family: var(--amalgam-heading-font);
+  }
+</style>
+
 <!-- Leaflet and plugin styles -->
 <link rel="stylesheet" href="https://unpkg.com/leaflet/dist/leaflet.css" />
 <link rel="stylesheet" href="https://unpkg.com/leaflet.markercluster/dist/MarkerCluster.css" />
@@ -104,7 +125,7 @@
     background: rgba(32, 32, 32, 0.82);
     color: #fff;
     box-shadow: 0 12px 30px rgba(0,0,0,0.22);
-    font: 14px/1.2 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font: 14px/1.2 var(--amalgam-body-font);
     text-align: center;
   }
 
@@ -149,7 +170,7 @@
     background: rgba(92, 92, 92, 0.92);
     color: #fff;
     box-shadow: 0 10px 30px rgba(0,0,0,0.24);
-    font: 14px/1.35 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font: 14px/1.35 var(--amalgam-body-font);
   }
 
   .filter-panel-header {
@@ -167,6 +188,7 @@
     text-transform: uppercase;
     letter-spacing: 0.08em;
     color: rgba(255,255,255,0.78);
+    font-family: var(--amalgam-heading-font);
   }
 
   .filter-title {
@@ -175,6 +197,7 @@
     font-weight: 700;
     line-height: 1.05;
     color: #fff;
+    font-family: var(--amalgam-heading-font);
   }
 
   .filter-panel-actions {
@@ -298,6 +321,7 @@
   .leaflet-popup-content {
     margin: 14px 16px;
     line-height: 1.3;
+    font-family: var(--amalgam-body-font);
   }
 
   .leaflet-popup-content b {
@@ -305,6 +329,7 @@
     font-size: 1.05rem;
     margin-bottom: 2px;
     color: #000;
+    font-family: var(--amalgam-heading-font);
   }
 
   .leaflet-popup-content em {
@@ -327,7 +352,7 @@
     padding: 6px 8px;
     border-radius: 6px;
     box-shadow: 0 1px 3px rgba(0,0,0,0.3);
-    font: 13px/1 system-ui, -apple-system, Segoe UI, Roboto, sans-serif;
+    font: 13px/1 var(--amalgam-body-font);
   }
 
   .leaflet-control-darktoggle label {

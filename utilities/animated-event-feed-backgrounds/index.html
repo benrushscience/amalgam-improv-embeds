@@ -1,0 +1,343 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Amalgam Animated Event Feed Backgrounds</title>
+  <style>
+    /* ---------- Amalgam brand colors and gallery layout ---------- */
+    :root {
+      --off-white: #f7f6f3;
+      --pale-yellow: #ffe974;
+      --red-orange: #e55937;
+      --deep-pink: #bd005b;
+      --black: #000000;
+      --card: rgb(255 255 255 / 0.9);
+      font-family: "Avenir Next", Montserrat, "Trebuchet MS", Arial, sans-serif;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      background: var(--off-white);
+      color: var(--black);
+      margin: 0;
+      padding: 32px 20px 56px;
+    }
+
+    main { margin: 0 auto; max-width: 1180px; }
+
+    h1 { font-size: clamp(2rem, 4vw, 3.25rem); line-height: 1; margin: 0; }
+    .intro { line-height: 1.5; margin: 14px 0 28px; max-width: 760px; }
+
+    .background-grid {
+      display: grid;
+      gap: 20px;
+      grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    }
+
+    .background-option {
+      background: #fff;
+      border: 3px solid var(--black);
+      border-radius: 16px;
+      overflow: hidden;
+    }
+
+    .option-label {
+      align-items: baseline;
+      display: flex;
+      gap: 8px;
+      justify-content: space-between;
+      padding: 14px 16px;
+    }
+
+    .option-label h2 { font-size: 1.05rem; margin: 0; }
+    .option-label code { color: var(--deep-pink); font-size: 0.78rem; font-weight: 700; }
+
+    /* ---------- Shared feed-example structure ---------- */
+    .feed-preview {
+      isolation: isolate;
+      min-height: 270px;
+      overflow: hidden;
+      padding: 20px;
+      position: relative;
+    }
+
+    .feed-preview::before,
+    .feed-preview::after {
+      content: "";
+      pointer-events: none;
+      position: absolute;
+      z-index: -1;
+    }
+
+    .feed-title {
+      font-size: 1.35rem;
+      line-height: 1.1;
+      margin: 0 0 14px;
+    }
+
+    .event-list { display: grid; gap: 10px; }
+
+    .event-card {
+      background: var(--card);
+      border: 1px solid rgb(0 0 0 / 0.16);
+      border-radius: 10px;
+      box-shadow: 0 2px 8px rgb(0 0 0 / 0.08);
+      padding: 12px;
+    }
+
+    .event-card time {
+      color: var(--deep-pink);
+      display: block;
+      font-size: 0.74rem;
+      font-weight: 800;
+      letter-spacing: 0.04em;
+      margin-bottom: 3px;
+      text-transform: uppercase;
+    }
+
+    .event-card strong { display: block; font-size: 0.96rem; }
+    .event-card span { display: block; font-size: 0.82rem; margin-top: 4px; }
+
+    /* 01: Barely-there off-white movement for the most neutral feed. */
+    .feed--off-white-drift {
+      background: linear-gradient(120deg, #fffdf9, var(--off-white), #fffaf0);
+      background-size: 180% 180%;
+      animation: color-drift 13s ease-in-out infinite;
+    }
+
+    .feed--off-white-drift::before {
+      background: rgb(255 233 116 / 0.32);
+      border-radius: 50%;
+      height: 180px;
+      right: -74px;
+      top: -96px;
+      width: 180px;
+      animation: float-blob 15s ease-in-out infinite;
+    }
+
+    /* 02: A sunny pale-yellow wash with slow, warm movement. */
+    .feed--lemon-glow {
+      background: linear-gradient(135deg, #fffdf6, #fff7bd, #ffe974, #fff8cc);
+      background-size: 220% 220%;
+      animation: color-drift 14s ease-in-out infinite reverse;
+    }
+
+    .feed--lemon-glow::after {
+      background: rgb(255 255 255 / 0.35);
+      border-radius: 50%;
+      bottom: -120px;
+      height: 240px;
+      left: -80px;
+      width: 240px;
+      animation: float-blob 17s ease-in-out infinite reverse;
+    }
+
+    /* 03: A soft red-orange wash that stays light behind event cards. */
+    .feed--apricot-wash {
+      background: linear-gradient(145deg, #fffdf9, #fce8dd, #f8d6c7, #fff9ef);
+      background-size: 220% 220%;
+      animation: color-drift 16s ease-in-out infinite;
+    }
+
+    .feed--apricot-wash::before {
+      background: rgb(229 89 55 / 0.14);
+      border-radius: 42% 58% 46% 54%;
+      height: 150px;
+      right: -42px;
+      top: 16px;
+      transform: rotate(15deg);
+      width: 150px;
+      animation: blob-turn 18s ease-in-out infinite;
+    }
+
+    /* 04: Deep pink is used as a very low-contrast, festival-like mist. */
+    .feed--pink-mist {
+      background: linear-gradient(125deg, #fffafd, #fae4ef, #f9dfe9, #fff9ed);
+      background-size: 210% 210%;
+      animation: color-drift 15s ease-in-out infinite reverse;
+    }
+
+    .feed--pink-mist::after {
+      background: radial-gradient(circle, rgb(189 0 91 / 0.16), transparent 69%);
+      bottom: -80px;
+      height: 230px;
+      right: -80px;
+      width: 230px;
+      animation: breathe 11s ease-in-out infinite;
+    }
+
+    /* 05: Pale yellow, orange, and pink meet in an especially gentle sunset. */
+    .feed--sunset-veil {
+      background: linear-gradient(130deg, #fffbe1, #ffe8b8, #f9d7c6, #f8e2ee, #fffbe1);
+      background-size: 260% 260%;
+      animation: color-drift 18s ease-in-out infinite;
+    }
+
+    .feed--sunset-veil::before {
+      background: linear-gradient(90deg, transparent, rgb(255 255 255 / 0.35), transparent);
+      height: 100%;
+      left: -60%;
+      top: 0;
+      transform: skewX(-20deg);
+      width: 55%;
+      animation: soft-sweep 15s ease-in-out infinite;
+    }
+
+    /* 06: Echo Rings add a recognizable mark without competing with copy. */
+    .feed--echo-rings {
+      background: linear-gradient(135deg, #fffdf9, #f9e7ef, #fff8d1);
+      background-size: 180% 180%;
+      animation: color-drift 16s ease-in-out infinite;
+    }
+
+    .feed--echo-rings::after {
+      background: repeating-radial-gradient(
+        circle,
+        transparent 0 10px,
+        rgb(189 0 91 / 0.16) 11px 14px,
+        transparent 15px 23px
+      );
+      border-radius: 50%;
+      height: 240px;
+      right: -110px;
+      top: -105px;
+      width: 240px;
+      animation: echo-expand 11s ease-in-out infinite;
+    }
+
+    /* 07: Three bullseyes slowly roll across the bottom of the feed. */
+    .feed--rolling-rings {
+      background: linear-gradient(145deg, #fffdf9, #fff5bd, #fffaf1);
+      background-size: 180% 180%;
+      animation: color-drift 14s ease-in-out infinite reverse;
+    }
+
+    .feed--rolling-rings::before,
+    .feed--rolling-rings::after {
+      background: repeating-radial-gradient(
+        circle,
+        transparent 0 7px,
+        rgb(189 0 91 / 0.15) 8px 10px,
+        transparent 11px 15px
+      );
+      border-radius: 50%;
+      bottom: -66px;
+      height: 140px;
+      width: 140px;
+    }
+
+    .feed--rolling-rings::before { left: -30px; animation: roll-left 18s linear infinite; }
+    .feed--rolling-rings::after { right: -30px; animation: roll-right 20s linear infinite; }
+
+    /* 08: A subtle side-to-side band gives a modern, calm sense of movement. */
+    .feed--sidewind {
+      background: linear-gradient(90deg, #fffdf9 0%, #fffdf9 35%, #f9e5ee 52%, #fff3bf 70%, #fffdf9 100%);
+      background-size: 260% 100%;
+      animation: sidewind 17s ease-in-out infinite;
+    }
+
+    .feed--sidewind::after {
+      border: 2px solid rgb(189 0 91 / 0.12);
+      border-radius: 50%;
+      height: 90px;
+      left: -32px;
+      top: 32px;
+      width: 90px;
+      animation: breathe 10s ease-in-out infinite;
+    }
+
+    /* 09: Translucent color pools drift at different speeds. */
+    .feed--color-pools {
+      background: #fffdf9;
+    }
+
+    .feed--color-pools::before {
+      background: radial-gradient(circle, rgb(255 233 116 / 0.58), rgb(255 233 116 / 0) 69%);
+      height: 230px;
+      left: -84px;
+      top: -82px;
+      width: 230px;
+      animation: pool-one 17s ease-in-out infinite;
+    }
+
+    .feed--color-pools::after {
+      background: radial-gradient(circle, rgb(229 89 55 / 0.16), rgb(189 0 91 / 0.09) 35%, transparent 70%);
+      bottom: -100px;
+      height: 260px;
+      right: -100px;
+      width: 260px;
+      animation: pool-two 19s ease-in-out infinite;
+    }
+
+    /* 10: A warm gradient with a small rolling-ring accent in one corner. */
+    .feed--corner-orbit {
+      background: linear-gradient(140deg, #fffdf9, #fde8dc, #fff4bd, #fffdf9);
+      background-size: 210% 210%;
+      animation: color-drift 15s ease-in-out infinite reverse;
+    }
+
+    .feed--corner-orbit::after {
+      background: repeating-radial-gradient(
+        circle,
+        transparent 0 8px,
+        rgb(189 0 91 / 0.18) 9px 12px,
+        transparent 13px 17px
+      );
+      border-radius: 50%;
+      bottom: -46px;
+      height: 118px;
+      right: -40px;
+      width: 118px;
+      animation: corner-orbit 13s ease-in-out infinite;
+    }
+
+    /* ---------- Slow animation definitions ---------- */
+    @keyframes color-drift { 50% { background-position: 100% 100%; } }
+    @keyframes float-blob { 50% { transform: translate(-20px, 24px) scale(1.14); } }
+    @keyframes blob-turn { 50% { transform: rotate(45deg) scale(1.16); } }
+    @keyframes breathe { 50% { opacity: 0.46; transform: scale(1.18); } }
+    @keyframes soft-sweep { 50% { transform: translateX(330%) skewX(-20deg); } }
+    @keyframes echo-expand { 50% { opacity: 0.35; transform: scale(1.17); } }
+    @keyframes roll-left { to { transform: translateX(245px) rotate(360deg); } }
+    @keyframes roll-right { to { transform: translateX(-245px) rotate(-360deg); } }
+    @keyframes sidewind { 50% { background-position: 100% 0; } }
+    @keyframes pool-one { 50% { transform: translate(82px, 70px) scale(1.16); } }
+    @keyframes pool-two { 50% { transform: translate(-80px, -72px) scale(0.86); } }
+    @keyframes corner-orbit { 50% { transform: translate(-60px, -90px) rotate(180deg); } }
+
+    /* Keep the gallery usable for people who prefer less motion. */
+    @media (prefers-reduced-motion: reduce) {
+      .feed-preview,
+      .feed-preview::before,
+      .feed-preview::after { animation: none !important; }
+    }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&display=swap">
+  <style>
+    h1, h2, h3 { font-family: "Oswald", Impact, sans-serif; }
+    p { font-family: "Arimo", Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <main>
+    <h1>Animated Event Feed Backgrounds</h1>
+    <p class="intro">These ten examples keep event details readable while adding slow color movement. Echo and Rolling Rings appear only as low-opacity accents, so the feed stays inviting rather than distracting.</p>
+
+    <section class="background-grid" aria-label="Event feed background options">
+      <!-- Each feed preview uses the same sample content to make backgrounds easy to compare. -->
+      <article class="background-option"><div class="option-label"><h2>1. Off-white Drift</h2><code>feed--off-white-drift</code></div><section class="feed-preview feed--off-white-drift"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>2. Lemon Glow</h2><code>feed--lemon-glow</code></div><section class="feed-preview feed--lemon-glow"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>3. Apricot Wash</h2><code>feed--apricot-wash</code></div><section class="feed-preview feed--apricot-wash"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>4. Pink Mist</h2><code>feed--pink-mist</code></div><section class="feed-preview feed--pink-mist"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>5. Sunset Veil</h2><code>feed--sunset-veil</code></div><section class="feed-preview feed--sunset-veil"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>6. Echo Rings</h2><code>feed--echo-rings</code></div><section class="feed-preview feed--echo-rings"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>7. Rolling Rings</h2><code>feed--rolling-rings</code></div><section class="feed-preview feed--rolling-rings"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>8. Sidewind</h2><code>feed--sidewind</code></div><section class="feed-preview feed--sidewind"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>9. Color Pools</h2><code>feed--color-pools</code></div><section class="feed-preview feed--color-pools"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+      <article class="background-option"><div class="option-label"><h2>10. Corner Orbit</h2><code>feed--corner-orbit</code></div><section class="feed-preview feed--corner-orbit"><h3 class="feed-title">Upcoming Events</h3><div class="event-list"><article class="event-card"><time>Thursday · 6:45 PM</time><strong>Open Jam</strong><span>Neighborhood House Community Center</span></article><article class="event-card"><time>Saturday · 7:30 PM</time><strong>Half-Baked</strong><span>Independent improv teams live</span></article></div></section></article>
+    </section>
+  </main>
+</body>
+</html>

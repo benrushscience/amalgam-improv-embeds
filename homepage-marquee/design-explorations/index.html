@@ -1,0 +1,153 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Amalgam Marquee Design Explorations</title>
+  <style>
+    :root { color: #f8f5ed; background: #171321; font-family: Arial, Helvetica, sans-serif; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 40px 18px 80px; }
+    header { max-width: 1160px; margin: 0 auto 42px; }
+    h1 { margin: 0 0 10px; font-size: clamp(2rem, 5vw, 3.6rem); letter-spacing: -.05em; }
+    header p { max-width: 670px; margin: 0; color: #cac2d8; font-size: 1.08rem; line-height: 1.5; }
+    .gallery { display: grid; gap: 44px; max-width: 1160px; margin: auto; }
+    .concept { padding: 18px; border: 1px solid #463f55; background: #211b2e; }
+    .concept-heading { display: flex; align-items: baseline; gap: 14px; margin: 0 0 15px; }
+    .concept-number { color: #70ead8; font: 700 .82rem/1 monospace; }
+    h2 { margin: 0; font-size: 1.15rem; }
+    .concept-note { margin: 0 0 18px; color: #bcb3ca; font-size: .95rem; }
+    .marquee { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; min-height: 300px; }
+    .card { position: relative; display: block; min-height: 300px; overflow: hidden; color: #fff; text-decoration: none; isolation: isolate; }
+    .card::before { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, transparent 28%, rgb(0 0 0 / .84)); content: ""; }
+    .card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; transition: transform .5s ease; }
+    .card:hover img { transform: scale(1.06); }
+    .copy { position: absolute; right: 18px; bottom: 17px; left: 18px; }
+    .tag { display: block; margin-bottom: 5px; font-size: .68rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase; }
+    .title { display: block; font-size: clamp(1rem, 2vw, 1.45rem); font-weight: 800; line-height: 1.05; }
+
+    /* 1. Strong solid frames: direct, high-contrast, immediately readable. */
+    .poster .card { border: 7px solid #f6d84c; box-shadow: 7px 7px 0 #e04088; }
+    .poster .card:nth-child(2) { border-color: #70ead8; box-shadow-color: #f6d84c; }
+    .poster .card:nth-child(3) { border-color: #e04088; box-shadow-color: #70ead8; }
+    .poster .copy { background: #171321; padding: 12px; transform: translateY(8px) rotate(-1deg); }
+
+    /* 2. Echo rings: a subtle nod to Amalgam's circular visual language. */
+    .echo { gap: 16px; background: #101821; padding: 14px; overflow: hidden; }
+    .echo .card { border-radius: 50% 50% 12px 12px; border: 2px solid #70ead8; }
+    .echo .card::after { position: absolute; inset: -35%; border: 2px solid rgb(112 234 216 / .5); border-radius: 50%; content: ""; animation: pulse 5s ease-in-out infinite; }
+    .echo .card:nth-child(2)::after { animation-delay: -1.6s; }
+    .echo .card:nth-child(3)::after { animation-delay: -3.2s; }
+    @keyframes pulse { 50% { opacity: .25; transform: scale(.75); } }
+    .echo .copy { text-align: center; }
+
+    /* 3. Ticket stubs: playful event identity with perforation-inspired edges. */
+    .tickets { gap: 0; background: #fa6a50; padding: 10px; }
+    .tickets .card { border-right: 2px dashed #f9e8be; border-radius: 16px 0 0 16px; }
+    .tickets .card:last-child { border: 0; border-radius: 0 16px 16px 0; }
+    .tickets .copy { left: 0; right: 0; bottom: 0; padding: 17px 20px; background: #f9e8be; color: #1c1b2b; }
+    .tickets .tag { color: #b42462; }
+
+    /* 4. Theater bulbs: a night-out look with animated light points. */
+    .bulbs { gap: 18px; padding: 12px; background: #07162b; }
+    .bulbs .card { border: 4px solid #f9e8be; outline: 4px dotted #f4b840; outline-offset: 5px; }
+    .bulbs .tag { color: #f4d35e; }
+    .bulbs .card:nth-child(2) { animation: flicker 3.5s ease-in-out infinite; }
+    @keyframes flicker { 50% { filter: brightness(1.23); } }
+
+    /* 5. Scrapbook collage: layered photos and handwritten-style details. */
+    .scrapbook { align-items: center; gap: 22px; padding: 18px; background: #e9d9c7; }
+    .scrapbook .card { min-height: 260px; border: 10px solid #fff; box-shadow: 3px 8px 12px rgb(36 22 28 / .36); transform: rotate(-2deg); }
+    .scrapbook .card:nth-child(2) { transform: rotate(2deg) translateY(-8px); }
+    .scrapbook .card:nth-child(3) { transform: rotate(-1deg); }
+    .scrapbook .copy { padding: 10px 13px; background: rgb(255 255 255 / .92); color: #19142a; }
+    .scrapbook .tag { color: #a60053; }
+
+    /* 6. Neon nightlife: electric outline and a small hover lift. */
+    .neon { gap: 20px; padding: 13px; background: radial-gradient(circle at 50% 0, #6e245e, #10101f 55%); }
+    .neon .card { border: 2px solid #f46bc4; box-shadow: 0 0 12px #f46bc4, inset 0 0 15px rgb(244 107 196 / .5); }
+    .neon .card:nth-child(2) { border-color: #63f5d2; box-shadow: 0 0 12px #63f5d2, inset 0 0 15px rgb(99 245 210 / .5); }
+    .neon .card:hover { transform: translateY(-7px); }
+    .neon .tag { color: #63f5d2; }
+
+    /* 7. Color windows: translucent panes that keep the photography prominent. */
+    .windows { gap: 8px; background: #a60053; padding: 8px; }
+    .windows .card { border-radius: 18px; }
+    .windows .card::after { position: absolute; inset: 0; background: linear-gradient(135deg, rgb(104 233 215 / .45), transparent 45%); content: ""; mix-blend-mode: screen; }
+    .windows .card:nth-child(2)::after { background: linear-gradient(135deg, rgb(255 212 82 / .46), transparent 45%); }
+    .windows .card:nth-child(3)::after { background: linear-gradient(135deg, rgb(255 112 166 / .46), transparent 45%); }
+
+    /* 8. Offset gallery: cards overlap slightly for energetic depth. */
+    .offset { gap: 0; padding: 16px 30px; background: #70ead8; }
+    .offset .card { border: 5px solid #171321; }
+    .offset .card:nth-child(1) { transform: translateY(13px); z-index: 1; }
+    .offset .card:nth-child(2) { transform: translateY(-8px) scale(1.05); z-index: 2; }
+    .offset .card:nth-child(3) { transform: translateY(13px); z-index: 1; }
+    .offset .copy { background: #171321; }
+
+    /* 9. Timeline: date-style labels make the cards feel programmed and current. */
+    .timeline { gap: 12px; padding: 0 12px 13px; background: #f8f5ed; }
+    .timeline .card { border-bottom: 11px solid #171321; }
+    .timeline .card:nth-child(2) { border-bottom-color: #e04088; }
+    .timeline .card:nth-child(3) { border-bottom-color: #70ead8; }
+    .timeline .copy { left: 14px; right: 14px; bottom: 15px; padding-left: 14px; border-left: 5px solid #f6d84c; }
+
+    /* 10. Kinetic labels: lively, flexible bands that move on hover. */
+    .kinetic { gap: 15px; padding: 14px; background: linear-gradient(120deg, #f6d84c, #e04088, #70ead8); background-size: 220% 220%; animation: drift 12s ease infinite; }
+    .kinetic .card { border-radius: 50% 8px 50% 8px; }
+    .kinetic .copy { left: 0; right: 0; bottom: 25px; padding: 13px 18px; background: #171321; transform: rotate(-2deg); transition: transform .3s ease; }
+    .kinetic .card:hover .copy { transform: rotate(1deg) translateY(-7px); }
+    @keyframes drift { 50% { background-position: 100% 100%; } }
+
+    @media (max-width: 720px) {
+      body { padding: 24px 12px 60px; }
+      .marquee { display: flex; overflow-x: auto; min-height: 270px; padding-bottom: 9px; }
+      .card { flex: 0 0 75vw; min-height: 270px; }
+      .tickets .card { flex-basis: 75vw; }
+      .offset { gap: 10px; padding: 13px; }
+      .offset .card { transform: none !important; }
+    }
+    @media (prefers-reduced-motion: reduce) { *, *::before, *::after { animation: none !important; transition: none !important; } }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&display=swap">
+  <style>
+    h1, h2, h3 { font-family: "Oswald", Impact, sans-serif; }
+    p { font-family: "Arimo", Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <header>
+    <h1>Marquee design explorations</h1>
+    <p>Ten directions for a more unmistakably Amalgam home-page feature strip. Each keeps photos, useful event text, and clear click targets—while changing the personality around them.</p>
+  </header>
+  <main class="gallery" id="gallery"></main>
+  <script>
+    const events = [
+      { title: "Big Honey’s Little Improv Festival", tag: "Festival", image: "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/1a7bab22-34b2-4c2a-9b30-16011c9460e0/whimsy+slideshow+image+%282%29.jpg?format=500w" },
+      { title: "Open Jam — July 30", tag: "All skill levels", image: "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/e0542139-29c1-4f73-9314-f18b77f756df/Open+Jam+July+Square+2026-07-30.png?format=750w" },
+      { title: "Level 0 Course — August 1", tag: "Four-hour introduction", image: "../assets/Level 0 Course Square 2026-08-01.png" }
+    ];
+    const concepts = [
+      ["poster", "Solid poster frames", "Strong Amalgam colors, solid borders, and offset shadows."],
+      ["echo", "Echo rings", "Animated circular outlines bring the logo language into the cards."],
+      ["tickets", "Ticket stubs", "A show-night treatment with warm color and perforated borders."],
+      ["bulbs", "Theater bulbs", "A classic marquee feeling: dark navy, gold light, and theatrical detail."],
+      ["scrapbook", "Community scrapbook", "A warm, handmade collage that foregrounds community and play."],
+      ["neon", "Neon night", "High-energy nightlife styling for shows, jams, and late-night discovery."],
+      ["windows", "Color windows", "Clean photography with luminous color panes over the images."],
+      ["offset", "Offset gallery", "Layered cards with depth—like a vibrant stack of event posters."],
+      ["timeline", "Program timeline", "A crisp, editorial system that makes upcoming events feel organized."],
+      ["kinetic", "Kinetic labels", "A playful gradient backdrop and labels that shift as visitors explore."]
+    ];
+    document.querySelector("#gallery").innerHTML = concepts.map(([className, title, note], index) => `
+      <section class="concept">
+        <div class="concept-heading"><span class="concept-number">${String(index + 1).padStart(2, "0")}</span><h2>${title}</h2></div>
+        <p class="concept-note">${note}</p>
+        <div class="marquee ${className}">
+          ${events.map(event => `<a class="card" href="#${className}" aria-label="Preview ${event.title}"><img src="${event.image}" alt=""><span class="copy"><span class="tag">${event.tag}</span><span class="title">${event.title}</span></span></a>`).join("")}
+        </div>
+      </section>
+    `).join("");
+  </script>
+</body>
+</html>
