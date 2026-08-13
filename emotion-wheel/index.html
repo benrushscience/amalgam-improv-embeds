@@ -1,0 +1,4061 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="description" content="Explore a two-tier interactive emotion wheel from Amalgam Improv.">
+  <meta name="theme-color" content="#bd005b">
+  <title>Amalgam Improv Emotion Wheel</title>
+</head>
+<body>
+<!-- Full Amalgam Improv interactive two-tier emotion wheel for a Squarespace Code Block. -->
+<div id="amalgam-emotion-wheel">
+
+  <style>
+    @import url("https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&family=Oswald:wght@400;500;600;700&display=swap");
+
+    /* =========================================================
+       AMALGAM BRAND + BASE
+       ========================================================= */
+
+    #amalgam-emotion-wheel {
+      --amalgam-off-white: #F7F6F3;
+      --amalgam-yellow: #FFE974;
+      --amalgam-orange: #E55937;
+      --amalgam-pink: #BD005B;
+      --amalgam-black: #000000;
+
+      --surface: #FFFFFF;
+      --muted-text: #555555;
+      --border-soft: rgba(0, 0, 0, 0.16);
+
+      width: 100%;
+      box-sizing: border-box;
+
+      padding: clamp(22px, 4vw, 46px);
+
+      background: var(--amalgam-off-white);
+      color: var(--amalgam-black);
+
+      border-radius: 24px;
+
+      font-family: "Arimo", Arial, sans-serif;
+    }
+
+    #amalgam-emotion-wheel * {
+      box-sizing: border-box;
+    }
+
+    #amalgam-emotion-wheel h1,
+    #amalgam-emotion-wheel h2,
+    #amalgam-emotion-wheel h3,
+    #amalgam-emotion-wheel h4,
+    #amalgam-emotion-wheel button {
+      font-family: "Oswald", Impact, sans-serif;
+    }
+
+    #amalgam-emotion-wheel p {
+      font-family: "Arimo", Arial, sans-serif;
+    }
+
+    .emotion-wheel-shell {
+      max-width: 1200px;
+      margin: 0 auto;
+    }
+
+
+    /* =========================================================
+       INTRO
+       ========================================================= */
+
+    .emotion-wheel-intro {
+      max-width: 850px;
+      margin: 0 auto 24px;
+      text-align: center;
+    }
+
+    .emotion-wheel-intro h2 {
+      margin: 0 0 14px;
+
+      font-size: clamp(2.2rem, 5vw, 4rem);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .emotion-wheel-intro p {
+      max-width: 740px;
+      margin: 0 auto;
+
+      color: var(--muted-text);
+
+      font-size: 1.03rem;
+      line-height: 1.65;
+    }
+
+
+    /* =========================================================
+       HOW-TO
+       ========================================================= */
+
+    .emotion-how-to {
+      display: flex;
+      align-items: flex-start;
+      gap: 14px;
+
+      max-width: 850px;
+      margin: 24px auto 28px;
+      padding: 18px 22px;
+
+      background: var(--amalgam-yellow);
+
+      border: 2px solid var(--amalgam-black);
+      border-radius: 14px;
+    }
+
+    .emotion-how-to-number {
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+
+      flex: 0 0 auto;
+
+      width: 32px;
+      height: 32px;
+
+      background: var(--amalgam-black);
+      color: var(--amalgam-yellow);
+
+      border-radius: 50%;
+
+      font-family: "Oswald", Impact, sans-serif;
+      font-weight: 700;
+    }
+
+    .emotion-how-to p {
+      margin: 2px 0 0;
+
+      font-size: 0.97rem;
+      line-height: 1.55;
+    }
+
+
+    /* =========================================================
+       RANDOM BUTTON
+       ========================================================= */
+
+    .emotion-random-area {
+      margin-bottom: 30px;
+      text-align: center;
+    }
+
+    .emotion-random-button {
+      appearance: none;
+
+      padding: 13px 25px;
+
+      background: var(--amalgam-orange);
+      color: var(--amalgam-black);
+
+      border: 2px solid var(--amalgam-black);
+      border-radius: 999px;
+
+      box-shadow: 4px 4px 0 var(--amalgam-black);
+
+      font-size: 1.05rem;
+      font-weight: 700;
+      letter-spacing: 0.025em;
+      text-transform: uppercase;
+
+      cursor: pointer;
+
+      transition:
+        background 140ms ease,
+        color 140ms ease,
+        transform 140ms ease,
+        box-shadow 140ms ease;
+    }
+
+    .emotion-random-button:hover {
+      background: var(--amalgam-pink);
+      color: #FFFFFF;
+
+      transform: translate(2px, 2px);
+      box-shadow: 2px 2px 0 var(--amalgam-black);
+    }
+
+    .emotion-random-button:focus-visible {
+      outline: 4px solid var(--amalgam-yellow);
+      outline-offset: 4px;
+    }
+
+
+    /* =========================================================
+       MAIN LAYOUT
+       ========================================================= */
+
+    .emotion-wheel-layout {
+      display: grid;
+      grid-template-columns:
+        minmax(390px, 1.08fr)
+        minmax(310px, 0.92fr);
+
+      gap: clamp(26px, 4vw, 48px);
+
+      align-items: start;
+    }
+
+    .wheel-column {
+      min-width: 0;
+    }
+
+    .wheel-wrap {
+      position: relative;
+
+      width: min(100%, 700px);
+      margin: 0 auto;
+
+      aspect-ratio: 1 / 1;
+    }
+
+    #emotion-wheel-svg {
+      display: block;
+
+      width: 100%;
+      height: 100%;
+
+      overflow: visible;
+    }
+
+
+    /* =========================================================
+       SVG SEGMENTS
+       ========================================================= */
+
+    .emotion-segment {
+      cursor: pointer;
+
+      stroke: rgba(255, 255, 255, 0.92);
+      stroke-width: 2;
+
+      transition:
+        opacity 180ms ease,
+        filter 180ms ease,
+        stroke-width 180ms ease;
+    }
+
+    .emotion-segment:hover,
+    .emotion-segment:focus {
+      filter: brightness(1.07);
+
+      stroke-width: 4;
+
+      outline: none;
+    }
+
+    .emotion-segment.is-selected {
+      stroke: var(--amalgam-black);
+      stroke-width: 5;
+
+      filter: brightness(1.03);
+    }
+
+    .emotion-segment.is-dimmed {
+      opacity: 0.2;
+    }
+
+
+    /* =========================================================
+       SVG LABELS
+       ========================================================= */
+
+    .emotion-label {
+      pointer-events: none;
+
+      fill: #151515;
+
+      font-family: "Arimo", Arial, sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+
+      text-anchor: middle;
+      dominant-baseline: middle;
+
+      transition: opacity 180ms ease;
+    }
+
+    .emotion-label.is-dimmed {
+      opacity: 0.17;
+    }
+
+    .family-label {
+      font-family: "Oswald", Impact, sans-serif;
+      font-size: 15px;
+      font-weight: 600;
+
+      letter-spacing: 0.15px;
+      text-transform: uppercase;
+    }
+
+    .tier2-label {
+      font-family: "Arimo", Arial, sans-serif;
+      font-size: 12.5px;
+      font-weight: 700;
+    }
+
+
+    /* =========================================================
+       CENTER
+       ========================================================= */
+
+    .center-circle {
+      fill: var(--amalgam-off-white);
+
+      stroke: var(--amalgam-black);
+      stroke-width: 2.5;
+
+      cursor: pointer;
+    }
+
+    .center-title {
+      pointer-events: none;
+
+      fill: var(--amalgam-black);
+
+      font-family: "Oswald", Impact, sans-serif;
+      font-size: 20px;
+      font-weight: 700;
+
+      text-anchor: middle;
+    }
+
+    .center-subtitle {
+      pointer-events: none;
+
+      fill: #555555;
+
+      font-family: "Arimo", Arial, sans-serif;
+      font-size: 10.5px;
+
+      text-anchor: middle;
+    }
+
+
+    /* =========================================================
+       DESKTOP HELPER TEXT
+       ========================================================= */
+
+    .wheel-helper {
+      max-width: 560px;
+      margin: 12px auto 0;
+
+      color: var(--muted-text);
+
+      font-size: 0.91rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+
+    /* =========================================================
+       MOBILE FAMILY EXPLORER
+       ========================================================= */
+
+    .mobile-family-explorer {
+      display: none;
+
+      max-width: 540px;
+      margin: 16px auto 0;
+      padding: 18px;
+
+      background: var(--amalgam-yellow);
+
+      border: 2px solid var(--amalgam-black);
+      border-radius: 16px;
+    }
+
+    .mobile-family-explorer h3 {
+      margin: 0 0 6px;
+
+      font-size: 1.45rem;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+
+    .mobile-family-explorer p {
+      margin: 0 0 15px;
+
+      font-size: 0.92rem;
+      line-height: 1.45;
+    }
+
+    .mobile-emotion-buttons {
+      display: grid;
+      grid-template-columns:
+        repeat(2, minmax(0, 1fr));
+
+      gap: 9px;
+    }
+
+    .mobile-emotion-button {
+      appearance: none;
+
+      width: 100%;
+      min-height: 48px;
+      padding: 10px 8px;
+
+      background: #FFFFFF;
+      color: var(--amalgam-black);
+
+      border: 1.5px solid var(--amalgam-black);
+      border-radius: 10px;
+
+      font-family: "Arimo", Arial, sans-serif !important;
+      font-size: 0.9rem;
+      font-weight: 700;
+
+      cursor: pointer;
+
+      transition:
+        background 140ms ease,
+        color 140ms ease,
+        transform 140ms ease;
+    }
+
+    .mobile-emotion-button:hover,
+    .mobile-emotion-button:focus {
+      background: var(--amalgam-off-white);
+
+      transform: translateY(-1px);
+
+      outline: none;
+    }
+
+    .mobile-emotion-button.is-selected {
+      background: var(--amalgam-pink);
+      color: #FFFFFF;
+    }
+
+
+    /* =========================================================
+       INFORMATION CARD
+       ========================================================= */
+
+    .emotion-card {
+      position: sticky;
+      top: 22px;
+
+      min-height: 500px;
+      padding: clamp(23px, 4vw, 34px);
+
+      background: #FFFFFF;
+
+      border: 2px solid var(--amalgam-black);
+      border-radius: 20px;
+
+      box-shadow: 7px 7px 0 var(--amalgam-yellow);
+    }
+
+    .emotion-family-chip {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+
+      margin-bottom: 17px;
+      padding: 7px 11px;
+
+      background: var(--amalgam-off-white);
+
+      border: 1.5px solid var(--amalgam-black);
+      border-radius: 999px;
+
+      font-size: 0.78rem;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      text-transform: uppercase;
+    }
+
+    .emotion-family-dot {
+      flex: 0 0 auto;
+
+      width: 12px;
+      height: 12px;
+
+      border-radius: 50%;
+    }
+
+    .emotion-card h3 {
+      margin: 0 0 20px;
+
+      font-size: clamp(2rem, 4.2vw, 3.1rem);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .emotion-section {
+      margin-top: 19px;
+      padding-top: 19px;
+
+      border-top: 1px solid var(--border-soft);
+    }
+
+    .emotion-section:first-of-type {
+      margin-top: 0;
+      padding-top: 0;
+
+      border-top: 0;
+    }
+
+    .emotion-section h4 {
+      margin: 0 0 8px;
+
+      font-size: 0.91rem;
+      letter-spacing: 0.055em;
+      text-transform: uppercase;
+    }
+
+    .emotion-section p {
+      margin: 0;
+
+      font-size: 1rem;
+      line-height: 1.62;
+    }
+
+    .emotion-example {
+      padding: 15px 17px;
+
+      background: var(--amalgam-off-white);
+
+      border-left: 5px solid var(--amalgam-orange);
+    }
+
+
+    /* =========================================================
+       COMPARE WITH
+       ========================================================= */
+
+    .comparison-list {
+      display: grid;
+      gap: 10px;
+    }
+
+    .comparison-item {
+      padding: 12px 14px;
+
+      background: #FFFFFF;
+
+      border: 1.5px solid var(--amalgam-black);
+      border-radius: 10px;
+
+      cursor: pointer;
+
+      transition:
+        background 150ms ease,
+        transform 150ms ease;
+    }
+
+    .comparison-item:hover,
+    .comparison-item:focus {
+      background: var(--amalgam-yellow);
+
+      transform: translateY(-1px);
+
+      outline: none;
+    }
+
+    .comparison-item strong {
+      display: block;
+
+      margin-bottom: 4px;
+
+      font-family: "Oswald", Impact, sans-serif;
+      font-size: 1rem;
+      text-transform: uppercase;
+    }
+
+    .comparison-item span {
+      display: block;
+
+      color: var(--muted-text);
+
+      font-size: 0.91rem;
+      line-height: 1.45;
+    }
+
+
+    /* =========================================================
+       FAMILY BUTTONS IN CARD
+       ========================================================= */
+
+    .family-members {
+      display: flex;
+      flex-wrap: wrap;
+
+      gap: 8px;
+    }
+
+    .family-member-button {
+      appearance: none;
+
+      padding: 7px 11px;
+
+      background: var(--amalgam-off-white);
+      color: var(--amalgam-black);
+
+      border: 1.5px solid var(--amalgam-black);
+      border-radius: 999px;
+
+      font-size: 0.86rem;
+
+      cursor: pointer;
+    }
+
+    .family-member-button:hover,
+    .family-member-button:focus {
+      background: var(--amalgam-yellow);
+
+      outline: none;
+    }
+
+
+    /* =========================================================
+       DISCLAIMER
+       ========================================================= */
+
+    .emotion-disclaimer {
+      max-width: 880px;
+
+      margin: 38px auto 0;
+      padding-top: 18px;
+
+      color: #666666;
+
+      border-top: 1px solid rgba(0, 0, 0, 0.18);
+
+      font-size: 0.76rem;
+      line-height: 1.5;
+      text-align: center;
+    }
+
+
+    /* =========================================================
+       RESPONSIVE
+       ========================================================= */
+
+    @media (max-width: 850px) {
+
+      .emotion-wheel-layout {
+        grid-template-columns: 1fr;
+      }
+
+      .emotion-card {
+        position: static;
+
+        min-height: 0;
+      }
+
+      .mobile-family-explorer {
+        display: block;
+      }
+
+      .wheel-helper {
+        display: none;
+      }
+    }
+
+
+    @media (max-width: 530px) {
+
+      #amalgam-emotion-wheel {
+        padding: 20px 14px 26px;
+
+        border-radius: 16px;
+      }
+
+      .emotion-how-to {
+        padding: 15px;
+      }
+
+      .wheel-wrap {
+        width: 100%;
+        margin: 0 auto;
+      }
+
+      .family-label {
+        font-size: 14px;
+      }
+
+      .emotion-card {
+        padding: 21px 17px;
+
+        box-shadow: 5px 5px 0 var(--amalgam-yellow);
+      }
+    }
+
+
+    @media (max-width: 390px) {
+
+      .mobile-emotion-buttons {
+        grid-template-columns: 1fr;
+      }
+
+      .family-label {
+        font-size: 12.5px;
+      }
+    }
+
+  </style>
+
+
+  <div class="emotion-wheel-shell">
+
+    <!-- ======================================================
+         INTRO
+         ====================================================== -->
+
+    <header class="emotion-wheel-intro">
+
+      <h2>Explore Your Emotions</h2>
+
+      <p>
+        Start with a broad emotion family, then explore more specific
+        emotional experiences within it. Nearby emotions can feel similar
+        while differing in their cause, intensity, timing, or social meaning.
+      </p>
+
+    </header>
+
+
+    <!-- ======================================================
+         HOW TO USE
+         ====================================================== -->
+
+    <div class="emotion-how-to">
+
+      <span class="emotion-how-to-number">?</span>
+
+      <p>
+        <strong>How to explore:</strong>
+        Choose a broad family or a specific emotion. Read its definition and
+        example, then use <strong>Compare With</strong> to investigate subtle
+        differences between related emotional experiences.
+      </p>
+
+    </div>
+
+
+    <!-- ======================================================
+         RANDOMIZER
+         ====================================================== -->
+
+    <div class="emotion-random-area">
+
+      <button
+        type="button"
+        class="emotion-random-button"
+        id="random-emotion-button"
+      >
+        Choose a Random Emotion
+      </button>
+
+    </div>
+
+
+    <!-- ======================================================
+         WHEEL + CARD
+         ====================================================== -->
+
+    <div class="emotion-wheel-layout">
+
+
+      <!-- WHEEL COLUMN -->
+
+      <div class="wheel-column">
+
+        <div class="wheel-wrap">
+
+          <svg
+            id="emotion-wheel-svg"
+            viewBox="0 0 700 700"
+            role="img"
+            aria-label="Interactive two-tier emotion wheel"
+          ></svg>
+
+        </div>
+
+
+        <!-- Mobile progressive disclosure -->
+
+        <div
+          class="mobile-family-explorer"
+          id="mobile-family-explorer"
+          aria-live="polite"
+        >
+
+          <h3 id="mobile-family-title">
+            Choose an Emotion Family
+          </h3>
+
+          <p id="mobile-family-description">
+            Tap one of the eight families above to explore its more
+            specific emotions.
+          </p>
+
+          <div
+            class="mobile-emotion-buttons"
+            id="mobile-emotion-buttons"
+          ></div>
+
+        </div>
+
+
+        <p class="wheel-helper">
+          Hover over a family to focus on it. Click a family or specific
+          emotion to keep that selection active.
+        </p>
+
+      </div>
+
+
+      <!-- INFORMATION CARD -->
+
+      <article
+        class="emotion-card"
+        id="emotion-card"
+        aria-live="polite"
+      >
+
+        <div class="emotion-family-chip">
+
+          <span
+            class="emotion-family-dot"
+            id="emotion-family-dot"
+          ></span>
+
+          <span id="emotion-family-name">
+            Emotion Wheel
+          </span>
+
+        </div>
+
+
+        <h3 id="emotion-name">
+          Choose an Emotion
+        </h3>
+
+
+        <div class="emotion-section">
+
+          <h4>What It Means</h4>
+
+          <p id="emotion-definition">
+            Select a family or specific emotion to explore its meaning,
+            an example, and nearby emotions that can be easy to confuse.
+          </p>
+
+        </div>
+
+
+        <div class="emotion-section">
+
+          <h4>When You Might Feel It</h4>
+
+          <div class="emotion-example">
+
+            <p id="emotion-example">
+              There does not need to be one perfectly correct label.
+              Exploring nearby words can help describe an experience
+              with greater precision.
+            </p>
+
+          </div>
+
+        </div>
+
+
+        <div class="emotion-section">
+
+          <h4>Compare With</h4>
+
+          <div
+            class="comparison-list"
+            id="comparison-list"
+          ></div>
+
+        </div>
+
+
+        <div
+          class="emotion-section"
+          id="family-section"
+        >
+
+          <h4>Explore This Family</h4>
+
+          <div
+            class="family-members"
+            id="family-members"
+          ></div>
+
+        </div>
+
+      </article>
+
+    </div>
+
+
+    <!-- ======================================================
+         DISCLAIMER
+         ====================================================== -->
+
+    <p class="emotion-disclaimer">
+      This interactive wheel is an educational tool for exploring emotional
+      vocabulary. It is not a psychological evaluation, screening,
+      diagnostic, or mental-health assessment tool.
+    </p>
+
+  </div>
+
+
+  <script>
+    (() => {
+
+      /* =========================================================
+         EMOTION DATA
+         ========================================================= */
+
+      const families = [
+
+        /* -------------------------------------------------------
+           JOY
+           ------------------------------------------------------- */
+
+        {
+          id: "joy",
+
+          name: "Joy",
+
+          color: "#F4C542",
+
+          definition:
+            "A family of pleasant emotional experiences related to enjoyment, satisfaction, reward, possibility, or things going well.",
+
+          example:
+            "Something feels rewarding, enjoyable, or promising, and you notice yourself moving toward rather than away from the experience.",
+
+          emotions: [
+
+            {
+              name: "Contentment",
+
+              definition:
+                "A calm sense of satisfaction with the way things are right now.",
+
+              example:
+                "You finish a productive day, sit somewhere comfortable, and realize you do not particularly want the moment to be different.",
+
+              compare: [
+                [
+                  "Relief",
+                  "Relief follows a reduction in tension or threat; contentment does not require a preceding problem."
+                ],
+                [
+                  "Delight",
+                  "Delight is more activated and responsive to something especially pleasing."
+                ]
+              ]
+            },
+
+            {
+              name: "Amusement",
+
+              definition:
+                "Pleasure sparked by something funny, playful, absurd, or entertaining.",
+
+              example:
+                "A friend makes an unexpected joke and you immediately start laughing.",
+
+              compare: [
+                [
+                  "Delight",
+                  "Delight can arise from many pleasing experiences; amusement specifically involves humor or playfulness."
+                ],
+                [
+                  "Excitement",
+                  "Excitement is energizing or anticipatory and does not necessarily involve humor."
+                ]
+              ]
+            },
+
+            {
+              name: "Delight",
+
+              definition:
+                "A vivid burst of pleasure in response to something especially enjoyable, charming, or pleasing.",
+
+              example:
+                "Someone remembers a tiny detail you mentioned months ago and uses it to surprise you.",
+
+              compare: [
+                [
+                  "Contentment",
+                  "Contentment is quieter and steadier; delight is more immediate and expressive."
+                ],
+                [
+                  "Amusement",
+                  "Amusement usually involves humor; delight can come from beauty, kindness, discovery, or pleasure."
+                ]
+              ]
+            },
+
+            {
+              name: "Excitement",
+
+              definition:
+                "High-energy positive anticipation or engagement with something appealing.",
+
+              example:
+                "You are about to begin a trip you have looked forward to for months and feel energized thinking about it.",
+
+              compare: [
+                [
+                  "Hope",
+                  "Hope concerns the possibility of a desired outcome; excitement emphasizes energized anticipation."
+                ],
+                [
+                  "Delight",
+                  "Delight responds to something pleasing now; excitement often points toward what is about to happen."
+                ]
+              ]
+            },
+
+            {
+              name: "Relief",
+
+              definition:
+                "Pleasure and release that follow the ending, reduction, or avoidance of something stressful or threatening.",
+
+              example:
+                "You learn that a problem you feared would be serious is actually manageable.",
+
+              compare: [
+                [
+                  "Contentment",
+                  "Contentment can exist without prior tension; relief depends on tension decreasing."
+                ],
+                [
+                  "Joy",
+                  "Joy is broader; relief specifically describes movement from strain toward greater safety or ease."
+                ]
+              ]
+            },
+
+            {
+              name: "Hope",
+
+              definition:
+                "A positive orientation toward a desired future outcome that still contains some uncertainty.",
+
+              example:
+                "You are waiting to hear about an opportunity and can imagine a genuinely good outcome even though it is not guaranteed.",
+
+              compare: [
+                [
+                  "Excitement",
+                  "Excitement emphasizes activation; hope can be quiet and still involves uncertainty about the outcome."
+                ],
+                [
+                  "Contentment",
+                  "Contentment concerns satisfaction now; hope points toward a possible future."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           SURPRISE
+           ------------------------------------------------------- */
+
+        {
+          id: "surprise",
+
+          name: "Surprise",
+
+          color: "#F28C3C",
+
+          definition:
+            "A family of responses to novelty or events that differ from what was expected, causing attention to rapidly shift.",
+
+          example:
+            "Something happens differently from what you predicted, and your attention immediately moves toward understanding it.",
+
+          emotions: [
+
+            {
+              name: "Interest",
+
+              definition:
+                "Engaged attention toward something experienced as novel, meaningful, or worth exploring.",
+
+              example:
+                "Someone introduces an unfamiliar idea and you find yourself wanting to hear more.",
+
+              compare: [
+                [
+                  "Confusion",
+                  "Confusion means you are having difficulty making sense of something; interest means you are drawn toward exploring it."
+                ],
+                [
+                  "Amazement",
+                  "Amazement adds wonder or a sense that something is remarkable."
+                ]
+              ]
+            },
+
+            {
+              name: "Astonishment",
+
+              definition:
+                "Strong surprise caused by something far outside what you expected.",
+
+              example:
+                "A usually quiet colleague unexpectedly reveals that they have been training for an ultramarathon.",
+
+              compare: [
+                [
+                  "Shock",
+                  "Shock often includes greater disruption or difficulty processing what happened."
+                ],
+                [
+                  "Amazement",
+                  "Amazement commonly adds wonder or admiration; astonishment primarily emphasizes unexpectedness."
+                ]
+              ]
+            },
+
+            {
+              name: "Amazement",
+
+              definition:
+                "Surprise mixed with wonder, admiration, or the sense that something is remarkable.",
+
+              example:
+                "You see the Milky Way clearly for the first time and remain staring at it longer than you expected.",
+
+              compare: [
+                [
+                  "Astonishment",
+                  "Astonishment emphasizes unexpectedness; amazement adds wonder."
+                ],
+                [
+                  "Delight",
+                  "Delight is primarily pleasurable; amazement emphasizes how extraordinary something seems."
+                ]
+              ]
+            },
+
+            {
+              name: "Startlement",
+
+              definition:
+                "A brief automatic jolt of attention caused by a sudden unexpected event.",
+
+              example:
+                "A book falls loudly behind you in a quiet room and your body reacts before you know what happened.",
+
+              compare: [
+                [
+                  "Alarm",
+                  "Alarm includes recognition of possible danger; startlement can happen before you know whether anything is threatening."
+                ],
+                [
+                  "Shock",
+                  "Shock usually lasts longer and can temporarily disrupt emotional or cognitive processing."
+                ]
+              ]
+            },
+
+            {
+              name: "Shock",
+
+              definition:
+                "Intense surprise that temporarily makes an event difficult to fully process.",
+
+              example:
+                "You receive major unexpected news and need a moment before you can decide what you think or feel about it.",
+
+              compare: [
+                [
+                  "Astonishment",
+                  "Astonishment can be intense without being destabilizing; shock suggests greater disruption."
+                ],
+                [
+                  "Startlement",
+                  "Startlement is usually immediate and brief; shock can persist after the initial event."
+                ]
+              ]
+            },
+
+            {
+              name: "Confusion",
+
+              definition:
+                "Uncertainty that arises when information, events, or expectations do not fit together clearly.",
+
+              example:
+                "You receive two instructions that appear to contradict each other and are unsure which one to follow.",
+
+              compare: [
+                [
+                  "Interest",
+                  "Interest draws you toward something; confusion describes difficulty understanding it."
+                ],
+                [
+                  "Surprise",
+                  "Surprise comes from unexpectedness; confusion comes from difficulty making sense of what is happening."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           ANGER
+           ------------------------------------------------------- */
+
+        {
+          id: "anger",
+
+          name: "Anger",
+
+          color: "#D9534F",
+
+          definition:
+            "A family of activating responses to obstruction, mistreatment, violation, unfairness, or something perceived as wrong.",
+
+          example:
+            "Something important is being blocked or violated and you feel drawn toward confronting, correcting, or resisting it.",
+
+          emotions: [
+
+            {
+              name: "Annoyance",
+
+              definition:
+                "Relatively mild anger caused by something bothersome, repetitive, or inconvenient.",
+
+              example:
+                "Someone repeatedly taps their pen while you are trying to concentrate.",
+
+              compare: [
+                [
+                  "Frustration",
+                  "Frustration usually involves something preventing progress toward a goal."
+                ],
+                [
+                  "Resentment",
+                  "Resentment is more persistent and often contains a sense of unfair treatment."
+                ]
+              ]
+            },
+
+            {
+              name: "Frustration",
+
+              definition:
+                "Anger or agitation that develops when progress toward a goal is blocked.",
+
+              example:
+                "You follow the instructions several times, but the software still refuses to work.",
+
+              compare: [
+                [
+                  "Annoyance",
+                  "Annoyance requires only something bothersome; frustration specifically involves obstruction."
+                ],
+                [
+                  "Indignation",
+                  "Indignation centers on perceived injustice rather than simply being blocked."
+                ]
+              ]
+            },
+
+            {
+              name: "Resentment",
+
+              definition:
+                "Persistent anger associated with feeling unfairly treated, overlooked, burdened, or wronged.",
+
+              example:
+                "You repeatedly take on extra work while another person receives the credit, and your anger accumulates over time.",
+
+              compare: [
+                [
+                  "Frustration",
+                  "Frustration concerns blocked goals; resentment often develops around ongoing relational unfairness."
+                ],
+                [
+                  "Indignation",
+                  "Indignation may arise immediately at an injustice; resentment tends to linger."
+                ]
+              ]
+            },
+
+            {
+              name: "Indignation",
+
+              definition:
+                "Anger specifically triggered by something perceived as unfair, unethical, or unjust.",
+
+              example:
+                "You learn that a rule is being applied harshly to one person while others are allowed to ignore it.",
+
+              compare: [
+                [
+                  "Resentment",
+                  "Resentment often accumulates personally over time; indignation can arise from injustice done to anyone."
+                ],
+                [
+                  "Outrage",
+                  "Outrage generally represents a more intense reaction to a perceived violation."
+                ]
+              ]
+            },
+
+            {
+              name: "Outrage",
+
+              definition:
+                "Intense anger in response to a serious perceived violation, injustice, or unacceptable action.",
+
+              example:
+                "You discover that someone knowingly exploited people who trusted them.",
+
+              compare: [
+                [
+                  "Indignation",
+                  "Both involve perceived wrongdoing, but outrage generally carries greater intensity."
+                ],
+                [
+                  "Fury",
+                  "Fury describes extreme anger itself; outrage specifically emphasizes the offense provoking it."
+                ]
+              ]
+            },
+
+            {
+              name: "Fury",
+
+              definition:
+                "Extremely intense anger accompanied by powerful emotional and physical activation.",
+
+              example:
+                "Someone deliberately harms a person you care about, and you experience an immediate surge of overwhelming anger.",
+
+              compare: [
+                [
+                  "Outrage",
+                  "Outrage is organized around a perceived violation; fury emphasizes the intensity of the anger itself."
+                ],
+                [
+                  "Frustration",
+                  "Frustration can be relatively moderate and goal-focused; fury is far more intense."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           FEAR
+           ------------------------------------------------------- */
+
+        {
+          id: "fear",
+
+          name: "Fear",
+
+          color: "#7656A8",
+
+          definition:
+            "A family of responses to perceived danger, vulnerability, uncertainty, or the possibility of harm.",
+
+          example:
+            "Something important may be threatened, and your attention shifts toward detecting danger or protecting yourself or others.",
+
+          emotions: [
+
+            {
+              name: "Unease",
+
+              definition:
+                "A mild sense that something may be wrong or unsafe even when the source is not fully clear.",
+
+              example:
+                "A situation appears normal, but several small details leave you feeling that something is off.",
+
+              compare: [
+                [
+                  "Apprehension",
+                  "Apprehension is usually tied more clearly to something that may happen."
+                ],
+                [
+                  "Dread",
+                  "Dread is heavier and substantially more intense than unease."
+                ]
+              ]
+            },
+
+            {
+              name: "Nervousness",
+
+              definition:
+                "Restless or activated concern about an upcoming challenge, evaluation, or uncertain event.",
+
+              example:
+                "You are waiting backstage to give a presentation and notice your body becoming restless.",
+
+              compare: [
+                [
+                  "Apprehension",
+                  "Apprehension emphasizes concern about what may happen; nervousness often emphasizes bodily activation."
+                ],
+                [
+                  "Excitement",
+                  "Both can feel physically activated, but excitement leans toward anticipated reward rather than threat."
+                ]
+              ]
+            },
+
+            {
+              name: "Apprehension",
+
+              definition:
+                "Concern or hesitation about something unpleasant that may happen.",
+
+              example:
+                "You need to raise a difficult subject with a friend and worry about how the conversation might go.",
+
+              compare: [
+                [
+                  "Unease",
+                  "Unease can be vague; apprehension usually has a more identifiable future concern."
+                ],
+                [
+                  "Dread",
+                  "Dread carries a stronger expectation that the anticipated experience will be bad."
+                ]
+              ]
+            },
+
+            {
+              name: "Dread",
+
+              definition:
+                "Strong anticipatory fear accompanied by an expectation of something deeply unpleasant.",
+
+              example:
+                "You know a difficult confrontation is scheduled tomorrow and feel its weight throughout the day.",
+
+              compare: [
+                [
+                  "Apprehension",
+                  "Apprehension is usually less intense and leaves more uncertainty about the outcome."
+                ],
+                [
+                  "Alarm",
+                  "Dread anticipates a future threat; alarm responds to something that appears immediately threatening."
+                ]
+              ]
+            },
+
+            {
+              name: "Alarm",
+
+              definition:
+                "A rapid, activated fear response to a possible immediate threat.",
+
+              example:
+                "You smell smoke in a building and immediately begin looking for its source and an exit.",
+
+              compare: [
+                [
+                  "Startlement",
+                  "Startlement is a reflex to sudden change; alarm includes recognition of possible danger."
+                ],
+                [
+                  "Terror",
+                  "Terror represents substantially greater fear and perceived danger."
+                ]
+              ]
+            },
+
+            {
+              name: "Terror",
+
+              definition:
+                "Overwhelming fear in response to an extreme or immediate perceived threat.",
+
+              example:
+                "You suddenly realize you are in a situation where serious physical harm appears imminent.",
+
+              compare: [
+                [
+                  "Alarm",
+                  "Alarm activates attention toward danger; terror describes a much more overwhelming degree of fear."
+                ],
+                [
+                  "Dread",
+                  "Dread anticipates danger; terror generally focuses on a threat experienced as immediate."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           SADNESS
+           ------------------------------------------------------- */
+
+        {
+          id: "sadness",
+
+          name: "Sadness",
+
+          color: "#4F73B8",
+
+          definition:
+            "A family of responses to loss, disappointment, separation, helplessness, or something valued being absent.",
+
+          example:
+            "Something meaningful is lost or does not turn out as hoped, drawing you toward reflection, comfort, or withdrawal.",
+
+          emotions: [
+
+            {
+              name: "Disappointment",
+
+              definition:
+                "Sadness that follows when reality falls short of what you hoped for or expected.",
+
+              example:
+                "You prepare carefully for an opportunity but learn that you were not selected.",
+
+              compare: [
+                [
+                  "Grief",
+                  "Grief generally concerns more significant loss; disappointment centers on an unmet expectation."
+                ],
+                [
+                  "Frustration",
+                  "Frustration emphasizes being blocked; disappointment emphasizes sadness about the outcome."
+                ]
+              ]
+            },
+
+            {
+              name: "Loneliness",
+
+              definition:
+                "Emotional pain associated with feeling insufficiently connected, understood, or accompanied.",
+
+              example:
+                "You attend an event full of people but realize you do not feel meaningfully connected to anyone there.",
+
+              compare: [
+                [
+                  "Sadness",
+                  "Sadness is broad; loneliness specifically concerns a perceived lack of meaningful connection."
+                ],
+                [
+                  "Grief",
+                  "Grief responds to loss; loneliness responds to the experience of insufficient connection."
+                ]
+              ]
+            },
+
+            {
+              name: "Melancholy",
+
+              definition:
+                "A quiet, reflective, or lingering sadness that may not have one immediate or easily identified cause.",
+
+              example:
+                "An old song reminds you of a period of your life that is gone, leaving you thoughtful and subdued.",
+
+              compare: [
+                [
+                  "Grief",
+                  "Grief is organized around meaningful loss; melancholy can be more diffuse and contemplative."
+                ],
+                [
+                  "Despair",
+                  "Despair includes a much stronger sense that a painful situation may not improve."
+                ]
+              ]
+            },
+
+            {
+              name: "Sorrow",
+
+              definition:
+                "Deep sadness associated with misfortune, hurt, loss, or circumstances you wish were different.",
+
+              example:
+                "A close friend tells you about a painful experience, and you feel deeply saddened by what they have gone through.",
+
+              compare: [
+                [
+                  "Grief",
+                  "Grief specifically involves adjusting to loss; sorrow is broader and can respond to many forms of suffering."
+                ],
+                [
+                  "Melancholy",
+                  "Melancholy is often quieter or more diffuse; sorrow usually has a more identifiable source."
+                ]
+              ]
+            },
+
+            {
+              name: "Grief",
+
+              definition:
+                "Deep sadness and adjustment associated with losing a person, relationship, role, place, possibility, or other valued part of life.",
+
+              example:
+                "A close friendship ends, and you mourn both the relationship and the future experiences you expected to share.",
+
+              compare: [
+                [
+                  "Disappointment",
+                  "Disappointment involves an unmet hope; grief reflects a more meaningful experience of loss."
+                ],
+                [
+                  "Sorrow",
+                  "Sorrow is broad sadness about suffering or misfortune; grief specifically centers on loss."
+                ]
+              ]
+            },
+
+            {
+              name: "Despair",
+
+              definition:
+                "Intense sadness accompanied by the feeling that a painful situation may not improve.",
+
+              example:
+                "After repeated attempts to resolve a serious problem fail, you begin to feel that none of the available options will change things.",
+
+              compare: [
+                [
+                  "Grief",
+                  "Grief centers on loss; despair centers on the felt absence of a path toward improvement."
+                ],
+                [
+                  "Melancholy",
+                  "Melancholy is usually quieter and reflective; despair is substantially more intense."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           DISGUST
+           ------------------------------------------------------- */
+
+        {
+          id: "disgust",
+
+          name: "Disgust",
+
+          color: "#789447",
+
+          definition:
+            "A family of aversive responses that motivate rejection, avoidance, withdrawal, or psychological distance.",
+
+          example:
+            "Something feels contaminating, degrading, deeply unpleasant, or incompatible with your values and you want distance from it.",
+
+          emotions: [
+
+            {
+              name: "Distaste",
+
+              definition:
+                "A relatively mild dislike or aversion toward something experienced as unpleasant.",
+
+              example:
+                "You try a food with a flavor you strongly dislike and decide not to eat more.",
+
+              compare: [
+                [
+                  "Aversion",
+                  "Aversion usually includes a stronger motivation to avoid the thing altogether."
+                ],
+                [
+                  "Contempt",
+                  "Contempt concerns diminished respect rather than simply finding something unpleasant."
+                ]
+              ]
+            },
+
+            {
+              name: "Aversion",
+
+              definition:
+                "A strong inclination to avoid or withdraw from something experienced as unpleasant.",
+
+              example:
+                "After a particularly unpleasant experience with a certain smell, you instinctively avoid places where you might encounter it.",
+
+              compare: [
+                [
+                  "Distaste",
+                  "Distaste is dislike; aversion more clearly motivates avoidance."
+                ],
+                [
+                  "Revulsion",
+                  "Revulsion is typically sharper, more intense, and more visceral."
+                ]
+              ]
+            },
+
+            {
+              name: "Revulsion",
+
+              definition:
+                "An intense, often visceral form of disgust that produces a strong desire to recoil.",
+
+              example:
+                "You unexpectedly encounter badly spoiled food and immediately pull away.",
+
+              compare: [
+                [
+                  "Aversion",
+                  "Aversion motivates avoidance; revulsion describes a more immediate and forceful rejection response."
+                ],
+                [
+                  "Moral Disgust",
+                  "Revulsion can be sensory or physical; moral disgust concerns perceived ethical violation."
+                ]
+              ]
+            },
+
+            {
+              name: "Contempt",
+
+              definition:
+                "A dismissive feeling that a person, behavior, or attitude is unworthy of respect.",
+
+              example:
+                "Someone repeatedly boasts about exploiting others, and you begin regarding their behavior as beneath respect.",
+
+              compare: [
+                [
+                  "Anger",
+                  "Anger often motivates confrontation or correction; contempt tends to create distance and devaluation."
+                ],
+                [
+                  "Moral Disgust",
+                  "Moral disgust emphasizes ethical repulsion; contempt emphasizes diminished respect."
+                ]
+              ]
+            },
+
+            {
+              name: "Moral Disgust",
+
+              definition:
+                "Strong aversion toward behavior perceived as profoundly unethical, degrading, or corrupt.",
+
+              example:
+                "You learn that someone deliberately abused a position of trust for personal gain and feel repelled by the behavior.",
+
+              compare: [
+                [
+                  "Indignation",
+                  "Indignation is anger at perceived injustice; moral disgust emphasizes rejection and aversion."
+                ],
+                [
+                  "Contempt",
+                  "Contempt diminishes respect for someone; moral disgust emphasizes repulsion toward the behavior or violation."
+                ]
+              ]
+            },
+
+            {
+              name: "Loathing",
+
+              definition:
+                "Intense and often sustained disgust or hatred toward a person, behavior, object, or idea.",
+
+              example:
+                "Repeated exposure to someone's deliberately cruel behavior develops into a powerful and enduring sense of aversion toward them.",
+
+              compare: [
+                [
+                  "Revulsion",
+                  "Revulsion is often immediate and visceral; loathing can be sustained over time."
+                ],
+                [
+                  "Contempt",
+                  "Contempt emphasizes lack of respect; loathing emphasizes powerful aversion."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           CONNECTION
+           ------------------------------------------------------- */
+
+        {
+          id: "connection",
+
+          name: "Connection",
+
+          color: "#D96C8A",
+
+          definition:
+            "A family of affiliative experiences that draw us toward other people through closeness, care, appreciation, and shared meaning.",
+
+          example:
+            "Someone matters to you or you recognize something valuable in them, and you feel emotionally drawn toward rather than away from them.",
+
+          emotions: [
+
+            {
+              name: "Affection",
+
+              definition:
+                "Warm fondness and positive regard for someone or something familiar and valued.",
+
+              example:
+                "You see an old friend arrive and immediately feel warmth toward them.",
+
+              compare: [
+                [
+                  "Love",
+                  "Love is often deeper, broader, or more enduring; affection can be gentler and less encompassing."
+                ],
+                [
+                  "Admiration",
+                  "Admiration focuses on qualities you value; affection focuses more directly on fondness."
+                ]
+              ]
+            },
+
+            {
+              name: "Tenderness",
+
+              definition:
+                "Gentle warmth and care toward someone perceived as precious, vulnerable, or deserving of softness.",
+
+              example:
+                "A close friend admits they are frightened, and your immediate impulse is to respond gently.",
+
+              compare: [
+                [
+                  "Compassion",
+                  "Compassion specifically responds to another person's difficulty or suffering; tenderness does not require suffering."
+                ],
+                [
+                  "Affection",
+                  "Affection is general fondness; tenderness adds gentleness and protective care."
+                ]
+              ]
+            },
+
+            {
+              name: "Compassion",
+
+              definition:
+                "Concern for another person's difficulty accompanied by a desire for their suffering to lessen.",
+
+              example:
+                "A colleague makes an embarrassing mistake and you feel motivated to make the situation easier rather than mock them.",
+
+              compare: [
+                [
+                  "Tenderness",
+                  "Tenderness is gentle care; compassion specifically responds to hardship or suffering."
+                ],
+                [
+                  "Affection",
+                  "Affection is fondness; compassion can be felt even toward someone you do not know personally."
+                ]
+              ]
+            },
+
+            {
+              name: "Admiration",
+
+              definition:
+                "Warm appreciation for qualities, abilities, choices, or achievements you consider valuable.",
+
+              example:
+                "You watch someone calmly defend another person at personal cost and feel impressed by their courage.",
+
+              compare: [
+                [
+                  "Affection",
+                  "Affection is fondness; admiration specifically responds to qualities you esteem."
+                ],
+                [
+                  "Gratitude",
+                  "Gratitude responds to something valued that has been received or recognized; admiration focuses on valued qualities."
+                ]
+              ]
+            },
+
+            {
+              name: "Gratitude",
+
+              definition:
+                "Warm appreciation for something beneficial, meaningful, or generous that you have received or recognized.",
+
+              example:
+                "A friend rearranges their day to help you through a difficult situation, and you feel deeply appreciative of their effort.",
+
+              compare: [
+                [
+                  "Admiration",
+                  "Admiration focuses on another person's qualities; gratitude centers on something beneficial that you received or recognized."
+                ],
+                [
+                  "Affection",
+                  "Affection is general fondness; gratitude usually has a specific object or reason."
+                ]
+              ]
+            },
+
+            {
+              name: "Love",
+
+              definition:
+                "Deep care, attachment, and valuing of another person, group, place, activity, or meaningful part of life.",
+
+              example:
+                "Someone important to you is struggling, and their wellbeing matters to you even when helping is inconvenient.",
+
+              compare: [
+                [
+                  "Affection",
+                  "Affection is warmth and fondness; love often includes greater depth, attachment, or commitment."
+                ],
+                [
+                  "Tenderness",
+                  "Tenderness is one gentle expression of care; love can contain many different emotional experiences."
+                ]
+              ]
+            }
+
+          ]
+        },
+
+
+        /* -------------------------------------------------------
+           SELF-CONSCIOUS
+           ------------------------------------------------------- */
+
+        {
+          id: "self-conscious",
+
+          name: "Self-Conscious",
+
+          color: "#3D8F8A",
+
+          definition:
+            "A family of emotions shaped by awareness and evaluation of yourself, your actions, your identity, or how you believe others perceive you.",
+
+          example:
+            "Your attention turns toward yourself as you evaluate what you did, how you appeared, or what an experience seems to say about you.",
+
+          emotions: [
+
+            {
+              name: "Awkwardness",
+
+              definition:
+                "Social discomfort that arises when expectations about what to say or do feel unclear.",
+
+              example:
+                "A conversation suddenly goes silent after someone raises a sensitive topic and no one knows how to continue.",
+
+              compare: [
+                [
+                  "Embarrassment",
+                  "Awkwardness does not require believing you made a mistake; embarrassment usually involves greater self-evaluation."
+                ],
+                [
+                  "Shame",
+                  "Shame is a much deeper negative evaluation of the self; awkwardness can be temporary and relatively mild."
+                ]
+              ]
+            },
+
+            {
+              name: "Embarrassment",
+
+              definition:
+                "Discomfort following a social mistake, awkward exposure, or moment in which you believe you appeared foolish.",
+
+              example:
+                "You confidently greet a stranger because you thought they were someone you knew.",
+
+              compare: [
+                [
+                  "Shame",
+                  "Embarrassment usually concerns a specific social moment; shame can involve a more global negative judgment of the self."
+                ],
+                [
+                  "Awkwardness",
+                  "Awkwardness concerns uncertainty about how to behave; embarrassment often follows something you already did."
+                ]
+              ]
+            },
+
+            {
+              name: "Guilt",
+
+              definition:
+                "Distress about something you believe you did, failed to do, or contributed to that violated your values.",
+
+              example:
+                "You realize that an impatient comment hurt a friend and wish you had handled the conversation differently.",
+
+              compare: [
+                [
+                  "Shame",
+                  "Guilt primarily evaluates an action; shame more often extends the negative evaluation toward the self."
+                ],
+                [
+                  "Embarrassment",
+                  "Embarrassment can follow harmless social mistakes; guilt involves perceived moral or relational responsibility."
+                ]
+              ]
+            },
+
+            {
+              name: "Shame",
+
+              definition:
+                "Painful self-evaluation in which a mistake, exposure, or perceived shortcoming feels connected to your worth or identity.",
+
+              example:
+                "After failing publicly, you do not only think the performance went badly—you begin to feel that the failure says something deeply negative about you.",
+
+              compare: [
+                [
+                  "Guilt",
+                  "Guilt focuses primarily on something you did; shame tends to generalize the evaluation toward who you are."
+                ],
+                [
+                  "Humiliation",
+                  "Humiliation strongly emphasizes being lowered, exposed, or degraded in relation to other people."
+                ]
+              ]
+            },
+
+            {
+              name: "Humiliation",
+
+              definition:
+                "Pain associated with feeling publicly lowered, degraded, powerless, or stripped of dignity.",
+
+              example:
+                "A supervisor mocks your mistake in front of the entire team rather than correcting you privately.",
+
+              compare: [
+                [
+                  "Embarrassment",
+                  "Embarrassment may occur without mistreatment; humiliation more strongly involves loss of dignity or social power."
+                ],
+                [
+                  "Shame",
+                  "Shame can arise internally; humiliation emphasizes what happened to you in relation to other people."
+                ]
+              ]
+            },
+
+            {
+              name: "Pride",
+
+              definition:
+                "Positive self-evaluation connected to an achievement, quality, effort, identity, or group affiliation you value.",
+
+              example:
+                "You complete a difficult project that required months of persistence and feel good about what your effort made possible.",
+
+              compare: [
+                [
+                  "Joy",
+                  "Joy is broadly pleasant; pride specifically involves positively evaluating something about yourself or a group you identify with."
+                ],
+                [
+                  "Gratitude",
+                  "Pride focuses more on valued contribution or identity; gratitude focuses on something beneficial that has been received or appreciated."
+                ]
+              ]
+            }
+
+          ]
+        }
+
+      ];
+
+
+      /* =========================================================
+         DOM REFERENCES
+         ========================================================= */
+
+      const svg =
+        document.getElementById("emotion-wheel-svg");
+
+      const card =
+        document.getElementById("emotion-card");
+
+      const cardName =
+        document.getElementById("emotion-name");
+
+      const familyName =
+        document.getElementById("emotion-family-name");
+
+      const familyDot =
+        document.getElementById("emotion-family-dot");
+
+      const definitionText =
+        document.getElementById("emotion-definition");
+
+      const exampleText =
+        document.getElementById("emotion-example");
+
+      const comparisonList =
+        document.getElementById("comparison-list");
+
+      const familyMembers =
+        document.getElementById("family-members");
+
+      const randomButton =
+        document.getElementById("random-emotion-button");
+
+      const mobileFamilyTitle =
+        document.getElementById("mobile-family-title");
+
+      const mobileFamilyDescription =
+        document.getElementById("mobile-family-description");
+
+      const mobileEmotionButtons =
+        document.getElementById("mobile-emotion-buttons");
+
+
+      /* =========================================================
+         STATE
+         ========================================================= */
+
+      let selectedFamilyId = null;
+
+      let selectedEmotionName = null;
+
+      let previousLayoutWasMobile = null;
+
+
+      /* =========================================================
+         WHEEL GEOMETRY
+         ========================================================= */
+
+      const centerX = 350;
+      const centerY = 350;
+
+      const centerRadius = 75;
+
+
+      function isMobileWheel() {
+
+        return window
+          .matchMedia("(max-width: 850px)")
+          .matches;
+      }
+
+
+      function polarToCartesian(
+        radius,
+        angleDegrees
+      ) {
+
+        const angleRadians =
+          (angleDegrees - 90) *
+          Math.PI /
+          180;
+
+        return {
+          x:
+            centerX +
+            radius *
+            Math.cos(angleRadians),
+
+          y:
+            centerY +
+            radius *
+            Math.sin(angleRadians)
+        };
+      }
+
+
+      function createArcPath(
+        innerRadius,
+        outerRadius,
+        startAngle,
+        endAngle
+      ) {
+
+        const outerStart =
+          polarToCartesian(
+            outerRadius,
+            startAngle
+          );
+
+        const outerEnd =
+          polarToCartesian(
+            outerRadius,
+            endAngle
+          );
+
+        const innerEnd =
+          polarToCartesian(
+            innerRadius,
+            endAngle
+          );
+
+        const innerStart =
+          polarToCartesian(
+            innerRadius,
+            startAngle
+          );
+
+        const largeArcFlag =
+          endAngle - startAngle > 180
+            ? 1
+            : 0;
+
+        return [
+          `M ${outerStart.x} ${outerStart.y}`,
+          `A ${outerRadius} ${outerRadius} 0 ${largeArcFlag} 1 ${outerEnd.x} ${outerEnd.y}`,
+          `L ${innerEnd.x} ${innerEnd.y}`,
+          `A ${innerRadius} ${innerRadius} 0 ${largeArcFlag} 0 ${innerStart.x} ${innerStart.y}`,
+          "Z"
+        ].join(" ");
+      }
+
+
+      function mixWithWhite(
+        hexColor,
+        amount
+      ) {
+
+        const normalizedHex =
+          hexColor.replace("#", "");
+
+        const red =
+          parseInt(
+            normalizedHex.substring(0, 2),
+            16
+          );
+
+        const green =
+          parseInt(
+            normalizedHex.substring(2, 4),
+            16
+          );
+
+        const blue =
+          parseInt(
+            normalizedHex.substring(4, 6),
+            16
+          );
+
+        const mixedRed =
+          Math.round(
+            red +
+            (255 - red) *
+            amount
+          );
+
+        const mixedGreen =
+          Math.round(
+            green +
+            (255 - green) *
+            amount
+          );
+
+        const mixedBlue =
+          Math.round(
+            blue +
+            (255 - blue) *
+            amount
+          );
+
+        return (
+          `rgb(${mixedRed}, ${mixedGreen}, ${mixedBlue})`
+        );
+      }
+
+
+      /* =========================================================
+         LABEL CREATION
+         ========================================================= */
+
+      function addTextLabel({
+        text,
+        radius,
+        angle,
+        className,
+        familyId = "",
+        emotionName = "",
+        radial = false
+      }) {
+
+        const position =
+          polarToCartesian(
+            radius,
+            angle
+          );
+
+        const label =
+          document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+          );
+
+        label.setAttribute(
+          "x",
+          position.x
+        );
+
+        label.setAttribute(
+          "y",
+          position.y
+        );
+
+        label.setAttribute(
+          "class",
+          className
+        );
+
+        if (familyId) {
+          label.dataset.family =
+            familyId;
+        }
+
+        if (emotionName) {
+          label.dataset.emotion =
+            emotionName;
+        }
+
+
+        /*
+         * Radial Tier 2 labels follow the center line
+         * of their wedge.
+         *
+         * Text on the left half of the circle is
+         * automatically flipped so it remains upright.
+         */
+
+        if (radial) {
+
+          let textRotation =
+            angle - 90;
+
+          while (
+            textRotation > 180
+          ) {
+            textRotation -= 360;
+          }
+
+          while (
+            textRotation < -180
+          ) {
+            textRotation += 360;
+          }
+
+          if (
+            textRotation > 90
+          ) {
+            textRotation -= 180;
+          }
+
+          if (
+            textRotation < -90
+          ) {
+            textRotation += 180;
+          }
+
+          label.setAttribute(
+            "transform",
+            `rotate(${textRotation} ${position.x} ${position.y})`
+          );
+        }
+
+
+        label.textContent =
+          text;
+
+        svg.appendChild(
+          label
+        );
+
+        return label;
+      }
+
+
+      /* =========================================================
+         SEGMENT CREATION
+         ========================================================= */
+
+      function createSegment({
+        innerRadius,
+        outerRadius,
+        startAngle,
+        endAngle,
+        fill,
+        ariaLabel,
+        familyId,
+        emotionName = "",
+        clickHandler
+      }) {
+
+        const path =
+          document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "path"
+          );
+
+        path.setAttribute(
+          "d",
+          createArcPath(
+            innerRadius,
+            outerRadius,
+            startAngle,
+            endAngle
+          )
+        );
+
+        path.setAttribute(
+          "fill",
+          fill
+        );
+
+        path.setAttribute(
+          "class",
+          "emotion-segment"
+        );
+
+        path.setAttribute(
+          "tabindex",
+          "0"
+        );
+
+        path.setAttribute(
+          "role",
+          "button"
+        );
+
+        path.setAttribute(
+          "aria-label",
+          ariaLabel
+        );
+
+        path.dataset.family =
+          familyId;
+
+        if (emotionName) {
+
+          path.dataset.emotion =
+            emotionName;
+
+        } else {
+
+          path.dataset.familySegment =
+            "true";
+        }
+
+
+        path.addEventListener(
+          "click",
+          () => {
+
+            selectSegment(path);
+
+            clickHandler();
+          }
+        );
+
+
+        path.addEventListener(
+          "keydown",
+          event => {
+
+            if (
+              event.key === "Enter" ||
+              event.key === " "
+            ) {
+
+              event.preventDefault();
+
+              selectSegment(path);
+
+              clickHandler();
+            }
+          }
+        );
+
+
+        /*
+         * Desktop progressive disclosure:
+         * hovering over any wedge temporarily emphasizes
+         * that entire family.
+         */
+
+        path.addEventListener(
+          "mouseenter",
+          () => {
+
+            previewFamily(
+              familyId
+            );
+          }
+        );
+
+
+        path.addEventListener(
+          "mouseleave",
+          () => {
+
+            endFamilyPreview();
+          }
+        );
+
+
+        svg.appendChild(
+          path
+        );
+
+        return path;
+      }
+
+
+      /* =========================================================
+         HIGHLIGHTING
+         ========================================================= */
+
+      function selectSegment(
+        element
+      ) {
+
+        document
+          .querySelectorAll(
+            "#emotion-wheel-svg .emotion-segment"
+          )
+          .forEach(
+            segment => {
+
+              segment.classList.remove(
+                "is-selected"
+              );
+            }
+          );
+
+
+        if (element) {
+
+          element.classList.add(
+            "is-selected"
+          );
+        }
+      }
+
+
+      function applyFamilyHighlight(
+        familyId
+      ) {
+
+        document
+          .querySelectorAll(
+            "#emotion-wheel-svg .emotion-segment"
+          )
+          .forEach(
+            segment => {
+
+              segment.classList.toggle(
+                "is-dimmed",
+                segment.dataset.family !==
+                familyId
+              );
+            }
+          );
+
+
+        document
+          .querySelectorAll(
+            "#emotion-wheel-svg .emotion-label"
+          )
+          .forEach(
+            label => {
+
+              const belongsToOtherFamily =
+                label.dataset.family &&
+                label.dataset.family !==
+                familyId;
+
+              label.classList.toggle(
+                "is-dimmed",
+                Boolean(
+                  belongsToOtherFamily
+                )
+              );
+            }
+          );
+      }
+
+
+      function highlightFamily(
+        familyId
+      ) {
+
+        selectedFamilyId =
+          familyId;
+
+        applyFamilyHighlight(
+          familyId
+        );
+      }
+
+
+      function previewFamily(
+        familyId
+      ) {
+
+        if (
+          !isMobileWheel()
+        ) {
+
+          applyFamilyHighlight(
+            familyId
+          );
+        }
+      }
+
+
+      function endFamilyPreview() {
+
+        if (
+          isMobileWheel()
+        ) {
+
+          return;
+        }
+
+
+        if (
+          selectedFamilyId
+        ) {
+
+          applyFamilyHighlight(
+            selectedFamilyId
+          );
+
+        } else {
+
+          clearFamilyHighlight();
+        }
+      }
+
+
+      function clearFamilyHighlight() {
+
+        document
+          .querySelectorAll(
+            "#emotion-wheel-svg .emotion-segment"
+          )
+          .forEach(
+            segment => {
+
+              segment.classList.remove(
+                "is-dimmed"
+              );
+            }
+          );
+
+
+        document
+          .querySelectorAll(
+            "#emotion-wheel-svg .emotion-label"
+          )
+          .forEach(
+            label => {
+
+              label.classList.remove(
+                "is-dimmed"
+              );
+            }
+          );
+      }
+
+
+      /* =========================================================
+         LOOKUPS
+         ========================================================= */
+
+      function findEmotionByName(
+        emotionName
+      ) {
+
+        for (
+          const family of families
+        ) {
+
+          const emotion =
+            family.emotions.find(
+              familyEmotion =>
+                familyEmotion.name ===
+                emotionName
+            );
+
+
+          if (emotion) {
+
+            return {
+              family,
+              emotion
+            };
+          }
+        }
+
+
+        return null;
+      }
+
+
+      function findFamilyByName(
+        familyNameToFind
+      ) {
+
+        return (
+          families.find(
+            family =>
+              family.name ===
+              familyNameToFind
+          ) ||
+          null
+        );
+      }
+
+
+      function findEmotionSegment(
+        emotionName
+      ) {
+
+        return (
+          Array.from(
+            document.querySelectorAll(
+              "#emotion-wheel-svg .emotion-segment"
+            )
+          ).find(
+            segment =>
+              segment.dataset.emotion ===
+              emotionName
+          ) ||
+          null
+        );
+      }
+
+
+      function findFamilySegment(
+        familyId
+      ) {
+
+        return (
+          Array.from(
+            document.querySelectorAll(
+              "#emotion-wheel-svg .emotion-segment"
+            )
+          ).find(
+            segment =>
+              segment.dataset.family ===
+              familyId &&
+              segment.dataset.familySegment ===
+              "true"
+          ) ||
+          null
+        );
+      }
+
+
+      /* =========================================================
+         MOBILE EMOTION BUTTONS
+         ========================================================= */
+
+      function showMobileFamily(
+        family
+      ) {
+
+        mobileFamilyTitle.textContent =
+          family.name;
+
+        mobileFamilyDescription.textContent =
+          `Explore six more specific experiences in the ${family.name.toLowerCase()} family.`;
+
+        mobileEmotionButtons.innerHTML =
+          "";
+
+
+        family.emotions.forEach(
+          emotion => {
+
+            const button =
+              document.createElement(
+                "button"
+              );
+
+            button.type =
+              "button";
+
+            button.className =
+              "mobile-emotion-button";
+
+            button.textContent =
+              emotion.name;
+
+            button.dataset.emotion =
+              emotion.name;
+
+
+            if (
+              selectedEmotionName ===
+              emotion.name
+            ) {
+
+              button.classList.add(
+                "is-selected"
+              );
+            }
+
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                mobileEmotionButtons
+                  .querySelectorAll(
+                    ".mobile-emotion-button"
+                  )
+                  .forEach(
+                    emotionButton => {
+
+                      emotionButton
+                        .classList
+                        .remove(
+                          "is-selected"
+                        );
+                    }
+                  );
+
+
+                button.classList.add(
+                  "is-selected"
+                );
+
+
+                selectedEmotionName =
+                  emotion.name;
+
+
+                showEmotion(
+                  family,
+                  emotion
+                );
+
+
+                highlightFamily(
+                  family.id
+                );
+
+
+                setTimeout(
+                  () => {
+
+                    card.scrollIntoView({
+                      behavior:
+                        "smooth",
+
+                      block:
+                        "start"
+                    });
+                  },
+                  100
+                );
+              }
+            );
+
+
+            mobileEmotionButtons
+              .appendChild(
+                button
+              );
+          }
+        );
+      }
+
+
+      /* =========================================================
+         FAMILY BUTTONS IN CARD
+         ========================================================= */
+
+      function updateFamilyButtons(
+        family
+      ) {
+
+        familyMembers.innerHTML =
+          "";
+
+
+        family.emotions.forEach(
+          emotion => {
+
+            const button =
+              document.createElement(
+                "button"
+              );
+
+            button.type =
+              "button";
+
+            button.className =
+              "family-member-button";
+
+            button.textContent =
+              emotion.name;
+
+
+            button.addEventListener(
+              "click",
+              () => {
+
+                selectedEmotionName =
+                  emotion.name;
+
+
+                showEmotion(
+                  family,
+                  emotion
+                );
+
+
+                highlightFamily(
+                  family.id
+                );
+
+
+                const segment =
+                  findEmotionSegment(
+                    emotion.name
+                  );
+
+
+                if (segment) {
+
+                  selectSegment(
+                    segment
+                  );
+                }
+
+
+                if (
+                  isMobileWheel()
+                ) {
+
+                  showMobileFamily(
+                    family
+                  );
+                }
+              }
+            );
+
+
+            familyMembers.appendChild(
+              button
+            );
+          }
+        );
+      }
+
+
+      /* =========================================================
+         SHOW FAMILY
+         ========================================================= */
+
+      function showFamily(
+        family
+      ) {
+
+        selectedFamilyId =
+          family.id;
+
+        selectedEmotionName =
+          null;
+
+
+        highlightFamily(
+          family.id
+        );
+
+
+        familyName.textContent =
+          `${family.name} family`;
+
+        familyDot.style.background =
+          family.color;
+
+        cardName.textContent =
+          family.name;
+
+        definitionText.textContent =
+          family.definition;
+
+        exampleText.textContent =
+          family.example;
+
+
+        comparisonList.innerHTML =
+          "";
+
+
+        const instruction =
+          document.createElement(
+            "div"
+          );
+
+        instruction.className =
+          "comparison-item";
+
+        instruction.tabIndex =
+          0;
+
+        instruction.innerHTML = `
+          <strong>Explore this family</strong>
+          <span>
+            These experiences share features of
+            ${family.name.toLowerCase()}, but differ in
+            their cause, intensity, timing, appraisal,
+            or social meaning.
+          </span>
+        `;
+
+
+        comparisonList.appendChild(
+          instruction
+        );
+
+
+        updateFamilyButtons(
+          family
+        );
+
+
+        if (
+          isMobileWheel()
+        ) {
+
+          showMobileFamily(
+            family
+          );
+        }
+      }
+
+
+      /* =========================================================
+         SHOW EMOTION
+         ========================================================= */
+
+      function showEmotion(
+        family,
+        emotion
+      ) {
+
+        selectedFamilyId =
+          family.id;
+
+        selectedEmotionName =
+          emotion.name;
+
+
+        familyName.textContent =
+          `${family.name} family`;
+
+        familyDot.style.background =
+          family.color;
+
+        cardName.textContent =
+          emotion.name;
+
+        definitionText.textContent =
+          emotion.definition;
+
+        exampleText.textContent =
+          emotion.example;
+
+
+        comparisonList.innerHTML =
+          "";
+
+
+        emotion.compare.forEach(
+          ([comparisonName, distinction]) => {
+
+            const item =
+              document.createElement(
+                "div"
+              );
+
+            item.className =
+              "comparison-item";
+
+            item.tabIndex =
+              0;
+
+            item.setAttribute(
+              "role",
+              "button"
+            );
+
+
+            item.innerHTML = `
+              <strong>${comparisonName}</strong>
+              <span>${distinction}</span>
+            `;
+
+
+            const openComparison =
+              () => {
+
+                const emotionResult =
+                  findEmotionByName(
+                    comparisonName
+                  );
+
+
+                /*
+                 * First look for a Tier 2 emotion.
+                 */
+
+                if (
+                  emotionResult
+                ) {
+
+                  selectedEmotionName =
+                    emotionResult
+                      .emotion
+                      .name;
+
+
+                  showEmotion(
+                    emotionResult.family,
+                    emotionResult.emotion
+                  );
+
+
+                  highlightFamily(
+                    emotionResult.family.id
+                  );
+
+
+                  if (
+                    isMobileWheel()
+                  ) {
+
+                    showMobileFamily(
+                      emotionResult.family
+                    );
+
+                  } else {
+
+                    const matchingSegment =
+                      findEmotionSegment(
+                        comparisonName
+                      );
+
+
+                    if (
+                      matchingSegment
+                    ) {
+
+                      selectSegment(
+                        matchingSegment
+                      );
+                    }
+                  }
+
+
+                  return;
+                }
+
+
+                /*
+                 * Some comparisons intentionally reference
+                 * a Tier 1 family, such as Joy or Sadness.
+                 */
+
+                const familyResult =
+                  findFamilyByName(
+                    comparisonName
+                  );
+
+
+                if (
+                  familyResult
+                ) {
+
+                  showFamily(
+                    familyResult
+                  );
+
+
+                  const familySegment =
+                    findFamilySegment(
+                      familyResult.id
+                    );
+
+
+                  if (
+                    familySegment
+                  ) {
+
+                    selectSegment(
+                      familySegment
+                    );
+                  }
+                }
+              };
+
+
+            item.addEventListener(
+              "click",
+              openComparison
+            );
+
+
+            item.addEventListener(
+              "keydown",
+              event => {
+
+                if (
+                  event.key ===
+                    "Enter" ||
+                  event.key ===
+                    " "
+                ) {
+
+                  event.preventDefault();
+
+                  openComparison();
+                }
+              }
+            );
+
+
+            comparisonList.appendChild(
+              item
+            );
+          }
+        );
+
+
+        updateFamilyButtons(
+          family
+        );
+      }
+
+
+      /* =========================================================
+         RANDOM EMOTION
+         ========================================================= */
+
+      function chooseRandomEmotion() {
+
+        const emotionOptions =
+          [];
+
+
+        families.forEach(
+          family => {
+
+            family.emotions.forEach(
+              emotion => {
+
+                emotionOptions.push({
+                  family,
+                  emotion
+                });
+              }
+            );
+          }
+        );
+
+
+        const randomIndex =
+          Math.floor(
+            Math.random() *
+            emotionOptions.length
+          );
+
+
+        const selection =
+          emotionOptions[
+            randomIndex
+          ];
+
+
+        selectedFamilyId =
+          selection.family.id;
+
+        selectedEmotionName =
+          selection.emotion.name;
+
+
+        showEmotion(
+          selection.family,
+          selection.emotion
+        );
+
+
+        highlightFamily(
+          selection.family.id
+        );
+
+
+        if (
+          isMobileWheel()
+        ) {
+
+          showMobileFamily(
+            selection.family
+          );
+
+
+          const randomMobileButton =
+            Array.from(
+              mobileEmotionButtons
+                .querySelectorAll(
+                  ".mobile-emotion-button"
+                )
+            ).find(
+              button =>
+                button.dataset.emotion ===
+                selection.emotion.name
+            );
+
+
+          if (
+            randomMobileButton
+          ) {
+
+            randomMobileButton
+              .classList
+              .add(
+                "is-selected"
+              );
+          }
+
+
+          setTimeout(
+            () => {
+
+              card.scrollIntoView({
+                behavior:
+                  "smooth",
+
+                block:
+                  "start"
+              });
+            },
+            100
+          );
+
+        } else {
+
+          const matchingSegment =
+            findEmotionSegment(
+              selection.emotion.name
+            );
+
+
+          if (
+            matchingSegment
+          ) {
+
+            selectSegment(
+              matchingSegment
+            );
+          }
+        }
+      }
+
+
+      randomButton.addEventListener(
+        "click",
+        chooseRandomEmotion
+      );
+
+
+      /* =========================================================
+         RESET
+         ========================================================= */
+
+      function resetWheel() {
+
+        selectedFamilyId =
+          null;
+
+        selectedEmotionName =
+          null;
+
+
+        clearFamilyHighlight();
+
+
+        document
+          .querySelectorAll(
+            "#emotion-wheel-svg .emotion-segment"
+          )
+          .forEach(
+            segment => {
+
+              segment.classList.remove(
+                "is-selected"
+              );
+            }
+          );
+
+
+        familyName.textContent =
+          "Emotion Wheel";
+
+        familyDot.style.background =
+          "#000000";
+
+        cardName.textContent =
+          "Choose an Emotion";
+
+        definitionText.textContent =
+          "Select a family or specific emotion to explore its meaning, an example, and nearby emotions that can be easy to confuse.";
+
+        exampleText.textContent =
+          "There does not need to be one perfectly correct label. Exploring nearby words can help describe an experience with greater precision.";
+
+
+        comparisonList.innerHTML =
+          "";
+
+        familyMembers.innerHTML =
+          "";
+
+
+        mobileFamilyTitle.textContent =
+          "Choose an Emotion Family";
+
+        mobileFamilyDescription.textContent =
+          "Tap one of the eight families above to explore its more specific emotions.";
+
+        mobileEmotionButtons.innerHTML =
+          "";
+      }
+
+
+      /* =========================================================
+         DRAW WHEEL
+         ========================================================= */
+
+      function drawWheel() {
+
+        svg.innerHTML =
+          "";
+
+
+        const mobileLayout =
+          isMobileWheel();
+
+
+        previousLayoutWasMobile =
+          mobileLayout;
+
+
+        const familyAngle =
+          360 /
+          families.length;
+
+
+        const startingOffset =
+          -22.5;
+
+
+        /*
+         * Desktop:
+         *   Center       = 75
+         *   Tier 1 ring  = 82–165
+         *   Tier 2 ring  = 169–333
+         *
+         * Mobile:
+         *   Only Tier 1 is drawn.
+         *   Each family expands from 82–310.
+         */
+
+        const currentFamilyInnerRadius =
+          82;
+
+        const currentFamilyOuterRadius =
+          mobileLayout
+            ? 310
+            : 165;
+
+        const currentSpecificInnerRadius =
+          169;
+
+        const currentSpecificOuterRadius =
+          333;
+
+
+        families.forEach(
+          (
+            family,
+            familyIndex
+          ) => {
+
+            const familyStart =
+              startingOffset +
+              familyIndex *
+              familyAngle;
+
+
+            const familyEnd =
+              familyStart +
+              familyAngle;
+
+
+            const familyMiddle =
+              (
+                familyStart +
+                familyEnd
+              ) /
+              2;
+
+
+            /* -----------------------------------------------
+               TIER 1 FAMILY SEGMENT
+               ----------------------------------------------- */
+
+            createSegment({
+
+              innerRadius:
+                currentFamilyInnerRadius,
+
+              outerRadius:
+                currentFamilyOuterRadius,
+
+              startAngle:
+                familyStart,
+
+              endAngle:
+                familyEnd,
+
+              fill:
+                family.color,
+
+              ariaLabel:
+                `${family.name} emotion family`,
+
+              familyId:
+                family.id,
+
+              clickHandler:
+                () => {
+
+                  selectedEmotionName =
+                    null;
+
+
+                  highlightFamily(
+                    family.id
+                  );
+
+
+                  showFamily(
+                    family
+                  );
+                }
+            });
+
+
+            /*
+             * Tier 1 labels stay horizontal because the
+             * eight segments provide enough width.
+             */
+
+            addTextLabel({
+
+              text:
+                family.name,
+
+              radius:
+                (
+                  currentFamilyInnerRadius +
+                  currentFamilyOuterRadius
+                ) /
+                2,
+
+              angle:
+                familyMiddle,
+
+              className:
+                "emotion-label family-label",
+
+              familyId:
+                family.id
+            });
+
+
+            /*
+             * Mobile progressive disclosure stops here.
+             *
+             * The six Tier 2 emotions appear as buttons
+             * beneath the wheel rather than 48 tiny wedges.
+             */
+
+            if (
+              mobileLayout
+            ) {
+
+              return;
+            }
+
+
+            /* -----------------------------------------------
+               DESKTOP TIER 2 SEGMENTS
+               ----------------------------------------------- */
+
+            const emotionAngle =
+              familyAngle /
+              family.emotions.length;
+
+
+            family.emotions.forEach(
+              (
+                emotion,
+                emotionIndex
+              ) => {
+
+                const emotionStart =
+                  familyStart +
+                  emotionIndex *
+                  emotionAngle;
+
+
+                const emotionEnd =
+                  emotionStart +
+                  emotionAngle;
+
+
+                const emotionMiddle =
+                  (
+                    emotionStart +
+                    emotionEnd
+                  ) /
+                  2;
+
+
+                const lighteningAmount =
+                  0.16 +
+                  emotionIndex *
+                  0.055;
+
+
+                createSegment({
+
+                  innerRadius:
+                    currentSpecificInnerRadius,
+
+                  outerRadius:
+                    currentSpecificOuterRadius,
+
+                  startAngle:
+                    emotionStart,
+
+                  endAngle:
+                    emotionEnd,
+
+                  fill:
+                    mixWithWhite(
+                      family.color,
+                      lighteningAmount
+                    ),
+
+                  ariaLabel:
+                    `${emotion.name}, part of the ${family.name} family`,
+
+                  familyId:
+                    family.id,
+
+                  emotionName:
+                    emotion.name,
+
+                  clickHandler:
+                    () => {
+
+                      selectedEmotionName =
+                        emotion.name;
+
+
+                      highlightFamily(
+                        family.id
+                      );
+
+
+                      showEmotion(
+                        family,
+                        emotion
+                      );
+                    }
+                });
+
+
+                /*
+                 * Labels sit along the radial centerline,
+                 * giving long words much more room than
+                 * horizontal text inside narrow wedges.
+                 */
+
+                const labelRadius =
+                  currentSpecificInnerRadius +
+                  (
+                    currentSpecificOuterRadius -
+                    currentSpecificInnerRadius
+                  ) *
+                  0.58;
+
+
+                addTextLabel({
+
+                  text:
+                    emotion.name,
+
+                  radius:
+                    labelRadius,
+
+                  angle:
+                    emotionMiddle,
+
+                  className:
+                    "emotion-label tier2-label",
+
+                  familyId:
+                    family.id,
+
+                  emotionName:
+                    emotion.name,
+
+                  radial:
+                    true
+                });
+              }
+            );
+          }
+        );
+
+
+        /* =====================================================
+           CENTER RESET CONTROL
+           ===================================================== */
+
+        const centerCircle =
+          document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "circle"
+          );
+
+
+        centerCircle.setAttribute(
+          "cx",
+          centerX
+        );
+
+        centerCircle.setAttribute(
+          "cy",
+          centerY
+        );
+
+        centerCircle.setAttribute(
+          "r",
+          centerRadius
+        );
+
+        centerCircle.setAttribute(
+          "class",
+          "center-circle"
+        );
+
+        centerCircle.setAttribute(
+          "tabindex",
+          "0"
+        );
+
+        centerCircle.setAttribute(
+          "role",
+          "button"
+        );
+
+        centerCircle.setAttribute(
+          "aria-label",
+          "Reset the emotion wheel"
+        );
+
+
+        svg.appendChild(
+          centerCircle
+        );
+
+
+        const centerTitle =
+          document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+          );
+
+
+        centerTitle.setAttribute(
+          "x",
+          centerX
+        );
+
+        centerTitle.setAttribute(
+          "y",
+          centerY - 8
+        );
+
+        centerTitle.setAttribute(
+          "class",
+          "center-title"
+        );
+
+        centerTitle.textContent =
+          "EMOTIONS";
+
+
+        svg.appendChild(
+          centerTitle
+        );
+
+
+        const centerSubtitle =
+          document.createElementNS(
+            "http://www.w3.org/2000/svg",
+            "text"
+          );
+
+
+        centerSubtitle.setAttribute(
+          "x",
+          centerX
+        );
+
+        centerSubtitle.setAttribute(
+          "y",
+          centerY + 18
+        );
+
+        centerSubtitle.setAttribute(
+          "class",
+          "center-subtitle"
+        );
+
+        centerSubtitle.textContent =
+          "click to reset";
+
+
+        svg.appendChild(
+          centerSubtitle
+        );
+
+
+        centerCircle.addEventListener(
+          "click",
+          resetWheel
+        );
+
+
+        centerCircle.addEventListener(
+          "keydown",
+          event => {
+
+            if (
+              event.key === "Enter" ||
+              event.key === " "
+            ) {
+
+              event.preventDefault();
+
+              resetWheel();
+            }
+          }
+        );
+
+
+        /*
+         * Restore a current selection after redraw,
+         * such as when the browser crosses the mobile
+         * breakpoint.
+         */
+
+        if (
+          selectedFamilyId
+        ) {
+
+          applyFamilyHighlight(
+            selectedFamilyId
+          );
+
+
+          if (
+            mobileLayout
+          ) {
+
+            const selectedFamily =
+              families.find(
+                family =>
+                  family.id ===
+                  selectedFamilyId
+              );
+
+
+            if (
+              selectedFamily
+            ) {
+
+              showMobileFamily(
+                selectedFamily
+              );
+            }
+
+          } else if (
+            selectedEmotionName
+          ) {
+
+            const selectedSegment =
+              findEmotionSegment(
+                selectedEmotionName
+              );
+
+
+            if (
+              selectedSegment
+            ) {
+
+              selectSegment(
+                selectedSegment
+              );
+            }
+
+          } else {
+
+            const selectedFamilySegment =
+              findFamilySegment(
+                selectedFamilyId
+              );
+
+
+            if (
+              selectedFamilySegment
+            ) {
+
+              selectSegment(
+                selectedFamilySegment
+              );
+            }
+          }
+        }
+      }
+
+
+      /* =========================================================
+         RESPONSIVE REDRAW
+         ========================================================= */
+
+      let resizeTimer =
+        null;
+
+
+      window.addEventListener(
+        "resize",
+        () => {
+
+          window.clearTimeout(
+            resizeTimer
+          );
+
+
+          resizeTimer =
+            window.setTimeout(
+              () => {
+
+                const currentLayoutIsMobile =
+                  isMobileWheel();
+
+
+                /*
+                 * Redraw only when crossing the 850px
+                 * breakpoint rather than on every tiny
+                 * browser resize.
+                 */
+
+                if (
+                  currentLayoutIsMobile !==
+                  previousLayoutWasMobile
+                ) {
+
+                  drawWheel();
+                }
+              },
+              120
+            );
+        }
+      );
+
+
+      /* =========================================================
+         INITIALIZE
+         ========================================================= */
+
+      familyDot.style.background =
+        "#000000";
+
+
+      drawWheel();
+
+    })();
+  </script>
+
+</div>
+</body>
+</html>
