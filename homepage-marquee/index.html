@@ -205,14 +205,6 @@
     // image: "./assets/my-new-photo.jpg"
     const cards = [
       {
-        title: "Join a course — Level 0, August 22",
-        eyebrow: "Four-hour introduction",
-        summary: "A friendly four-hour introduction to improv, designed to build confidence, connection, and play.",
-        href: "https://www.amalgamimprov.com/shop/p/level-0-course-2026-08-22",
-        image: "./assets/Level 0 Course Square Image 2026-08-22.png",
-        alt: "Level 0 Course on August 22, 2026"
-      },
-      {
         title: "Catch a show — Half-Baked, August 28",
         eyebrow: "Free improv show",
         summary: "A free night of bold, creative improv from independent Madison teams at Reverie Baking Co.",
@@ -227,6 +219,15 @@
         href: "https://www.amalgamimprov.com/shop/p/indie-power-hour-2026-09-03",
         image: "./assets/Indie Power Hour Square Image 2026-09-03.png",
         alt: "Indie Power Hour on September 3, 2026"
+      },
+      {
+        title: "Explore the Improv Group Map",
+        eyebrow: "Find your people",
+        summary: "See the groups that make Madison’s improv scene thrive—and find your next show, class, or community.",
+        href: "https://www.amalgamimprov.com/improv-group-map",
+        image: "./assets/Improv Group Map Screenshot 2026-08-21.png",
+        alt: "Improv Group Map showing improv communities around the world",
+        cta: "Open the Improv Group Map"
       }
     ];
 
@@ -239,7 +240,7 @@
           <span class="eyebrow">${card.eyebrow}</span>
           <span class="title">${card.title}</span>
           <span class="summary">${card.summary}</span>
-          <span class="learn-more">Click to learn more</span>
+          <span class="learn-more">${card.cta || "Click to learn more"}</span>
         </span>
       </a>
     `).join("");
