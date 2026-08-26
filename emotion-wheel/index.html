@@ -949,6 +949,76 @@
             aria-label="Interactive two-tier emotion wheel"
           ></svg>
 
+    <!-- Family and emotion details open here without moving the page. -->
+    <div
+      class="emotion-explorer-overlay"
+      id="emotion-explorer-overlay"
+      aria-hidden="true"
+    >
+      <section
+        class="emotion-explorer-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="emotion-explorer-title"
+      >
+        <div class="emotion-explorer-topbar">
+          <p class="emotion-explorer-stage-label" id="emotion-explorer-stage-label">
+            Emotion family
+          </p>
+          <button
+            type="button"
+            class="emotion-explorer-close"
+            id="emotion-explorer-close"
+            aria-label="Close emotion explorer and return to the wheel"
+          >&#10005;</button>
+        </div>
+
+        <div class="emotion-explorer-viewport">
+          <div class="emotion-explorer-track" id="emotion-explorer-track" data-stage="family">
+            <section class="emotion-explorer-panel" id="emotion-family-panel">
+              <h3 id="emotion-explorer-title">Choose an emotion</h3>
+              <p class="emotion-family-summary" id="overlay-family-summary"></p>
+              <div class="emotion-family-grid" id="overlay-family-grid"></div>
+            </section>
+
+            <section class="emotion-explorer-panel" id="emotion-detail-panel" aria-live="polite">
+              <div class="emotion-family-chip">
+                <span class="emotion-family-dot" id="overlay-family-dot"></span>
+                <span id="overlay-family-name"></span>
+              </div>
+              <h3 id="overlay-emotion-name">Emotion</h3>
+              <div class="emotion-section">
+                <h4>What It Means</h4>
+                <p id="overlay-emotion-definition"></p>
+              </div>
+              <div class="emotion-section">
+                <h4>When You Might Feel It</h4>
+                <div class="emotion-example"><p id="overlay-emotion-example"></p></div>
+              </div>
+              <div class="emotion-section">
+                <h4>Compare With</h4>
+                <div class="comparison-list" id="overlay-comparison-list"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <nav class="emotion-explorer-nav" aria-label="Emotion explorer views">
+          <button type="button" class="emotion-explorer-arrow" id="emotion-explorer-back">
+            &larr; <span id="emotion-explorer-back-label">Wheel</span>
+          </button>
+          <div class="emotion-explorer-progress" aria-label="Three steps: wheel, family, emotion">
+            <span class="emotion-explorer-dot"></span>
+            <span class="emotion-explorer-dot is-active"></span>
+            <span class="emotion-explorer-dot"></span>
+          </div>
+          <button type="button" class="emotion-explorer-arrow" id="emotion-explorer-next" disabled>
+            Next &rarr;
+          </button>
+        </nav>
+      </section>
+    </div>
+
         </div>
 
 
