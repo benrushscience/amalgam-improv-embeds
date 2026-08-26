@@ -792,8 +792,6 @@
     .emotion-explorer-dot { width: 10px; height: 10px; border-radius: 50%; background: #bbb; }
     .emotion-explorer-dot.is-active { background: var(--amalgam-pink); transform: scale(1.3); }
 
-    body.emotion-explorer-open { overflow: hidden; }
-
     @media (max-width: 530px) {
       .emotion-explorer-overlay { padding: 8px; place-items: center; }
       .emotion-explorer-dialog { height: 100%; max-height: 100%; border-radius: 18px; }
@@ -850,6 +848,12 @@
       .wheel-wrap {
         width: 100%;
         margin: 0 auto;
+      }
+
+      /* Give family and emotion cards more vertical room without distorting the wheel. */
+      .wheel-wrap.is-explorer-open {
+        height: clamp(600px, 170vw, 720px);
+        aspect-ratio: auto;
       }
 
       .family-label {
@@ -2404,6 +2408,7 @@
       const mobileEmotionButtons =
         document.getElementById("mobile-emotion-buttons");
 
+      const wheelWrap = document.querySelector(".wheel-wrap");
       const explorerOverlay = document.getElementById("emotion-explorer-overlay");
       const explorerTrack = document.getElementById("emotion-explorer-track");
       const explorerTitle = document.getElementById("emotion-explorer-title");
@@ -3277,9 +3282,9 @@
         if (!explorerOverlay.classList.contains("is-open")) {
           explorerTrigger = document.activeElement;
         }
+        wheelWrap.classList.add("is-explorer-open");
         explorerOverlay.classList.add("is-open");
         explorerOverlay.setAttribute("aria-hidden", "false");
-        document.body.classList.add("emotion-explorer-open");
         window.setTimeout(() => {
           const focusTarget = explorerStage === "emotion"
             ? explorerBack
@@ -3290,9 +3295,9 @@
 
       function closeExplorer() {
         explorerStage = "wheel";
+        wheelWrap.classList.remove("is-explorer-open");
         explorerOverlay.classList.remove("is-open");
         explorerOverlay.setAttribute("aria-hidden", "true");
-        document.body.classList.remove("emotion-explorer-open");
         if (explorerTrigger && typeof explorerTrigger.focus === "function") {
           explorerTrigger.focus();
         }
