@@ -648,7 +648,7 @@
        ========================================================= */
 
     .emotion-explorer-overlay {
-      position: fixed;
+      position: absolute;
       inset: 0;
       z-index: 1000;
       display: grid;
@@ -671,8 +671,11 @@
     }
 
     .emotion-explorer-dialog {
+      display: flex;
+      flex-direction: column;
       width: min(760px, 100%);
-      max-height: min(760px, calc(100vh - 32px));
+      height: min(760px, 100%);
+      max-height: 100%;
       overflow: hidden;
       background: var(--surface);
       border: 3px solid var(--amalgam-black);
@@ -733,17 +736,17 @@
 
     .emotion-explorer-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
 
-    .emotion-explorer-viewport { overflow: hidden; }
+    .emotion-explorer-viewport { flex: 1; min-height: 0; overflow: hidden; }
     .emotion-explorer-track {
       display: flex;
       width: 200%;
+      height: 100%;
       transition: transform 300ms ease;
     }
     .emotion-explorer-track[data-stage="emotion"] { transform: translateX(-50%); }
 
     .emotion-explorer-panel {
       width: 50%;
-      max-height: calc(100vh - 190px);
       overflow-y: auto;
       padding: clamp(22px, 5vw, 42px);
     }
@@ -792,10 +795,10 @@
     body.emotion-explorer-open { overflow: hidden; }
 
     @media (max-width: 530px) {
-      .emotion-explorer-overlay { padding: 8px; align-items: end; }
-      .emotion-explorer-dialog { max-height: calc(100vh - 16px); border-radius: 18px 18px 8px 8px; }
+      .emotion-explorer-overlay { padding: 8px; place-items: center; }
+      .emotion-explorer-dialog { height: 100%; max-height: 100%; border-radius: 18px; }
       .emotion-family-grid { grid-template-columns: 1fr; }
-      .emotion-explorer-panel { max-height: calc(100vh - 170px); padding: 24px 18px; }
+      .emotion-explorer-panel { height: 100%; padding: 24px 18px; }
       .emotion-explorer-arrow { padding: 8px 12px; }
     }
 
@@ -1139,77 +1142,6 @@
 
       </article>
 
-    </div>
-
-
-    <!-- Family and emotion details open here without moving the page. -->
-    <div
-      class="emotion-explorer-overlay"
-      id="emotion-explorer-overlay"
-      aria-hidden="true"
-    >
-      <section
-        class="emotion-explorer-dialog"
-        role="dialog"
-        aria-modal="true"
-        aria-labelledby="emotion-explorer-title"
-      >
-        <div class="emotion-explorer-topbar">
-          <p class="emotion-explorer-stage-label" id="emotion-explorer-stage-label">
-            Emotion family
-          </p>
-          <button
-            type="button"
-            class="emotion-explorer-close"
-            id="emotion-explorer-close"
-            aria-label="Close emotion explorer and return to the wheel"
-          >&#10005;</button>
-        </div>
-
-        <div class="emotion-explorer-viewport">
-          <div class="emotion-explorer-track" id="emotion-explorer-track" data-stage="family">
-            <section class="emotion-explorer-panel" id="emotion-family-panel">
-              <h3 id="emotion-explorer-title">Choose an emotion</h3>
-              <p class="emotion-family-summary" id="overlay-family-summary"></p>
-              <div class="emotion-family-grid" id="overlay-family-grid"></div>
-            </section>
-
-            <section class="emotion-explorer-panel" id="emotion-detail-panel" aria-live="polite">
-              <div class="emotion-family-chip">
-                <span class="emotion-family-dot" id="overlay-family-dot"></span>
-                <span id="overlay-family-name"></span>
-              </div>
-              <h3 id="overlay-emotion-name">Emotion</h3>
-              <div class="emotion-section">
-                <h4>What It Means</h4>
-                <p id="overlay-emotion-definition"></p>
-              </div>
-              <div class="emotion-section">
-                <h4>When You Might Feel It</h4>
-                <div class="emotion-example"><p id="overlay-emotion-example"></p></div>
-              </div>
-              <div class="emotion-section">
-                <h4>Compare With</h4>
-                <div class="comparison-list" id="overlay-comparison-list"></div>
-              </div>
-            </section>
-          </div>
-        </div>
-
-        <nav class="emotion-explorer-nav" aria-label="Emotion explorer views">
-          <button type="button" class="emotion-explorer-arrow" id="emotion-explorer-back">
-            &larr; <span id="emotion-explorer-back-label">Wheel</span>
-          </button>
-          <div class="emotion-explorer-progress" aria-label="Three steps: wheel, family, emotion">
-            <span class="emotion-explorer-dot"></span>
-            <span class="emotion-explorer-dot is-active"></span>
-            <span class="emotion-explorer-dot"></span>
-          </div>
-          <button type="button" class="emotion-explorer-arrow" id="emotion-explorer-next" disabled>
-            Next &rarr;
-          </button>
-        </nav>
-      </section>
     </div>
 
 
