@@ -539,12 +539,18 @@
     }
 
     .comparison-item {
+      appearance: none;
+      width: 100%;
       padding: 12px 14px;
 
       background: #FFFFFF;
 
       border: 1.5px solid var(--amalgam-black);
       border-radius: 10px;
+
+      color: var(--amalgam-black);
+      font-family: "Arimo", Arial, sans-serif;
+      text-align: left;
 
       cursor: pointer;
 
@@ -638,6 +644,171 @@
 
 
     /* =========================================================
+       THREE-STAGE EMOTION EXPLORER
+       ========================================================= */
+
+    .emotion-explorer-overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 1000;
+      display: grid;
+      place-items: center;
+      padding: clamp(16px, 4vw, 44px);
+      background: rgba(0, 0, 0, 0.58);
+      opacity: 0;
+      visibility: hidden;
+      transition: opacity 220ms ease, visibility 220ms ease;
+    }
+
+    /* Details now live in the overlay; keep the original data targets hidden. */
+    .emotion-wheel-layout { grid-template-columns: minmax(0, 1fr); }
+    .emotion-card,
+    .mobile-family-explorer { display: none; }
+
+    .emotion-explorer-overlay.is-open {
+      opacity: 1;
+      visibility: visible;
+    }
+
+    .emotion-explorer-dialog {
+      display: flex;
+      flex-direction: column;
+      width: min(760px, 100%);
+      height: min(760px, 100%);
+      max-height: 100%;
+      overflow: hidden;
+      background: var(--surface);
+      border: 3px solid var(--amalgam-black);
+      border-radius: 22px;
+      box-shadow: 9px 9px 0 var(--amalgam-yellow);
+      transform: translateY(16px) scale(0.985);
+      transition: transform 220ms ease;
+    }
+
+    .emotion-explorer-overlay.is-open .emotion-explorer-dialog {
+      transform: none;
+    }
+
+    .emotion-explorer-topbar,
+    .emotion-explorer-nav {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 14px 18px;
+      background: var(--amalgam-off-white);
+    }
+
+    .emotion-explorer-topbar { border-bottom: 2px solid var(--amalgam-black); }
+    .emotion-explorer-nav { border-top: 2px solid var(--amalgam-black); }
+
+    .emotion-explorer-stage-label {
+      margin: 0;
+      font-family: "Oswald", Impact, sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+    }
+
+    .emotion-explorer-close,
+    .emotion-explorer-arrow {
+      appearance: none;
+      min-width: 44px;
+      min-height: 44px;
+      background: #fff;
+      color: var(--amalgam-black);
+      border: 2px solid var(--amalgam-black);
+      border-radius: 999px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+
+    .emotion-explorer-arrow { padding: 8px 16px; }
+    .emotion-explorer-close:hover,
+    .emotion-explorer-arrow:hover,
+    .emotion-explorer-close:focus-visible,
+    .emotion-explorer-arrow:focus-visible {
+      background: var(--amalgam-yellow);
+      outline: 3px solid var(--amalgam-pink);
+      outline-offset: 2px;
+    }
+
+    .emotion-explorer-arrow:disabled { opacity: 0.3; cursor: not-allowed; }
+
+    .emotion-explorer-viewport { flex: 1; min-height: 0; overflow: hidden; }
+    .emotion-explorer-track {
+      display: flex;
+      width: 200%;
+      height: 100%;
+      transition: transform 300ms ease;
+    }
+    .emotion-explorer-track[data-stage="emotion"] { transform: translateX(-50%); }
+
+    .emotion-explorer-panel {
+      width: 50%;
+      height: 100%;
+      overflow-y: auto;
+      padding: clamp(22px, 5vw, 42px);
+    }
+
+    .emotion-explorer-panel h3 {
+      margin: 0 0 12px;
+      font-size: clamp(2rem, 6vw, 3.5rem);
+      line-height: 1;
+      text-transform: uppercase;
+    }
+
+    .emotion-family-summary { margin: 0 0 24px; line-height: 1.55; }
+    .emotion-family-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+    }
+
+    .emotion-family-choice {
+      appearance: none;
+      padding: 16px;
+      background: var(--amalgam-off-white);
+      color: var(--amalgam-black);
+      border: 2px solid var(--amalgam-black);
+      border-radius: 12px;
+      font-family: "Oswald", Impact, sans-serif;
+      font-size: 1.08rem;
+      font-weight: 700;
+      text-align: left;
+      text-transform: uppercase;
+      cursor: pointer;
+    }
+
+    .emotion-family-choice:hover,
+    .emotion-family-choice:focus-visible,
+    .emotion-family-choice.is-highlighted {
+      background: var(--family-color, var(--amalgam-yellow));
+      outline: 3px solid var(--amalgam-black);
+      outline-offset: 2px;
+    }
+
+    .emotion-explorer-progress { display: flex; align-items: center; gap: 8px; }
+    .emotion-explorer-dot { width: 10px; height: 10px; border-radius: 50%; background: #bbb; }
+    .emotion-explorer-dot.is-active { background: var(--amalgam-pink); transform: scale(1.3); }
+
+    @media (max-width: 530px) {
+      .emotion-explorer-overlay { padding: 8px; place-items: center; }
+      .emotion-explorer-dialog { height: 100%; max-height: 100%; border-radius: 18px; }
+      .emotion-family-grid { grid-template-columns: 1fr; }
+      .emotion-explorer-panel { height: 100%; padding: 24px 18px; }
+      .emotion-explorer-arrow { padding: 8px 12px; }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .emotion-explorer-overlay,
+      .emotion-explorer-dialog,
+      .emotion-explorer-track { transition: none; }
+    }
+
+
+    /* =========================================================
        RESPONSIVE
        ========================================================= */
 
@@ -654,7 +825,7 @@
       }
 
       .mobile-family-explorer {
-        display: block;
+        display: none;
       }
 
       .wheel-helper {
@@ -780,6 +951,76 @@
             aria-label="Interactive two-tier emotion wheel"
           ></svg>
 
+    <!-- Family and emotion details open here without moving the page. -->
+    <div
+      class="emotion-explorer-overlay"
+      id="emotion-explorer-overlay"
+      aria-hidden="true"
+    >
+      <section
+        class="emotion-explorer-dialog"
+        role="dialog"
+        aria-modal="true"
+        aria-labelledby="emotion-explorer-title"
+      >
+        <div class="emotion-explorer-topbar">
+          <p class="emotion-explorer-stage-label" id="emotion-explorer-stage-label">
+            Emotion family
+          </p>
+          <button
+            type="button"
+            class="emotion-explorer-close"
+            id="emotion-explorer-close"
+            aria-label="Close emotion explorer and return to the wheel"
+          >&#10005;</button>
+        </div>
+
+        <div class="emotion-explorer-viewport">
+          <div class="emotion-explorer-track" id="emotion-explorer-track" data-stage="family">
+            <section class="emotion-explorer-panel" id="emotion-family-panel">
+              <h3 id="emotion-explorer-title">Choose an emotion</h3>
+              <p class="emotion-family-summary" id="overlay-family-summary"></p>
+              <div class="emotion-family-grid" id="overlay-family-grid"></div>
+            </section>
+
+            <section class="emotion-explorer-panel" id="emotion-detail-panel" aria-live="polite">
+              <div class="emotion-family-chip">
+                <span class="emotion-family-dot" id="overlay-family-dot"></span>
+                <span id="overlay-family-name"></span>
+              </div>
+              <h3 id="overlay-emotion-name">Emotion</h3>
+              <div class="emotion-section">
+                <h4>What It Means</h4>
+                <p id="overlay-emotion-definition"></p>
+              </div>
+              <div class="emotion-section">
+                <h4>When You Might Feel It</h4>
+                <div class="emotion-example"><p id="overlay-emotion-example"></p></div>
+              </div>
+              <div class="emotion-section">
+                <h4>Compare With</h4>
+                <div class="comparison-list" id="overlay-comparison-list"></div>
+              </div>
+            </section>
+          </div>
+        </div>
+
+        <nav class="emotion-explorer-nav" aria-label="Emotion explorer views">
+          <button type="button" class="emotion-explorer-arrow" id="emotion-explorer-back">
+            &larr; <span id="emotion-explorer-back-label">Wheel</span>
+          </button>
+          <div class="emotion-explorer-progress" aria-label="Three steps: wheel, family, emotion">
+            <span class="emotion-explorer-dot"></span>
+            <span class="emotion-explorer-dot is-active"></span>
+            <span class="emotion-explorer-dot"></span>
+          </div>
+          <button type="button" class="emotion-explorer-arrow" id="emotion-explorer-next" disabled>
+            Next &rarr;
+          </button>
+        </nav>
+      </section>
+    </div>
+
         </div>
 
 
@@ -901,6 +1142,9 @@
       </article>
 
     </div>
+
+
+
 
 
     <!-- ======================================================
@@ -2162,6 +2406,24 @@
       const mobileEmotionButtons =
         document.getElementById("mobile-emotion-buttons");
 
+      const explorerOverlay = document.getElementById("emotion-explorer-overlay");
+      const explorerTrack = document.getElementById("emotion-explorer-track");
+      const explorerTitle = document.getElementById("emotion-explorer-title");
+      const explorerStageLabel = document.getElementById("emotion-explorer-stage-label");
+      const explorerClose = document.getElementById("emotion-explorer-close");
+      const explorerBack = document.getElementById("emotion-explorer-back");
+      const explorerBackLabel = document.getElementById("emotion-explorer-back-label");
+      const explorerNext = document.getElementById("emotion-explorer-next");
+      const explorerDots = Array.from(document.querySelectorAll(".emotion-explorer-dot"));
+      const overlayFamilySummary = document.getElementById("overlay-family-summary");
+      const overlayFamilyGrid = document.getElementById("overlay-family-grid");
+      const overlayFamilyDot = document.getElementById("overlay-family-dot");
+      const overlayFamilyName = document.getElementById("overlay-family-name");
+      const overlayEmotionName = document.getElementById("overlay-emotion-name");
+      const overlayEmotionDefinition = document.getElementById("overlay-emotion-definition");
+      const overlayEmotionExample = document.getElementById("overlay-emotion-example");
+      const overlayComparisonList = document.getElementById("overlay-comparison-list");
+
 
       /* =========================================================
          STATE
@@ -2172,6 +2434,13 @@
       let selectedEmotionName = null;
 
       let previousLayoutWasMobile = null;
+
+      let explorerStage = "wheel";
+      let activeFamily = null;
+      let activeEmotion = null;
+      let explorerTrigger = null;
+      let swipeStartX = null;
+      let swipeStartY = null;
 
 
       /* =========================================================
@@ -2893,21 +3162,6 @@
                 highlightFamily(
                   family.id
                 );
-
-
-                setTimeout(
-                  () => {
-
-                    card.scrollIntoView({
-                      behavior:
-                        "smooth",
-
-                      block:
-                        "start"
-                    });
-                  },
-                  100
-                );
               }
             );
 
@@ -3008,8 +3262,165 @@
          SHOW FAMILY
          ========================================================= */
 
+      function updateExplorerNavigation() {
+        const inEmotion = explorerStage === "emotion";
+        explorerTrack.dataset.stage = inEmotion ? "emotion" : "family";
+        explorerStageLabel.textContent = inEmotion ? "Individual emotion" : "Emotion family";
+        explorerBackLabel.textContent = inEmotion && activeFamily
+          ? activeFamily.name
+          : "Wheel";
+        explorerNext.disabled = !(!inEmotion && activeEmotion);
+        explorerDots.forEach((dot, index) => {
+          dot.classList.toggle("is-active", index === (inEmotion ? 2 : 1));
+        });
+      }
+
+      function openExplorer() {
+        if (!explorerOverlay.classList.contains("is-open")) {
+          explorerTrigger = document.activeElement;
+        }
+        explorerOverlay.classList.add("is-open");
+        explorerOverlay.setAttribute("aria-hidden", "false");
+        window.setTimeout(() => {
+          const focusTarget = explorerStage === "emotion"
+            ? explorerBack
+            : overlayFamilyGrid.querySelector("button") || explorerClose;
+          focusTarget.focus();
+        }, 0);
+      }
+
+      function closeExplorer() {
+        explorerStage = "wheel";
+        explorerOverlay.classList.remove("is-open");
+        explorerOverlay.setAttribute("aria-hidden", "true");
+        if (explorerTrigger && typeof explorerTrigger.focus === "function") {
+          explorerTrigger.focus();
+        }
+      }
+
+      function renderFamilyExplorer(family, highlightedEmotion = null) {
+        activeFamily = family;
+        activeEmotion = highlightedEmotion;
+        explorerStage = "family";
+        explorerTitle.textContent = `${family.name} emotions`;
+        overlayFamilySummary.textContent = family.definition;
+        overlayFamilyGrid.innerHTML = "";
+
+        family.emotions.forEach(emotion => {
+          const button = document.createElement("button");
+          button.type = "button";
+          button.className = "emotion-family-choice";
+          button.textContent = emotion.name;
+          button.style.setProperty("--family-color", mixWithWhite(family.color, 0.3));
+          if (highlightedEmotion && highlightedEmotion.name === emotion.name) {
+            button.classList.add("is-highlighted");
+          }
+          button.addEventListener("click", () => showEmotion(family, emotion));
+          overlayFamilyGrid.appendChild(button);
+        });
+
+        updateExplorerNavigation();
+        openExplorer();
+      }
+
+      function renderEmotionExplorer(family, emotion) {
+        activeFamily = family;
+        activeEmotion = emotion;
+        explorerStage = "emotion";
+        explorerTitle.textContent = emotion.name;
+        overlayFamilyDot.style.background = family.color;
+        overlayFamilyName.textContent = `${family.name} family`;
+        overlayEmotionName.textContent = emotion.name;
+        overlayEmotionDefinition.textContent = emotion.definition;
+        overlayEmotionExample.textContent = emotion.example;
+        overlayComparisonList.innerHTML = "";
+
+        emotion.compare.forEach(([comparisonName, distinction]) => {
+          const item = document.createElement("button");
+          item.type = "button";
+          item.className = "comparison-item";
+          item.innerHTML = `<strong>${comparisonName}</strong><span>${distinction}</span>`;
+          item.addEventListener("click", () => {
+            const emotionResult = findEmotionByName(comparisonName);
+            if (emotionResult) {
+              showEmotion(emotionResult.family, emotionResult.emotion);
+              return;
+            }
+            const familyResult = findFamilyByName(comparisonName);
+            if (familyResult) showFamily(familyResult);
+          });
+          overlayComparisonList.appendChild(item);
+        });
+
+        updateExplorerNavigation();
+        openExplorer();
+      }
+
+      explorerClose.addEventListener("click", closeExplorer);
+      explorerOverlay.addEventListener("click", event => {
+        if (event.target === explorerOverlay) closeExplorer();
+      });
+      explorerBack.addEventListener("click", () => {
+        if (explorerStage === "emotion" && activeFamily) {
+          renderFamilyExplorer(activeFamily, activeEmotion);
+        } else {
+          closeExplorer();
+        }
+      });
+      explorerNext.addEventListener("click", () => {
+        if (activeFamily && activeEmotion) renderEmotionExplorer(activeFamily, activeEmotion);
+      });
+
+      explorerOverlay.addEventListener("keydown", event => {
+        if (event.key === "Escape") {
+          event.preventDefault();
+          closeExplorer();
+          return;
+        }
+        if (event.key === "ArrowLeft") {
+          event.preventDefault();
+          explorerBack.click();
+          return;
+        }
+        if (event.key === "ArrowRight" && !explorerNext.disabled) {
+          event.preventDefault();
+          explorerNext.click();
+          return;
+        }
+        if (event.key === "Tab") {
+          const focusable = Array.from(explorerOverlay.querySelectorAll(
+            'button:not([disabled]), [href], [tabindex]:not([tabindex="-1"])'
+          ));
+          const first = focusable[0];
+          const last = focusable[focusable.length - 1];
+          if (event.shiftKey && document.activeElement === first) {
+            event.preventDefault();
+            last.focus();
+          } else if (!event.shiftKey && document.activeElement === last) {
+            event.preventDefault();
+            first.focus();
+          }
+        }
+      });
+
+      explorerOverlay.addEventListener("pointerdown", event => {
+        swipeStartX = event.clientX;
+        swipeStartY = event.clientY;
+      });
+      explorerOverlay.addEventListener("pointerup", event => {
+        if (swipeStartX === null || swipeStartY === null) return;
+        const deltaX = event.clientX - swipeStartX;
+        const deltaY = event.clientY - swipeStartY;
+        swipeStartX = null;
+        swipeStartY = null;
+        if (Math.abs(deltaX) < 70 || Math.abs(deltaX) < Math.abs(deltaY) * 1.25) return;
+        if (deltaX > 0) explorerBack.click();
+        else if (!explorerNext.disabled) explorerNext.click();
+      });
+
       function showFamily(
-        family
+        family,
+        highlightedEmotion = null
       ) {
 
         selectedFamilyId =
@@ -3084,6 +3495,8 @@
             family
           );
         }
+
+        renderFamilyExplorer(family, highlightedEmotion);
       }
 
 
@@ -3287,6 +3700,8 @@
         updateFamilyButtons(
           family
         );
+
+        renderEmotionExplorer(family, emotion);
       }
 
 
@@ -3380,21 +3795,6 @@
               );
           }
 
-
-          setTimeout(
-            () => {
-
-              card.scrollIntoView({
-                behavior:
-                  "smooth",
-
-                block:
-                  "start"
-              });
-            },
-            100
-          );
-
         } else {
 
           const matchingSegment =
@@ -3426,6 +3826,8 @@
          ========================================================= */
 
       function resetWheel() {
+
+        closeExplorer();
 
         selectedFamilyId =
           null;
@@ -3733,7 +4135,7 @@
                       );
 
 
-                      showEmotion(
+                      showFamily(
                         family,
                         emotion
                       );
