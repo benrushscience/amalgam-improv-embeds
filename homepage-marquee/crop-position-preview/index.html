@@ -1,0 +1,46 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Homepage Marquee Image Crop Preview</title>
+  <style>
+    :root { font-family: Arial, Helvetica, sans-serif; background: #e55937; color: #fff; }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 28px 12px; }
+    .preview-note { max-width: 1200px; margin: 0 auto 18px; color: #1c1720; font-size: 0.95rem; font-weight: 700; }
+
+    .marquee { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 20px; max-width: 1200px; margin: 0 auto; padding: 8px; }
+    .card { position: relative; display: block; min-height: 320px; overflow: hidden; border: 2px solid #bd005b; border-radius: 2px; background: #1c1720; color: #fff; text-decoration: none; isolation: isolate; box-shadow: 0 0 0 3px #ffe974, 0 0 13px rgb(189 0 91 / 0.9), 0 0 28px rgb(189 0 91 / 0.56); animation: neon-breath 4.5s ease-in-out infinite; }
+    .card:nth-child(2) { border-color: #ffe974; box-shadow: 0 0 0 3px #bd005b, 0 0 13px rgb(255 233 116 / 0.9), 0 0 28px rgb(255 233 116 / 0.56); animation-name: neon-breath-yellow; animation-delay: -1.5s; }
+    .card:nth-child(3) { animation-delay: -3s; }
+    .card::after { position: absolute; inset: 0; z-index: -1; background: linear-gradient(180deg, rgb(189 0 91 / 0.14), transparent 35%, rgb(0 0 0 / 0.86)), linear-gradient(135deg, transparent 60%, rgb(255 233 116 / 0.16)); content: ""; }
+
+    /* Keep the image centered from side to side and crop only from its bottom edge. */
+    .card img { position: absolute; inset: 0; z-index: -2; width: 100%; height: 100%; object-fit: cover; object-position: center top; transition: transform 280ms ease, filter 280ms ease; }
+    .card:hover { transform: translateY(-4px); }
+    .card:hover img { filter: saturate(1.15); transform: scale(1.06); }
+
+    .copy { position: absolute; right: 0; bottom: 0; left: 0; padding: 15px 18px 16px; background: linear-gradient(90deg, rgb(28 23 32 / 0.94), rgb(28 23 32 / 0.58)); border-top: 2px solid #ffe974; }
+    .eyebrow, .summary, .learn-more, .title { display: block; }
+    .eyebrow { margin-bottom: 6px; color: #ffe974; font-size: 0.72rem; font-weight: 700; letter-spacing: 0.09em; text-transform: uppercase; }
+    .title { font-size: clamp(1.1rem, 1.8vw, 1.45rem); font-weight: 700; line-height: 1.15; }
+    .summary { max-height: 0; margin-top: 0; overflow: hidden; font-size: 0.88rem; line-height: 1.35; opacity: 0; transform: translateY(6px); transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease; }
+    .learn-more { max-height: 0; margin-top: 0; overflow: hidden; color: #ffe974; font-size: 0.78rem; font-weight: 700; letter-spacing: 0.05em; opacity: 0; text-transform: uppercase; transform: translateY(6px); transition: max-height 240ms ease, margin-top 240ms ease, opacity 200ms ease, transform 240ms ease; }
+    .card:hover .summary, .card:hover .learn-more { max-height: 3em; margin-top: 8px; opacity: 1; transform: translateY(0); }
+
+    @keyframes neon-breath { 50% { box-shadow: 0 0 0 3px #ffe974, 0 0 19px rgb(189 0 91 / 1), 0 0 36px rgb(189 0 91 / 0.72); } }
+    @keyframes neon-breath-yellow { 50% { box-shadow: 0 0 0 3px #bd005b, 0 0 19px rgb(255 233 116 / 1), 0 0 36px rgb(255 233 116 / 0.72); } }
+    @media (max-width: 700px) { .marquee { display: flex; gap: 20px; overflow-x: auto; padding: 8px 8px 14px; scroll-snap-type: x mandatory; } .card { flex: 0 0 min(82vw, 350px); min-height: 340px; scroll-snap-align: start; } }
+    @media (prefers-reduced-motion: reduce) { .card, .card img, .summary, .learn-more { animation: none; transition: none; } }
+  </style>
+</head>
+<body>
+  <p class="preview-note">Local preview: original card heights with horizontally centered, top-aligned image crops. Nothing here has been published.</p>
+  <section class="marquee" aria-label="Homepage marquee crop preview">
+    <a class="card" href="#level-0"><img src="../assets/Level 0 Course Square Image 2026-08-22.png" alt="Level 0 Course on August 22, 2026"><span class="copy"><span class="eyebrow">Four-hour introduction</span><span class="title">Join a course — Level 0, August 22</span><span class="summary">A friendly four-hour introduction to improv, designed to build confidence, connection, and play.</span><span class="learn-more">Click to learn more</span></span></a>
+    <a class="card" href="#half-baked"><img src="../assets/Half-Baked Square Image 2026-04-01.jpg" alt="Half-Baked improv show on August 28, 2026"><span class="copy"><span class="eyebrow">Free improv show</span><span class="title">Catch a show — Half-Baked, August 28</span><span class="summary">A free night of bold, creative improv from independent Madison teams at Reverie Baking Co.</span><span class="learn-more">Click to learn more</span></span></a>
+    <a class="card" href="#indie-power-hour"><img src="../assets/Indie Power Hour Square Image 2026-09-03.png" alt="Indie Power Hour on September 3, 2026"><span class="copy"><span class="eyebrow">Three teams. One hour.</span><span class="title">Indie Power Hour — September 3</span><span class="summary">Three Madison improv teams at Muso; doors open at 6:45 p.m. and the show starts at 7 p.m.</span><span class="learn-more">Click to learn more</span></span></a>
+  </section>
+</body>
+</html>
