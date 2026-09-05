@@ -29,6 +29,7 @@ Utility projects are published as widgets with a `widget.js` loader. Squarespace
 - `utilities/jam-generator/widget.js`
 - `utilities/multi-timer/widget.js`
 - `utilities/suggestion-generator/widget.js`
+- `utilities/alphabet-vocal-warmup/` — self-contained HTML iframe; see its README for the Squarespace snippet.
 
 ## Squarespace Event Feed Iframes
 

@@ -1,0 +1,490 @@
+<!doctype html>
+<!-- Alphabet vocal warm-up v9: a self-contained GitHub Pages / iframe document. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Alphabet Vocal Warm-up</title>
+  <style>
+    /* Amalgam's warm palette, with translucent controls over a quiet pixel sky. */
+    :root {
+      --amalgam-orange: #E55937;
+      --amalgam-yellow: #FFE974;
+      --amalgam-offwhite: #F7F6F3;
+      --amalgam-black: #000000;
+      --control-fill: rgb(255 233 116 / .88);
+      color-scheme: light;
+      font-family: system-ui, sans-serif;
+      color: var(--amalgam-offwhite);
+      background: var(--amalgam-orange);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: 32px 24px 24px; isolation: isolate; }
+    main { position: relative; z-index: 1; max-width: 760px; margin: auto; }
+    .intro { margin-bottom: 24px; }
+    .eyebrow { margin: 0 0 10px; font: 700 .7rem/1.4 ui-monospace, monospace; letter-spacing: .16em; text-transform: uppercase; }
+    h1 { font-size: clamp(1.9rem, 5vw, 2.7rem); line-height: 1.1; letter-spacing: -.04em; margin: 0 0 12px; }
+    p { line-height: 1.55; }
+    .intro p:last-child { max-width: 590px; margin: 0; font-size: .95rem; }
+
+    /* Eight compact controls fill two rows of four on desktop. */
+    fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
+    legend { padding: 0; margin-bottom: 12px; font-size: 1.1rem; font-weight: 750; }
+    .controls-grid { display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 12px; }
+    label { display: grid; gap: 6px; font-size: .78rem; font-weight: 650; }
+    select, input, button { font: inherit; border: 1px solid var(--amalgam-yellow); border-radius: 8px; padding: 10px 12px; min-height: 44px; width: 100%; background: var(--amalgam-yellow); color: var(--amalgam-black); }
+    select, input { min-width: 0; background: var(--control-fill); font-size: .9rem; transition: background-color 160ms ease, box-shadow 160ms ease; }
+    select:not(:disabled):hover, input:not(:disabled):hover { background: rgb(255 233 116 / .96); }
+    select option { background: var(--amalgam-yellow); color: var(--amalgam-black); }
+    button { width: auto; cursor: pointer; font-weight: 700; transition: transform 160ms ease, box-shadow 160ms ease; }
+    button:not(:disabled):hover { transform: translateY(-2px); box-shadow: 0 4px 0 rgb(0 0 0 / .18); }
+    button:not(:disabled):active { transform: translateY(0); box-shadow: none; }
+    /* Keep disabled controls in the requested palette; a dashed border marks their state. */
+    select:disabled, input:disabled, button:disabled { opacity: 1; -webkit-text-fill-color: var(--amalgam-black); border: 1px dashed var(--amalgam-black); cursor: default; }
+    :focus-visible { outline: 3px solid var(--amalgam-offwhite); outline-offset: 3px; }
+    #loop-plan { margin: 12px 0 18px; font: .75rem/1.6 ui-monospace, monospace; overflow-wrap: anywhere; }
+
+    /* A roomy letter card stays still, keeping the pitch cue easy to follow. */
+    .stage { position: relative; overflow: hidden; text-align: center; padding: 20px 20px 18px; background: var(--amalgam-yellow); color: var(--amalgam-black); border: 1px solid var(--amalgam-yellow); border-radius: 18px; box-shadow: 0 6px 0 rgb(0 0 0 / .1); }
+    .stage-label { margin: 0 0 2px; font: 700 .65rem/1.5 ui-monospace, monospace; letter-spacing: .18em; text-transform: uppercase; }
+    .letter { font-size: clamp(5.5rem, 14vw, 7rem); line-height: 1; font-weight: 800; letter-spacing: -.06em; }
+    .note { font: 600 1.35rem/1.3 ui-monospace, monospace; margin-top: 8px; }
+    .progress { font-size: .78rem; margin: 14px 0 0; }
+    .pixel-spark { position: absolute; width: 5px; height: 5px; background: currentColor; box-shadow: -5px 0 currentColor, 5px 0 currentColor, 0 -5px currentColor, 0 5px currentColor; opacity: .22; }
+    .pixel-spark:first-child { top: 42px; left: 36px; }
+    .pixel-spark:nth-child(2) { bottom: 46px; right: 36px; }
+    .buttons { display: flex; justify-content: center; gap: 10px; margin-top: 22px; }
+    #start { min-width: 178px; }
+    #stop { min-width: 76px; }
+    #status { min-height: 1.5em; margin: 12px 0 18px; text-align: center; font-size: .8rem; }
+    .hint { font-size: .82rem; }
+    .instructions { margin: 0 0 12px; max-width: 680px; }
+    details { border-top: 1px dashed rgb(247 246 243 / .55); }
+    summary { cursor: pointer; padding: 12px 0; font-size: .8rem; font-weight: 600; }
+    .sequence { display: grid; grid-template-columns: repeat(auto-fit, minmax(66px, 1fr)); gap: 6px; padding: 0; list-style: none; }
+    .sequence li { text-align: center; padding: 8px 4px; background: var(--amalgam-yellow); color: var(--amalgam-black); border: 1px solid var(--amalgam-yellow); border-radius: 4px; font-size: .85rem; }
+    .sequence strong { display: block; font-size: 1.1rem; }
+    .sequence [aria-current="step"] { border-color: var(--amalgam-black); box-shadow: inset 0 0 0 2px var(--amalgam-black); }
+
+    /* Decorative vector clouds use whole pixel steps and cannot intercept controls. */
+    .pixel-sky { position: fixed; inset: 0; z-index: 0; overflow: hidden; pointer-events: none; }
+    .cloud { position: absolute; left: -140px; top: var(--y); width: var(--size); height: auto; fill: var(--amalgam-offwhite); opacity: var(--opacity, .18); shape-rendering: crispEdges; animation: cloud-drift var(--duration) linear infinite; animation-delay: var(--delay); }
+    @keyframes cloud-drift { from { transform: translateX(0); } to { transform: translateX(calc(100vw + 280px)); } }
+
+    /* A different pixel musician visits every 16 seconds, approaching then flying upward. */
+    .cherub-flight { position: absolute; top: 0; left: 0; width: 64px; height: 64px; opacity: 0; transform-origin: center; animation: cherub-swoop 64s linear infinite; animation-delay: var(--arrival); }
+    .cherub-flight svg { display: block; width: 100%; height: 100%; shape-rendering: crispEdges; transform: scaleX(var(--facing, 1)); }
+    .cherub-flight.from-left { --entry-x: -100px; --near-x: max(12px, calc(50vw - 510px)); --exit-x: max(24px, calc(50vw - 410px)); }
+    .cherub-flight.from-right { --entry-x: calc(100vw + 100px); --near-x: min(calc(100vw - 76px), calc(50vw + 446px)); --exit-x: min(calc(100vw - 88px), calc(50vw + 346px)); --facing: -1; }
+    .cherub-wings { transform-box: fill-box; transform-origin: center; animation: wing-flutter 480ms steps(2, end) infinite; }
+    @keyframes wing-flutter { 0%, 100% { transform: scaleX(1) scaleY(1); } 50% { transform: scaleX(.78) scaleY(.86); } }
+    @keyframes cherub-swoop {
+      0%, 100% { opacity: 0; transform: translate(var(--entry-x), 85vh) scale(.45); }
+      2% { opacity: .55; transform: translate(var(--entry-x), 76vh) scale(.65); }
+      7% { opacity: .95; transform: translate(var(--near-x), 49vh) scale(2); }
+      10% { opacity: 1; transform: translate(var(--near-x), 31vh) scale(2.8); }
+      15% { opacity: 0; transform: translate(var(--exit-x), -240px) scale(3.4); }
+      99.99% { opacity: 0; transform: translate(var(--exit-x), -240px) scale(3.4); }
+    }
+    @media (max-width: 540px) {
+      body { padding: 24px 16px 16px; }
+      .intro { margin-bottom: 22px; }
+      .controls-grid { grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+      .stage { padding: 18px 12px; border-radius: 14px; }
+      .cloud { opacity: .12; }
+    }
+    /* Keep a still sky when animations are switched off. */
+    [data-animations="off"] .cloud { animation: none; left: var(--rest-x); }
+    [data-animations="off"] .cherub-flight { display: none; animation: none; }
+    [data-animations="off"] .cherub-wings { animation: none; }
+    @media (prefers-reduced-motion: reduce) {
+      select, input, button { transition: none; }
+      button:not(:disabled):hover { transform: none; }
+    }
+  </style>
+</head>
+<body data-animations="off">
+  <div class="pixel-sky" aria-hidden="true">
+    <!-- Reusable pixel sprites keep all artwork inside this HTML document. -->
+    <svg width="0" height="0"><defs>
+      <symbol id="pixel-cloud" viewBox="0 0 88 40"><path d="M0 24H8V16H24V8H32V0H56V8H64V16H80V24H88V40H0Z"/></symbol>
+      <g id="cherub-body">
+        <!-- Stepped feathers, a little halo, curls, a tunic, and dangling feet. -->
+        <g class="cherub-wings" fill="#F7F6F3">
+          <path d="M26 30H20V26H16V20H10V16H4V30H8V38H14V42H24V38H28Z"/>
+          <path d="M38 30H44V26H48V20H54V16H60V30H56V38H50V42H40V38H36Z"/>
+        </g>
+        <path fill="#FFE974" d="M24 2H40V4H44V6H40V8H24V6H20V4H24ZM26 4V6H38V4Z" fill-rule="evenodd"/>
+        <path fill="#F7F6F3" d="M24 10H40V12H44V24H20V12H24Z"/>
+        <path fill="#FFE974" d="M24 16H40V28H36V32H28V28H24Z"/>
+        <path fill="#000000" d="M28 20H30V22H28ZM36 20H38V22H36ZM30 26H36V28H30Z"/>
+        <path fill="#E55937" d="M24 24H28V26H24ZM38 24H42V26H38Z"/>
+        <path fill="#F7F6F3" d="M26 32H38V36H42V48H38V52H24V48H22V36H26Z"/>
+        <path fill="#FFE974" d="M24 52H30V58H26V60H20V56H24ZM34 52H40V56H44V60H38V58H34Z"/>
+      </g>
+      <symbol id="cherub-recorder" viewBox="0 0 64 64">
+        <use href="#cherub-body"/>
+        <path fill="#000000" d="M34 26H40V30H42V50H44V54H36V50H34Z"/>
+        <path fill="#FFE974" d="M36 28H38V32H40V50H38V52H40V54H38V50H36Z"/>
+        <path fill="#F7F6F3" d="M38 34H40V36H38ZM38 40H40V42H38ZM38 46H40V48H38Z"/>
+        <path fill="#FFE974" d="M28 34H38V38H28ZM38 42H46V46H38Z"/>
+      </symbol>
+      <symbol id="cherub-harp" viewBox="0 0 64 64">
+        <use href="#cherub-body"/>
+        <path fill="#000000" d="M32 28H58V32H54V54H50V58H36V54H32ZM38 34V50H42V54H48V50H50V34Z" fill-rule="evenodd"/>
+        <path fill="#FFE974" d="M34 30H56V32H52V52H48V56H38V52H34ZM38 34V48H42V52H48V48H50V34Z" fill-rule="evenodd"/>
+        <path fill="#F7F6F3" d="M40 34H42V48H40ZM44 34H46V50H44ZM48 34H50V46H48Z"/>
+        <path fill="#FFE974" d="M26 36H38V40H26ZM30 44H44V48H30Z"/>
+      </symbol>
+      <symbol id="cherub-trumpet" viewBox="0 0 64 64">
+        <use href="#cherub-body"/>
+        <path fill="#000000" d="M34 26H40V28H52V24H56V20H62V40H56V36H52V34H48V42H36V34H34Z"/>
+        <path fill="#FFE974" d="M36 28H40V30H54V26H58V24H60V36H58V34H54V32H46V38H38V34H36ZM40 32V36H44V32Z" fill-rule="evenodd"/>
+        <path fill="#000000" d="M42 26H44V30H42ZM46 26H48V30H46Z"/>
+        <path fill="#FFE974" d="M28 34H38V38H28ZM38 38H44V42H38Z"/>
+      </symbol>
+      <symbol id="cherub-synth" viewBox="0 0 64 64">
+        <use href="#cherub-body"/>
+        <path fill="#000000" d="M14 36H54V52H14Z"/>
+        <path fill="#BD005B" d="M16 38H52V44H16Z"/>
+        <path fill="#FFE974" d="M18 40H24V42H18ZM40 40H42V42H40ZM46 40H48V42H46Z"/>
+        <path fill="#F7F6F3" d="M16 44H52V50H16Z"/>
+        <path fill="#000000" d="M20 44H22V48H20ZM26 44H28V48H26ZM34 44H36V48H34ZM40 44H42V48H40ZM46 44H48V48H46Z"/>
+        <path fill="#FFE974" d="M24 32H28V38H32V42H24ZM38 32H42V38H46V42H38Z"/>
+      </symbol>
+    </defs></svg>
+    <svg class="cloud" viewBox="0 0 88 40" style="--y:6%;--size:88px;--duration:91s;--delay:-12s;--rest-x:8%"><use href="#pixel-cloud"/></svg>
+    <svg class="cloud" viewBox="0 0 88 40" style="--y:21%;--size:64px;--duration:117s;--delay:-90s;--rest-x:86%"><use href="#pixel-cloud"/></svg>
+    <svg class="cloud" viewBox="0 0 88 40" style="--y:42%;--size:112px;--duration:103s;--delay:-48s;--rest-x:38%;--opacity:.13"><use href="#pixel-cloud"/></svg>
+    <svg class="cloud" viewBox="0 0 88 40" style="--y:64%;--size:72px;--duration:129s;--delay:-20s;--rest-x:12%"><use href="#pixel-cloud"/></svg>
+    <svg class="cloud" viewBox="0 0 88 40" style="--y:80%;--size:96px;--duration:109s;--delay:-89s;--rest-x:80%;--opacity:.15"><use href="#pixel-cloud"/></svg>
+    <svg class="cloud" viewBox="0 0 88 40" style="--y:94%;--size:56px;--duration:137s;--delay:-63s;--rest-x:48%"><use href="#pixel-cloud"/></svg>
+    <div class="cherub-flight from-left" style="--arrival:0s"><svg viewBox="0 0 64 64"><use href="#cherub-recorder"/></svg></div>
+    <div class="cherub-flight from-right" style="--arrival:16s"><svg viewBox="0 0 64 64"><use href="#cherub-harp"/></svg></div>
+    <div class="cherub-flight from-left" style="--arrival:32s"><svg viewBox="0 0 64 64"><use href="#cherub-trumpet"/></svg></div>
+    <div class="cherub-flight from-right" style="--arrival:48s"><svg viewBox="0 0 64 64"><use href="#cherub-synth"/></svg></div>
+  </div>
+  <main>
+    <header class="intro">
+    <p class="eyebrow">Amalgam Improv · Voice play</p>
+    <h1>Alphabet vocal warm-up</h1>
+    <p>A little up, a little down, all the way around the alphabet. Say or sing one letter with each tone.</p>
+    </header>
+    <fieldset id="settings">
+      <legend>Controls</legend>
+      <div class="controls-grid">
+      <label>Root note<select id="root"></select></label>
+      <label>Root octave<select id="octave"><option>2</option><option>3</option><option selected>4</option><option>5</option></select></label>
+      <label>Scale<select id="scale"><option value="major">Major</option><option value="minor">Natural minor</option></select></label>
+      <label>Letters per minute<input id="tempo" type="number" min="30" max="240" step="1" value="80" required></label>
+      <label>Starting letter<select id="starting-letter"></select></label>
+      <label>Number of loops<select id="loops"></select></label>
+      <label>Sound<select id="sound"><option value="piano">Piano</option><option value="sine">Sine wave</option><option value="bell">Bell</option><option value="trumpet">Trumpet</option></select></label>
+      <label>Animations<select id="animations"><option value="on">On</option><option value="off">Off</option></select></label>
+      </div>
+    </fieldset>
+    <p class="hint" id="loop-plan"></p>
+    <div class="stage" aria-label="Current letter and pitch">
+      <span class="pixel-spark" aria-hidden="true"></span><span class="pixel-spark" aria-hidden="true"></span>
+      <p class="stage-label">Your letter</p>
+      <div class="letter" id="letter">A</div>
+      <div class="note" id="note">C4</div>
+      <p class="progress" id="progress">Ready · 27 letters</p>
+    </div>
+    <div class="buttons">
+      <button id="start" type="button">Start warm-up</button>
+      <button id="stop" type="button" disabled>Stop</button>
+    </div>
+    <p id="status" role="status">Ready. Press Start to enable sound.</p>
+    <p class="hint instructions">Each loop returns to your starting letter with a root–fifth–root finish. Add loops to move up a semitone each time. Stop to change your controls. C4 is middle C.</p>
+    <details>
+      <summary id="preview-summary">Preview all 27 letter–note pairs</summary>
+      <ol class="sequence" id="sequence" aria-label="Letter and pitch sequence"></ol>
+    </details>
+    <noscript>This warm-up requires JavaScript to generate piano tones.</noscript>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+
+      // Define scale steps in semitones and bounce without repeating the endpoints.
+      const alphabet = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+      const lettersPerLoop = alphabet.length + 1;
+      const scaleSteps = { major: [0, 2, 4, 5, 7], minor: [0, 2, 3, 5, 7] };
+      const degreePattern = [0, 1, 2, 3, 4, 3, 2, 1];
+      const roots = ['C', 'C♯', 'D', 'E♭', 'E', 'F', 'F♯', 'G', 'A♭', 'A', 'B♭', 'B'];
+      const naturalLetters = 'CDEFGAB';
+      const naturalPitches = [0, 2, 4, 5, 7, 9, 11];
+
+      // Ratios and envelopes give each synthesized instrument its own tone color.
+      // The fundamental stays strongest enough to provide a clear pitch reference.
+      const soundProfiles = {
+        piano: {
+          attack: .008, sustain: 0, maxDuration: 1.6,
+          partials: [{ ratio: 1, level: .52 }, { ratio: 2, level: .24 },
+            { ratio: 3, level: .12 }, { ratio: 4, level: .07 }, { ratio: 6, level: .03 }]
+        },
+        sine: {
+          attack: .015, sustain: .9, maxDuration: 2,
+          partials: [{ ratio: 1, level: .55 }]
+        },
+        bell: {
+          attack: .003, sustain: 0, maxDuration: 2,
+          partials: [{ ratio: 1, level: .58 }, { ratio: 2.76, level: .2 },
+            { ratio: 5.4, level: .1 }, { ratio: 8.93, level: .04 }]
+        },
+        trumpet: {
+          attack: .035, sustain: .8, maxDuration: 2,
+          partials: [{ ratio: 1, level: .25 }, { ratio: 2, level: .22 },
+            { ratio: 3, level: .16 }, { ratio: 4, level: .09 },
+            { ratio: 5, level: .05 }, { ratio: 6, level: .025 }]
+        }
+      };
+      const ui = Object.fromEntries(['settings', 'root', 'octave', 'scale', 'tempo', 'starting-letter', 'loops', 'sound', 'animations',
+        'letter', 'note', 'progress', 'start', 'stop', 'status', 'sequence', 'loop-plan', 'preview-summary'].map(id => [id, document.getElementById(id)]));
+      let audioContext;
+      let masterGain;
+      let voices = [];
+      let sequence = [];
+      let running = false;
+      let runToken = 0;
+      let frameId = 0;
+      let endTimer = 0;
+      let displayedIndex = -1;
+
+      // Fill the two longer selectors without duplicating markup.
+      roots.forEach((name, index) => ui.root.add(new Option(name, index)));
+      [...alphabet].forEach((letter, index) => ui['starting-letter'].add(new Option(letter, index)));
+      for (let count = 1; count <= 12; count++) {
+        ui.loops.add(new Option(`${count} ${count === 1 ? 'loop' : 'loops'}`, count));
+      }
+
+      // Spell each note by its scale degree, including octave crossings and accidentals.
+      function pitchName(rootIndex, octave, degree, midi) {
+        const letterIndex = naturalLetters.indexOf(roots[rootIndex][0]) + degree;
+        const noteOctave = octave + Math.floor(letterIndex / 7);
+        const naturalIndex = letterIndex % 7;
+        const naturalMidi = 12 * (noteOctave + 1) + naturalPitches[naturalIndex];
+        const difference = midi - naturalMidi;
+        const accidental = difference > 0 ? '♯'.repeat(difference) : '♭'.repeat(-difference);
+        return naturalLetters[naturalIndex] + accidental + noteOctave;
+      }
+
+      // Restart the alphabet and pitch pattern each loop, raising its root by one semitone.
+      function buildSequence() {
+        const firstRootMidi = 12 * (Number(ui.octave.value) + 1) + Number(ui.root.value);
+        const loopCount = Number(ui.loops.value);
+        const startingLetter = Number(ui['starting-letter'].value);
+        return Array.from({ length: lettersPerLoop * loopCount }, (_, index) => {
+          const loopIndex = Math.floor(index / lettersPerLoop);
+          const letterIndex = index % lettersPerLoop;
+          const rootMidi = firstRootMidi + loopIndex;
+          const rootIndex = rootMidi % 12;
+          const octave = Math.floor(rootMidi / 12) - 1;
+          // End with root–fifth–root: beat 25 already lands on the root naturally.
+          let degree = degreePattern[letterIndex % degreePattern.length];
+          if (letterIndex === lettersPerLoop - 2) degree = 4;
+          if (letterIndex === lettersPerLoop - 1) degree = 0;
+          const midi = rootMidi + scaleSteps[ui.scale.value][degree];
+          return {
+            loopIndex,
+            letterIndex,
+            rootPitch: pitchName(rootIndex, octave, 0, rootMidi),
+            letter: alphabet[(startingLetter + letterIndex) % alphabet.length],
+            pitch: pitchName(rootIndex, octave, degree, midi),
+            frequency: 440 * Math.pow(2, (midi - 69) / 12)
+          };
+        });
+      }
+
+      // Show a quiet visual preview; announce only run status to assistive technology.
+      function displayStep(index) {
+        if (displayedIndex >= 0) ui.sequence.children[displayedIndex]?.removeAttribute('aria-current');
+        displayedIndex = index;
+        ui.letter.textContent = sequence[index].letter;
+        ui.note.textContent = sequence[index].pitch;
+        ui.sequence.children[index]?.setAttribute('aria-current', 'step');
+        const step = sequence[index];
+        ui.progress.textContent = `Loop ${step.loopIndex + 1} of ${sequence.length / lettersPerLoop} · Root ${step.rootPitch} · Letter ${step.letterIndex + 1} of ${lettersPerLoop}`;
+      }
+
+      function refreshPreview() {
+        sequence = buildSequence();
+        ui.sequence.replaceChildren(...sequence.map(step => {
+          const item = document.createElement('li');
+          const letter = document.createElement('strong');
+          item.title = `Loop ${step.loopIndex + 1} · Root ${step.rootPitch} · Letter ${step.letterIndex + 1}`;
+          letter.textContent = step.letter;
+          item.append(letter, document.createTextNode(step.pitch));
+          return item;
+        }));
+        displayedIndex = -1;
+        displayStep(0);
+        const loopCount = sequence.length / lettersPerLoop;
+        ui.progress.textContent = `Ready · ${loopCount} ${loopCount === 1 ? 'loop' : 'loops'} · ${sequence.length} letters`;
+        ui['loop-plan'].textContent = `Loop roots: ${sequence.filter(step => step.letterIndex === 0).map(step => step.rootPitch).join(' → ')}`;
+        ui['preview-summary'].textContent = `Preview all ${sequence.length} letter–note pairs`;
+        ui.start.textContent = 'Start warm-up';
+        ui.status.textContent = 'Ready. Press Start to enable sound.';
+      }
+
+      // Share timing and cleanup across sounds; vary their partials and attack/decay/sustain.
+      function scheduleTone(frequency, startTime, beatLength, profile) {
+        const duration = Math.min(beatLength * .88, profile.maxDuration);
+        profile.partials.forEach(({ ratio, level }) => {
+          // Omit partials above the audio sample rate's Nyquist limit at high pitches.
+          if (frequency * ratio >= audioContext.sampleRate / 2) return;
+          const oscillator = audioContext.createOscillator();
+          const envelope = audioContext.createGain();
+          oscillator.type = 'sine';
+          oscillator.frequency.value = frequency * ratio;
+          envelope.gain.setValueAtTime(.0001, startTime);
+          envelope.gain.exponentialRampToValueAtTime(level, startTime + profile.attack);
+          if (profile.sustain > 0) {
+            // Hold sine/brass tones until a short release; piano and bell decay immediately.
+            envelope.gain.exponentialRampToValueAtTime(level * profile.sustain, startTime + profile.attack + .025);
+            envelope.gain.setValueAtTime(level * profile.sustain, startTime + duration - .04);
+          }
+          envelope.gain.exponentialRampToValueAtTime(.0001, startTime + duration);
+          oscillator.connect(envelope);
+          envelope.connect(masterGain);
+          oscillator.start(startTime);
+          oscillator.stop(startTime + duration + .015);
+          const voice = { oscillator, envelope };
+          voices.push(voice);
+          oscillator.onended = () => {
+            oscillator.disconnect();
+            envelope.disconnect();
+            voices = voices.filter(item => item !== voice);
+          };
+        });
+      }
+
+      // Invalidate pending starts and cancel every scheduled tone when stopping or leaving.
+      function finish(message, completed = false) {
+        runToken += 1;
+        running = false;
+        cancelAnimationFrame(frameId);
+        clearTimeout(endTimer);
+        if (audioContext && masterGain) {
+          const now = audioContext.currentTime;
+          masterGain.gain.cancelScheduledValues(now);
+          masterGain.gain.setTargetAtTime(0, now, .005);
+          voices.forEach(({ oscillator }) => oscillator.stop(now + .025));
+        }
+        lockPlaybackControls(false);
+        ui.start.disabled = false;
+        ui.stop.disabled = true;
+        ui.start.textContent = 'Start again';
+        ui.status.textContent = message;
+        if (completed) {
+          displayStep(sequence.length - 1);
+          const loopCount = sequence.length / lettersPerLoop;
+          ui.progress.textContent = `Complete · ${loopCount} ${loopCount === 1 ? 'loop' : 'loops'} · ${sequence.length} of ${sequence.length} letters`;
+        }
+      }
+
+      // Schedule against the audio clock so browser timers do not introduce musical drift.
+      async function start() {
+        if (running || !ui.tempo.reportValidity()) return;
+        const AudioContextClass = window.AudioContext || window.webkitAudioContext;
+        if (!AudioContextClass) {
+          ui.status.textContent = 'Audio is unavailable in this browser. Please try another browser.';
+          return;
+        }
+        const token = ++runToken;
+        running = true;
+        ui.start.disabled = true;
+        ui.stop.disabled = false;
+        lockPlaybackControls(true);
+        ui.status.textContent = 'Starting audio…';
+        try {
+          audioContext ??= new AudioContextClass();
+          await audioContext.resume();
+          if (token !== runToken) return;
+          if (audioContext.state !== 'running') throw new Error('Audio did not start');
+          // Give each run its own gain bus so a quick restart cannot revive old notes.
+          masterGain?.disconnect();
+          masterGain = audioContext.createGain();
+          masterGain.gain.value = .25;
+          masterGain.connect(audioContext.destination);
+          sequence = buildSequence();
+          const beatLength = 60 / Number(ui.tempo.value);
+          const startTime = audioContext.currentTime + .08;
+          const endTime = startTime + sequence.length * beatLength;
+          const profile = soundProfiles[ui.sound.value];
+          sequence.forEach((step, index) => scheduleTone(step.frequency, startTime + index * beatLength, beatLength, profile));
+          displayStep(0);
+          ui.status.textContent = 'Playing. Match one letter to each tone.';
+
+          function update() {
+            if (token !== runToken) return;
+            if (audioContext.state !== 'running') {
+              finish('Audio was interrupted. Press Start again to restart.');
+              return;
+            }
+            const elapsed = audioContext.currentTime - startTime;
+            if (audioContext.currentTime >= endTime) {
+              finish('Complete. You returned to your starting letter.', true);
+              return;
+            }
+            if (elapsed >= 0) {
+              const index = Math.min(sequence.length - 1, Math.floor(elapsed / beatLength));
+              if (index !== displayedIndex) displayStep(index);
+            }
+            frameId = requestAnimationFrame(update);
+          }
+          frameId = requestAnimationFrame(update);
+          // A fallback also restores controls when visual animation frames are unavailable.
+          function checkCompletion() {
+            if (token !== runToken) return;
+            if (audioContext.state !== 'running') {
+              finish('Audio was interrupted. Press Start again to restart.');
+              return;
+            }
+            const remaining = endTime - audioContext.currentTime;
+            if (remaining <= 0) finish('Complete. You returned to your starting letter.', true);
+            // The audio clock may lag behind wall time; never truncate the final beat.
+            else endTimer = setTimeout(checkCompletion, remaining * 1000 + 100);
+          }
+          endTimer = setTimeout(checkCompletion, (endTime - audioContext.currentTime) * 1000 + 100);
+        } catch (error) {
+          if (token === runToken) finish('Could not start audio. Press Start again to retry.');
+        }
+      }
+
+      // Keep the motion toggle available even while musical settings are locked.
+      function lockPlaybackControls(locked) {
+        ui.settings.querySelectorAll('select, input').forEach(control => {
+          control.disabled = locked && control !== ui.animations;
+        });
+      }
+
+      // Start with the visitor's motion preference; an explicit choice takes precedence.
+      const motionPreference = window.matchMedia('(prefers-reduced-motion: reduce)');
+      let motionChosen = false;
+      function applyMotionPreference() {
+        if (!motionChosen) ui.animations.value = motionPreference.matches ? 'off' : 'on';
+        document.body.dataset.animations = ui.animations.value;
+      }
+      motionPreference.addEventListener('change', applyMotionPreference);
+      applyMotionPreference();
+
+      // Connect controls and stop background playback when the page is hidden or left.
+      ui.start.addEventListener('click', start);
+      ui.stop.addEventListener('click', () => finish('Stopped. Press Start again to restart from your chosen letter.'));
+      ui.settings.addEventListener('change', event => {
+        if (event.target === ui.animations) {
+          motionChosen = true;
+          applyMotionPreference();
+        } else refreshPreview();
+      });
+      document.addEventListener('visibilitychange', () => {
+        if (document.hidden && running) finish('Stopped while this page was hidden. Press Start again to restart.');
+      });
+      window.addEventListener('pagehide', () => { if (running) finish('Stopped.'); });
+      refreshPreview();
+    })();
+  </script>
+</body>
+</html>
