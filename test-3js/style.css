@@ -1,0 +1,382 @@
+/* Amalgam's palette and a compact layout suitable for an iframe. */
+:root {
+  color-scheme: light;
+  --paper: #f7f6f3;
+  --yellow: #ffe974;
+  --orange: #e55937;
+  --pink: #bd005b;
+  --ink: #171514;
+  font-family: "Avenir Next", "Trebuchet MS", Arial, sans-serif;
+  color: var(--ink);
+  background: var(--paper);
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+}
+
+button,
+a,
+input {
+  -webkit-tap-highlight-color: transparent;
+}
+
+button {
+  font: inherit;
+  cursor: pointer;
+}
+
+button:focus-visible,
+a:focus-visible,
+input:focus-visible {
+  outline: 3px solid var(--pink);
+  outline-offset: 5px;
+}
+
+main {
+  max-width: 1280px;
+  margin: auto;
+  padding: 28px 40px 20px;
+}
+
+header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  border-bottom: 1px solid #d7d4ce;
+  padding-bottom: 18px;
+}
+
+.brand {
+  font-size: 32px;
+  font-weight: 900;
+  letter-spacing: -2px;
+  line-height: 1;
+  text-decoration: none;
+  color: var(--ink);
+}
+
+.brand span {
+  display: block;
+  font-size: 9px;
+  letter-spacing: 2px;
+  margin-top: 9px;
+}
+
+.edition {
+  font-size: 11px;
+  letter-spacing: 2px;
+}
+
+.edition b {
+  margin-left: 12px;
+  border: 1px solid #aaa69d;
+  padding: 8px;
+  border-radius: 50%;
+}
+
+.intro {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 28px 0 24px;
+}
+
+.eyebrow {
+  font-size: 10px;
+  letter-spacing: 1.8px;
+  font-weight: 800;
+  margin: 0 0 14px;
+}
+
+h1 {
+  font-size: clamp(44px, 5.4vw, 72px);
+  letter-spacing: -3.8px;
+  line-height: 0.98;
+  margin: 0;
+  font-weight: 900;
+}
+
+h1 em {
+  color: var(--pink);
+  font-style: normal;
+}
+
+.intro-copy {
+  font-size: 15px;
+  line-height: 1.65;
+  margin: 0 15px 0 25px;
+}
+
+.intro-copy span {
+  color: #726e66;
+}
+
+.playground {
+  display: grid;
+  grid-template-columns: minmax(0, 1.65fr) minmax(290px, 1fr);
+  border: 1px solid #d1cec6;
+  border-radius: 20px;
+  overflow: hidden;
+}
+
+.stage {
+  min-height: 450px;
+  position: relative;
+  background: #ffe974;
+  overflow: hidden;
+  touch-action: pan-y;
+}
+
+.stage canvas {
+  display: block;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  inset: 0;
+  cursor: grab;
+  touch-action: pan-y;
+}
+
+.stage canvas:active {
+  cursor: grabbing;
+}
+
+.stage-label,
+.stage-bottom {
+  position: absolute;
+  z-index: 1;
+  left: 24px;
+  right: 24px;
+  display: flex;
+  align-items: center;
+  font-size: 9px;
+  letter-spacing: 1.4px;
+  font-weight: 800;
+}
+
+.stage-label {
+  top: 24px;
+  pointer-events: none;
+}
+
+.dot {
+  width: 7px;
+  height: 7px;
+  background: var(--pink);
+  border-radius: 50%;
+  margin-right: 9px;
+}
+
+.stage-bottom {
+  bottom: 20px;
+  justify-content: space-between;
+  letter-spacing: 0.2px;
+  font-size: 11px;
+  pointer-events: none;
+}
+
+.stage-bottom button {
+  pointer-events: auto;
+  background: #fff8;
+  border: 1px solid #0003;
+  border-radius: 30px;
+  padding: 8px 12px;
+  font-size: 11px;
+}
+
+.controls {
+  padding: 28px;
+  background: #fffdf8;
+}
+
+.scene-number {
+  font-size: 10px;
+  color: #7b7166;
+  letter-spacing: 1.4px;
+}
+
+h2 {
+  font-size: 30px;
+  letter-spacing: -1px;
+  line-height: 1.12;
+  margin: 10px 0 12px;
+  min-height: 68px;
+}
+
+.relationship {
+  font-size: 15px;
+  margin: 0 0 21px;
+  min-height: 20px;
+}
+
+.twist {
+  border-left: 3px solid var(--orange);
+  padding-left: 14px;
+  min-height: 66px;
+}
+
+.twist span {
+  font-size: 9px;
+  font-weight: 900;
+  letter-spacing: 1.4px;
+  color: var(--pink);
+}
+
+.twist p {
+  font-size: 14px;
+  line-height: 1.4;
+  margin: 7px 0 0;
+}
+
+.primary {
+  margin: 23px 0;
+  width: 100%;
+  padding: 15px 18px;
+  border: 0;
+  background: var(--pink);
+  color: white;
+  border-radius: 9px;
+  font-weight: 800;
+  text-align: left;
+  display: flex;
+  justify-content: space-between;
+}
+
+.primary:hover {
+  background: #970049;
+}
+
+.primary span {
+  font-size: 20px;
+  line-height: 18px;
+}
+
+.energy label {
+  display: flex;
+  justify-content: space-between;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+.energy output {
+  color: var(--pink);
+}
+
+input[type="range"] {
+  width: 100%;
+  accent-color: var(--pink);
+  margin: 15px 0 8px;
+  cursor: pointer;
+}
+
+.range-labels {
+  display: flex;
+  justify-content: space-between;
+  font-size: 9px;
+  color: #736b60;
+}
+
+.invitation {
+  font-size: 11px;
+  line-height: 1.6;
+  color: #736b60;
+  margin: 22px 0 0;
+}
+
+footer {
+  display: flex;
+  justify-content: space-between;
+  gap: 15px;
+  font-size: 10px;
+  color: #726e66;
+  padding-top: 18px;
+}
+
+footer span:last-child {
+  font-size: 8px;
+  letter-spacing: 1px;
+}
+
+#render-status {
+  position: absolute;
+  left: 30px;
+  right: 30px;
+  top: 40%;
+  text-align: center;
+  line-height: 1.5;
+  z-index: 2;
+  pointer-events: none;
+}
+
+.no-script {
+  padding: 20px;
+  text-align: center;
+}
+
+/* Stack the scene and controls without horizontal scrolling on phones. */
+@media (max-width: 680px) {
+  main {
+    padding: 20px 18px;
+  }
+  .intro {
+    align-items: flex-start;
+    gap: 20px;
+  }
+  .intro-copy {
+    font-size: 11px;
+    margin: 5px 0 0;
+    max-width: 130px;
+  }
+  h1 {
+    font-size: 45px;
+    letter-spacing: -2.6px;
+  }
+  .eyebrow {
+    font-size: 8px;
+    letter-spacing: 1px;
+  }
+  .playground {
+    grid-template-columns: 1fr;
+  }
+  .stage {
+    min-height: 330px;
+  }
+  .controls {
+    padding: 24px;
+  }
+  h2 {
+    min-height: 0;
+  }
+  .twist {
+    min-height: 0;
+  }
+  .relationship {
+    min-height: 0;
+  }
+  footer {
+    flex-direction: column;
+    gap: 8px;
+  }
+  .stage-label,
+  .stage-bottom {
+    left: 18px;
+    right: 18px;
+  }
+  .brand {
+    font-size: 28px;
+  }
+  .edition {
+    font-size: 9px;
+  }
+}
+
+@media (max-width: 380px) {
+  .intro-copy {
+    display: none;
+  }
+}

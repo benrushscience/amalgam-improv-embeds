@@ -1,0 +1,89 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="theme-color" content="#F7F6F3" />
+    <title>The Yes, And Machine · Amalgam Improv</title>
+    <link rel="icon" href="data:," />
+    <link rel="stylesheet" href="./style.css" />
+  </head>
+  <body>
+    <main>
+      <header>
+        <a
+          class="brand"
+          href="https://www.amalgamimprov.com/"
+          target="_blank"
+          rel="noopener"
+          >amalgam<span>IMPROV / MADISON, WI</span></a
+        ><span class="edition">PLAY LAB <b>001</b></span>
+      </header>
+      <section class="intro">
+        <div>
+          <p class="eyebrow">A LITTLE EXPERIMENT IN MAKING THINGS UP</p>
+          <h1>The Yes, And<br /><em>Machine.</em></h1>
+        </div>
+        <p class="intro-copy">
+          Two players. One suggestion.<br />Absolutely no script.<br /><span
+            >Make a little scene with us.</span
+          >
+        </p>
+      </section>
+      <section class="playground" aria-label="Interactive improv stage">
+        <div class="stage" id="stage">
+          <div class="stage-label">
+            <span class="dot"></span> YOUR IMAGINATION. ON STAGE.
+          </div>
+          <p id="render-status" role="status">Setting the stage…</p>
+          <div class="stage-bottom">
+            <span>↔ Drag to turn the stage</span
+            ><button id="motion" type="button" aria-pressed="false">
+              Pause motion
+            </button>
+          </div>
+        </div>
+        <aside class="controls">
+          <p class="eyebrow">LET’S GET A SUGGESTION</p>
+          <div id="suggestion" aria-live="polite" aria-atomic="true">
+            <span class="scene-number" id="scene-number">SCENE 001</span>
+            <h2 id="place">At a moon laundromat.</h2>
+            <p class="relationship" id="relationship">
+              You’re rival tour guides.
+            </p>
+            <div class="twist">
+              <span>YES, AND…</span>
+              <p id="twist">Every sock holds a tiny universe.</p>
+            </div>
+          </div>
+          <button class="primary" id="new-scene" type="button">
+            Make a scene <span aria-hidden="true">↗</span>
+          </button>
+          <div class="energy">
+            <label for="energy"
+              >Room energy
+              <output id="energy-label" for="energy">Playful</output></label
+            ><input id="energy" type="range" min="0" max="100" value="45" />
+            <div class="range-labels">
+              <span>A quiet little moment</span><span>Full weird</span>
+            </div>
+          </div>
+          <p class="invitation">
+            Try it with a friend: take these suggestions and play a 60-second
+            scene. Start with “Yes, and…”
+          </p>
+        </aside>
+      </section>
+      <footer>
+        <span>Doing & highlighting indie improv in Madison.</span
+        ><span>BUILT FOR PLAY. <b>POWERED BY THREE.JS.</b></span>
+      </footer>
+    </main>
+    <noscript
+      ><p class="no-script">
+        Enable JavaScript for the 3D stage and scene generator.
+      </p></noscript
+    >
+    <script type="module" src="./app.js"></script>
+  </body>
+</html>
