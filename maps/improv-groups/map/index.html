@@ -281,12 +281,28 @@
   }
 
   @media (max-width: 700px) {
+    /* Dock mobile filters below map buttons; scroll only the body so Hide stays available. */
     #filterPanel {
+      top: auto;
+      bottom: 24px;
       left: 12px;
       right: 12px;
       width: auto;
-      max-height: 45vh;
-      overflow: auto;
+      display: flex;
+      flex-direction: column;
+      max-height: min(50%, calc(100% - 210px));
+      overflow: hidden;
+    }
+
+    .filter-panel-header {
+      flex-shrink: 0;
+      flex-wrap: wrap;
+    }
+
+    #filterPanelBody {
+      min-height: 0;
+      overflow-y: auto;
+      overscroll-behavior: contain;
     }
 
     #filterPanel.is-collapsed {
