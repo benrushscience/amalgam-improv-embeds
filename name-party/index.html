@@ -1,0 +1,1586 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Name Party — Amalgam Improv</title>
+  <style>
+    :root {
+      --bg-deep: #201936;
+      --bg-mid: #342651;
+      --panel: #fff8ee;
+      --ink: #251d34;
+      --accent: #e55937;
+      --accent-2: #bd005b;
+      --accent-3: #ffe974;
+      --muted: #786e86;
+      --success: #2e8b57;
+      --danger: #c33a3a;
+      --shadow: 0 18px 50px rgba(0, 0, 0, 0.22);
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: Arial, Helvetica, sans-serif;
+      color: var(--ink);
+      background:
+        radial-gradient(circle at 15% 15%, rgba(255, 233, 116, 0.12), transparent 28%),
+        radial-gradient(circle at 85% 20%, rgba(189, 0, 91, 0.14), transparent 26%),
+        linear-gradient(180deg, var(--bg-mid), var(--bg-deep));
+      overflow-x: hidden;
+    }
+
+    button,
+    input {
+      font: inherit;
+    }
+
+    button {
+      cursor: pointer;
+    }
+
+    .app-shell {
+      min-height: 100vh;
+      display: grid;
+      grid-template-rows: auto 1fr;
+    }
+
+    .topbar {
+      width: min(1100px, calc(100% - 24px));
+      margin: 12px auto 0;
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      justify-content: center;
+      position: relative;
+      z-index: 3;
+    }
+
+    .stat-card {
+      min-width: 140px;
+      background: rgba(255, 248, 238, 0.94);
+      border: 2px solid rgba(255,255,255,0.55);
+      border-radius: 18px;
+      padding: 10px 14px;
+      text-align: center;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.15);
+    }
+
+    .stat-label {
+      display: block;
+      font-size: 0.76rem;
+      color: var(--muted);
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      font-weight: 700;
+    }
+
+    .introduction-progress { flex-basis: 100%; grid-column: 1 / -1; padding: 9px 14px; font-size: .9rem; }
+
+    .stat-value {
+      display: block;
+      margin-top: 3px;
+      font-size: 1.22rem;
+      font-weight: 800;
+    }
+
+    .game-stage {
+      position: relative;
+      width: min(1100px, calc(100% - 24px));
+      min-height: 700px;
+      margin: 14px auto 18px;
+      border-radius: 32px;
+      overflow: hidden;
+      background: #35274d;
+      box-shadow: var(--shadow);
+      border: 4px solid rgba(255,255,255,0.1);
+      isolation: isolate;
+    }
+
+    .party-background {
+      position: absolute;
+      inset: 0;
+      z-index: 0;
+    }
+
+    .character-wrap {
+      position: absolute;
+      left: 50%;
+      bottom: 160px;
+      transform: translateX(-50%);
+      width: min(46vw, 360px);
+      min-width: 250px;
+      z-index: 1;
+      transition: opacity 1.4s ease, transform 1.4s ease;
+    }
+
+    .character-wrap.entering {
+      opacity: 0;
+      transform: translateX(-50%) translateY(18px) scale(0.98);
+    }
+
+    .character-wrap.leaving {
+      opacity: 0;
+      transform: translateX(-50%) translateY(12px) scale(0.985);
+      transition-duration: 320ms;
+    }
+
+    .character-wrap svg {
+      width: 100%;
+      height: auto;
+      display: block;
+      filter: drop-shadow(0 16px 12px rgba(0,0,0,0.24));
+    }
+
+    .dialogue-panel {
+      position: absolute;
+      left: 50%;
+      bottom: 20px;
+      transform: translateX(-50%);
+      z-index: 2;
+      width: min(900px, calc(100% - 28px));
+      background: rgba(255, 248, 238, 0.97);
+      border-radius: 24px;
+      padding: 18px;
+      box-shadow: 0 14px 30px rgba(0,0,0,0.24);
+      border: 3px solid rgba(255,255,255,0.65);
+    }
+
+    .speaker {
+      color: var(--accent-2);
+      font-weight: 800;
+      font-size: 0.86rem;
+      text-transform: uppercase;
+      letter-spacing: 0.08em;
+      margin-bottom: 6px;
+    }
+
+    .dialogue-text {
+      font-size: clamp(1.05rem, 2.2vw, 1.35rem);
+      line-height: 1.45;
+      min-height: 3em;
+    }
+
+    .controls {
+      display: flex;
+      gap: 10px;
+      align-items: center;
+      flex-wrap: wrap;
+      margin-top: 14px;
+    }
+
+    .name-entry {
+      flex: 1 1 250px;
+      min-width: 180px;
+      border: 2px solid #cabfd4;
+      border-radius: 14px;
+      padding: 12px 14px;
+      outline: none;
+      background: white;
+    }
+
+    .name-entry:focus {
+      border-color: var(--accent-2);
+      box-shadow: 0 0 0 3px rgba(189,0,91,0.12);
+    }
+
+    .primary-btn,
+    .secondary-btn {
+      border: 0;
+      border-radius: 14px;
+      padding: 12px 18px;
+      font-weight: 800;
+      min-height: 46px;
+    }
+
+    .primary-btn {
+      background: var(--accent-2);
+      color: #fff;
+    }
+
+    .primary-btn:hover,
+    .primary-btn:focus-visible {
+      background: #98004a;
+    }
+
+    .secondary-btn {
+      background: var(--accent-3);
+      color: #000;
+    }
+
+    .secondary-btn:hover,
+    .secondary-btn:focus-visible {
+      background: #f2d95d;
+    }
+
+    .feedback {
+      font-size: 2rem;
+      line-height: 1;
+      min-width: 40px;
+      text-align: center;
+    }
+
+    .hint {
+      color: var(--muted);
+      font-size: 0.88rem;
+      margin-top: 8px;
+    }
+
+    .overlay {
+      position: absolute;
+      inset: 0;
+      z-index: 10;
+      display: grid;
+      place-items: center;
+      padding: 20px;
+      background: rgba(28, 20, 43, 0.74);
+      backdrop-filter: blur(5px);
+    }
+
+    .overlay.hidden {
+      display: none;
+    }
+
+    /* A native modal covers the entire UI and keeps keyboard focus on restart choices. */
+    .game-over-dialog {
+      width: min(740px, calc(100% - 24px));
+      max-width: none;
+      max-height: calc(100vh - 24px);
+      max-height: calc(100dvh - 24px);
+      margin: auto;
+      padding: 0;
+      border: 0;
+      border-radius: 28px;
+      color: var(--ink);
+      background: var(--panel);
+      overflow-y: auto;
+      overscroll-behavior: contain;
+      box-shadow: var(--shadow);
+    }
+
+    .game-over-dialog::backdrop {
+      background: rgba(28, 20, 43, 0.94);
+    }
+
+    body.game-finished {
+      overflow: hidden;
+    }
+
+    .game-over-dialog .overlay-card {
+      width: 100%;
+      box-shadow: none;
+    }
+
+    .game-over-dialog h2 {
+      font-size: clamp(2rem, 6vw, 3rem);
+      margin-bottom: 12px;
+    }
+
+    .game-over-dialog .summary-grid {
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+    }
+
+    /* Keep the final face and correct name together, including on narrow screens. */
+    .missed-guest {
+      display: flex;
+      align-items: center;
+      gap: 16px;
+      padding: 12px;
+      margin: 18px 0;
+      background: #f3e6e7;
+      border-radius: 18px;
+    }
+
+    .missed-guest-portrait {
+      flex: 0 0 96px;
+      overflow: hidden;
+      border-radius: 14px;
+      background: #fff8ee;
+    }
+
+    .missed-guest-portrait svg {
+      display: block;
+      width: 100%;
+      height: 104px;
+    }
+
+    .missed-guest p {
+      margin: 0;
+      min-width: 0;
+      font-size: 1.15rem;
+      overflow-wrap: anywhere;
+    }
+
+    .game-over-dialog .mode-card:focus-visible {
+      outline: 3px solid var(--accent-2);
+      outline-offset: 2px;
+    }
+
+    .overlay-card {
+      width: min(680px, 100%);
+      background: var(--panel);
+      border-radius: 28px;
+      padding: clamp(22px, 4vw, 36px);
+      box-shadow: var(--shadow);
+      border: 4px solid #fff;
+    }
+
+    .overlay-card h1,
+    .overlay-card h2 {
+      margin-top: 0;
+      line-height: 1.05;
+    }
+
+    .overlay-card h1 {
+      font-size: clamp(2.2rem, 7vw, 4.2rem);
+      margin-bottom: 12px;
+    }
+
+    .overlay-card p,
+    .overlay-card li {
+      line-height: 1.55;
+    }
+
+    .overlay-card ul {
+      padding-left: 1.25rem;
+    }
+
+    .mode-grid {
+      display: grid;
+      grid-template-columns: repeat(3, minmax(0, 1fr));
+      gap: 12px;
+      margin: 20px 0 8px;
+    }
+
+    .mode-card {
+      border: 2px solid #eadfe9;
+      background: #fff;
+      border-radius: 18px;
+      padding: 16px;
+      text-align: left;
+      color: var(--ink);
+      transition: transform 150ms ease, border-color 150ms ease, box-shadow 150ms ease;
+    }
+
+    .mode-card:hover,
+    .mode-card:focus-visible {
+      transform: translateY(-2px);
+      border-color: var(--accent-2);
+      box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+      outline: none;
+    }
+
+    .mode-card strong {
+      display: block;
+      font-size: 1.05rem;
+      margin-bottom: 6px;
+      color: var(--accent-2);
+    }
+
+    .mode-card span {
+      display: block;
+      font-size: 0.9rem;
+      line-height: 1.4;
+      color: var(--muted);
+    }
+
+    .summary-grid {
+      display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr));
+      gap: 12px;
+      margin: 18px 0;
+    }
+
+    .summary-box {
+      background: #fff;
+      border: 2px solid #eadfe9;
+      border-radius: 18px;
+      padding: 16px;
+      text-align: center;
+    }
+
+    .summary-box strong {
+      font-size: 1.8rem;
+      display: block;
+      margin-top: 4px;
+    }
+
+    .mistakes-three {
+      color: var(--danger);
+    }
+
+    .sr-only {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      padding: 0;
+      margin: -1px;
+      overflow: hidden;
+      clip: rect(0,0,0,0);
+      white-space: nowrap;
+      border: 0;
+    }
+
+    /* The welcome screen is a full page; game HUD and controls appear only after choosing a mode. */
+    .welcoming .topbar,
+    .welcoming .party-background,
+    .welcoming .character-wrap,
+    .welcoming .dialogue-panel { display: none; }
+    .welcoming .game-stage { min-height: 0; background: #f7f6f3; margin-top: 18px; border: 0; }
+    .landing { position: relative; display: block; place-items: normal; padding: 0; background: #f7f6f3; backdrop-filter: none; }
+    .landing > * { width: 100%; }
+    .landing-masthead { display: flex; align-items: center; justify-content: space-between; gap: 16px; padding: 24px 40px; border-bottom: 1px solid #ded8dc; }
+    .landing-brand { font-size: 14px; font-weight: 900; letter-spacing: .08em; }
+    .landing-brand span { color: #bd005b; }
+    .landing-tag { font-size: 13px; color: #655a6b; }
+    .landing-hero { display: grid; grid-template-columns: 1fr 1.05fr; align-items: center; gap: 32px; padding: 40px 40px 32px; }
+    .landing-eyebrow { margin: 0 0 16px; font-size: 11px; font-weight: 800; letter-spacing: .16em; color: #bd005b; }
+    .landing h1 { margin: 0 0 18px; font-size: clamp(64px, 8vw, 96px); letter-spacing: -.075em; line-height: .95; font-weight: 900; }
+    .landing h1 em { display: block; color: #bd005b; font-family: Georgia, serif; font-weight: 700; letter-spacing: -.06em; }
+    .landing-hook { font-size: clamp(22px, 2.5vw, 29px); line-height: 1.2; letter-spacing: -.03em; font-weight: 800; margin: 0 0 14px; }
+    .landing-description { max-width: 350px; color: #655a6b; font-size: 16px; line-height: 1.6; margin: 0 0 22px; }
+    .landing-jump { display: inline-flex; align-items: center; gap: 26px; color: #251d34; font-size: 14px; font-weight: 800; text-decoration-thickness: 2px; text-underline-offset: 5px; }
+    .landing-jump span { font-size: 24px; }
+    .landing-party { position: relative; height: 374px; overflow: hidden; border-radius: 150px 150px 24px 24px; background: #ddd3e6; border: 2px solid #302536; box-shadow: 7px 7px 0 #ffe974; }
+    .landing-party::before { content: ''; position: absolute; inset: 48% -30px -50px; border-radius: 50% 50% 0 0; background: #c6b4d5; }
+    .landing-lights { position: absolute; top: 0; left: 0; width: 100%; height: 100px; }
+    .landing-cast { position: absolute; inset: 0; }
+    .landing-guest { position: absolute; width: 57%; bottom: -50px; }
+    .landing-guest svg { display: block; width: 100%; height: auto; }
+    .landing-guest:nth-child(1) { left: -10%; transform: rotate(-7deg); }
+    .landing-guest:nth-child(2) { left: 52%; transform: rotate(7deg); }
+    .landing-guest:nth-child(3) { left: 21%; bottom: -35px; }
+    .party-speech { position: absolute; top: 86px; left: 18px; z-index: 2; padding: 12px 16px; border: 2px solid #302536; border-radius: 18px 18px 18px 2px; background: #fff8ee; font-size: 14px; font-weight: 800; transform: rotate(-6deg); }
+    .party-sticker { position: absolute; right: 12px; bottom: 18px; z-index: 3; background: #ffe974; color: #251d34; border: 2px solid #302536; border-radius: 50%; width: 90px; height: 90px; display: flex; flex-direction: column; justify-content: center; align-items: center; font-size: 13px; line-height: 1.1; font-weight: 800; transform: rotate(12deg); }
+    .party-sticker b { font-size: 24px; }
+    .party-speech { top: 18px; left: 50%; white-space: nowrap; transform: translateX(-50%) rotate(-6deg); }
+    .cast-caption { text-align: center; margin: 18px 0 0; font-size: 12px; color: #655a6b; }
+    .landing-how { display: grid; grid-template-columns: repeat(3, 1fr); padding: 20px 40px; gap: 18px; background: #ffe974; border-block: 1px solid #e3ce62; }
+    .landing-how p { margin: 0; font-size: 14px; font-weight: 800; display: flex; align-items: center; gap: 12px; }
+    .landing-how span { font-size: 12px; border: 1px solid #251d34; border-radius: 50%; padding: 7px; }
+    .landing-choices { padding: 32px 40px 26px; scroll-margin-top: 20px; }
+    .landing-choice-heading h2 { font-size: clamp(25px, 3vw, 32px); letter-spacing: -.04em; margin: 0 0 8px; }
+    .landing-choice-heading p { margin: 0; color: #655a6b; font-size: 14px; line-height: 1.5; }
+    .landing-modes { gap: 14px; margin: 22px 0 20px; }
+    .landing-mode { display: flex; flex-direction: column; padding: 22px 20px 18px; border: 1.5px solid #302536; border-radius: 18px; transition: none; }
+    .landing-mode:nth-child(1) { background: #fff8ee; }
+    .landing-mode:nth-child(2) { background: #f6e5ec; }
+    .landing-mode:nth-child(3) { background: #eee8f3; }
+    .landing-mode .mode-kicker { font-size: 10px; letter-spacing: .09em; font-weight: 800; color: #655a6b; margin-bottom: 12px; }
+    .landing-mode strong { color: #251d34; font-size: 23px; letter-spacing: -.03em; margin-bottom: 10px; }
+    .landing-mode .mode-description { color: #514458; font-size: 14px; line-height: 1.6; margin-bottom: 22px; }
+    .landing-mode .mode-start { display: flex; justify-content: space-between; align-items: center; gap: 8px; width: 100%; margin-top: auto; padding-top: 14px; border-top: 1px solid #d5c5cd; color: #bd005b; font-weight: 800; font-size: 13px; }
+    .landing-mode .mode-start span { color: #bd005b; font-size: 21px; }
+    .landing-mode:hover { transform: none; background: #ffe974; box-shadow: 4px 4px 0 #302536; border-color: #302536; }
+    .landing-mode:focus-visible, .landing-jump:focus-visible, .landing-rules summary:focus-visible { outline: 3px solid #bd005b; outline-offset: 4px; transform: none; }
+    .landing-stakes { color: #655a6b; font-size: 13px; line-height: 1.6; margin: 0; }
+    .landing-stakes strong { color: #251d34; }
+    .landing-rules { margin-top: 16px; color: #655a6b; font-size: 13px; line-height: 1.6; }
+    .landing-rules summary { cursor: pointer; width: fit-content; color: #251d34; font-weight: 700; }
+    .landing-rules p { max-width: 750px; }
+    .landing-footer { display: flex; justify-content: space-between; gap: 12px; padding: 20px 40px; border-top: 1px solid #ded8dc; color: #655a6b; font-size: 12px; }
+    .landing-footer span { color: #bd005b; font-weight: 800; }
+
+    @media (max-width: 700px) {
+      .landing-masthead { padding: 20px 22px; }
+      .landing-tag { display: none; }
+      .landing-hero { grid-template-columns: 1fr; gap: 26px; padding: 30px 22px 24px; }
+      .landing h1 { font-size: 76px; }
+      .landing h1 em { display: inline; }
+      .landing-description { max-width: 100%; }
+      .landing-party { height: 310px; max-width: 420px; margin-inline: auto; }
+      .landing-guest { width: 60%; bottom: -45px; }
+      .landing-guest:nth-child(2) { left: 49%; }
+      .landing-guest:nth-child(3) { left: 20%; bottom: -32px; }
+      .party-speech { top: 66px; left: 12px; font-size: 12px; padding: 9px 12px; transform: rotate(-6deg); }
+      .party-sticker { width: 72px; height: 72px; right: 8px; bottom: 10px; font-size: 11px; }
+      .party-sticker b { font-size: 20px; }
+      .landing-how { grid-template-columns: 1fr; padding: 18px 22px; gap: 10px; }
+      .landing-how p { font-size: 13px; }
+      .landing-how span { padding: 5px; }
+      .landing-choices { padding: 26px 22px; }
+      .landing-mode { padding: 20px; }
+      .landing-mode .mode-description { margin-bottom: 14px; }
+      .landing-footer { padding: 18px 22px; flex-wrap: wrap; }
+    }
+
+    @media (max-width: 380px) {
+      .landing h1 { font-size: 62px; }
+      .landing-party { height: 270px; }
+      .party-speech { top: 57px; }
+    }
+
+    @media (max-width: 700px) {
+      .game-stage {
+        min-height: 670px;
+      }
+
+      .character-wrap {
+        width: min(78vw, 320px);
+        bottom: 190px;
+      }
+
+      .topbar {
+        display: grid;
+        grid-template-columns: repeat(2, minmax(0, 1fr));
+      }
+
+      .stat-card {
+        min-width: 0;
+      }
+
+      .dialogue-panel {
+        bottom: 12px;
+      }
+
+      .mode-grid,
+      .summary-grid {
+        grid-template-columns: 1fr;
+      }
+    }
+  </style>
+</head>
+<body class="welcoming">
+  <div class="app-shell">
+    <header class="topbar" aria-label="Game status">
+      <div class="stat-card">
+        <span class="stat-label">People met</span>
+        <span class="stat-value" id="peopleMetStat">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Correct names</span>
+        <span class="stat-value" id="correctStat">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Streak</span>
+        <span class="stat-value" id="streakStat">0</span>
+      </div>
+      <div class="stat-card">
+        <span class="stat-label">Mistakes</span>
+        <span class="stat-value" id="mistakeStat">0 / 3</span>
+      </div>
+      <div class="stat-card introduction-progress" id="introductionProgress" aria-live="polite">Meet your first two guests.</div>
+    </header>
+
+    <main class="game-stage" id="gameStage">
+      <svg class="party-background" viewBox="0 0 1200 760" preserveAspectRatio="xMidYMid slice" aria-hidden="true">
+        <defs>
+          <linearGradient id="wallGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#4a355f"/>
+            <stop offset="100%" stop-color="#2b203b"/>
+          </linearGradient>
+          <linearGradient id="floorGrad" x1="0" x2="0" y1="0" y2="1">
+            <stop offset="0%" stop-color="#3e2e4d"/>
+            <stop offset="100%" stop-color="#251c31"/>
+          </linearGradient>
+        </defs>
+        <rect width="1200" height="560" fill="url(#wallGrad)"/>
+        <rect y="560" width="1200" height="200" fill="url(#floorGrad)"/>
+        <line x1="0" y1="560" x2="1200" y2="560" stroke="#806f94" stroke-width="6"/>
+        <g opacity="0.78">
+          <circle cx="90" cy="80" r="16" fill="#ffe974"/>
+          <circle cx="190" cy="115" r="12" fill="#e55937"/>
+          <circle cx="310" cy="72" r="14" fill="#ffe974"/>
+          <circle cx="470" cy="110" r="11" fill="#bd005b"/>
+          <circle cx="610" cy="72" r="15" fill="#ffe974"/>
+          <circle cx="760" cy="118" r="12" fill="#e55937"/>
+          <circle cx="900" cy="76" r="15" fill="#ffe974"/>
+          <circle cx="1060" cy="112" r="12" fill="#bd005b"/>
+          <path d="M0 45 Q150 120 300 55 T600 55 T900 55 T1200 55" fill="none" stroke="#dbc9e3" stroke-width="3"/>
+        </g>
+        <g opacity="0.34" fill="#16111f">
+          <circle cx="75" cy="490" r="42"/>
+          <rect x="45" y="525" width="60" height="115" rx="28"/>
+          <circle cx="1120" cy="475" r="45"/>
+          <rect x="1088" y="515" width="66" height="125" rx="30"/>
+          <circle cx="995" cy="510" r="31"/>
+          <rect x="970" y="540" width="50" height="90" rx="24"/>
+          <circle cx="215" cy="520" r="31"/>
+          <rect x="190" y="550" width="50" height="90" rx="24"/>
+        </g>
+        <g opacity="0.9">
+          <ellipse cx="107" cy="622" rx="88" ry="17" fill="#16111f"/>
+          <rect x="101" y="586" width="12" height="80" fill="#16111f"/>
+          <ellipse cx="1090" cy="626" rx="88" ry="17" fill="#16111f"/>
+          <rect x="1084" y="590" width="12" height="80" fill="#16111f"/>
+        </g>
+      </svg>
+
+      <div class="character-wrap" id="characterWrap" aria-live="polite"></div>
+
+      <section class="dialogue-panel" aria-live="polite">
+        <div class="speaker" id="speakerLabel">Party guest</div>
+        <div class="dialogue-text" id="dialogueText">Press Start to begin.</div>
+        <div class="controls" id="controls"></div>
+        <div class="hint" id="hintText">Keyboard: Enter advances dialogue and submits names.</div>
+      </section>
+
+      <div class="overlay landing" id="introOverlay">
+        <header class="landing-masthead">
+          <span class="landing-brand">AMALGAM <span>IMPROV</span></span>
+          <span class="landing-tag">A little party for your memory.</span>
+        </header>
+
+        <div class="landing-hero">
+          <div class="landing-copy">
+            <p class="landing-eyebrow">YOU'RE ON THE GUEST LIST</p>
+            <h1>Name <em>Party.</em></h1>
+            <p class="landing-hook">You know the face.<br>Do you know the name?</p>
+            <p class="landing-description">Work the room. Meet a few characters. Then try to remember who's who as the party gets bigger.</p>
+            <a class="landing-jump" href="#chooseYourParty">Find your way to play <span aria-hidden="true">↘</span></a>
+          </div>
+          <div class="landing-illustration">
+            <div class="landing-party" role="img" aria-label="Three illustrated party guests, with colorful outfits, curls, braids, and glasses.">
+              <svg class="landing-lights" viewBox="0 0 500 100" aria-hidden="true"><path d="M-20 15 Q250 125 520 15" fill="none" stroke="#302536" stroke-width="2"/><g stroke="#302536" stroke-width="2"><circle cx="55" cy="42" r="9" fill="#ffe974"/><circle cx="145" cy="64" r="9" fill="#e55937"/><circle cx="250" cy="70" r="9" fill="#ffe974"/><circle cx="355" cy="64" r="9" fill="#bd005b"/><circle cx="445" cy="42" r="9" fill="#ffe974"/></g></svg>
+              <span class="party-speech" aria-hidden="true">Wait… was it Alex?</span>
+              <div class="landing-cast" id="landingCast" aria-hidden="true"></div>
+              <span class="party-sticker" aria-hidden="true">OH, HEY<br><b>…YOU!</b></span>
+            </div>
+            <p class="cast-caption">Memorable faces. Names? That's your department.</p>
+          </div>
+        </div>
+
+        <div class="landing-how" aria-label="How to play">
+          <p><span>01</span> Meet someone new.</p>
+          <p><span>02</span> Remember their name.</p>
+          <p><span>03</span> Nail the next hello.</p>
+        </div>
+
+        <section class="landing-choices" id="chooseYourParty" aria-labelledby="choosePartyTitle">
+          <div class="landing-choice-heading">
+            <h2 id="choosePartyTitle">Your party. Your name game.</h2>
+            <p>Test your recall or put your imagination on the guest list. Pick a mode and jump in.</p>
+          </div>
+          <div class="mode-grid landing-modes" aria-label="Choose game mode">
+            <button class="mode-card landing-mode" id="generatedModeButton">
+              <span class="mode-kicker">THE CLASSIC CHALLENGE</span>
+              <strong>Game Names</strong>
+              <span class="mode-description">We make the introductions. You make the names stick. How many can you remember?</span>
+              <span class="mode-start">Meet the guests <span aria-hidden="true">↗</span></span>
+            </button>
+            <button class="mode-card landing-mode" id="mixedModeButton">
+              <span class="mode-kicker">A LITTLE OF BOTH</span>
+              <strong>Mixed Names</strong>
+              <span class="mode-description">We name about half the guests. You name the rest. A little surprise, a little creative license.</span>
+              <span class="mode-start">Mix it up <span aria-hidden="true">↗</span></span>
+            </button>
+            <button class="mode-card landing-mode" id="playerModeButton">
+              <span class="mode-kicker">YOU'RE IN CHARGE</span>
+              <strong>Your Names</strong>
+              <span class="mode-description">Name every guest yourself. Go familiar, go ridiculous—just remember what you called them.</span>
+              <span class="mode-start">Make it your party <span aria-hidden="true">↗</span></span>
+            </button>
+          </div>
+          <p class="landing-stakes"><strong>Three missed names. Party over.</strong> No timer. Take a breath, trust your memory, and have fun.</p>
+          <details class="landing-rules">
+            <summary>The very short guest guide</summary>
+            <p>Guests return with a little party gossip. Type their name to reply. Each correct answer adds to your score; three mistakes end the round. Then pick any mode to play again.</p>
+            <p>Start with two guests and remember each once to meet a third. After that, earn every new introduction with four correct recalls involving at least two different guests. Mistakes don't erase your introduction progress.</p>
+            <p>Spelling counts, capitalization doesn't. When inventing names, use letters A–Z only, without spaces or punctuation, and give each guest a different name.</p>
+          </details>
+        </section>
+        <footer class="landing-footer">Good company. Questionable recall. <span>Keep laughing.</span></footer>
+      </div>
+
+      <dialog class="game-over-dialog" id="gameOverOverlay" aria-labelledby="gameOverTitle" aria-describedby="gameOverDescription">
+        <div class="overlay-card">
+          <h2 id="gameOverTitle">Party over!</h2>
+          <p id="gameOverDescription">Three missed names. A fresh party is one click away.</p>
+          <div class="missed-guest">
+            <div class="missed-guest-portrait" id="finalGuestPortrait" aria-hidden="true"></div>
+            <p>That was <strong id="finalGuestName"></strong>.</p>
+          </div>
+          <div class="summary-grid">
+            <div class="summary-box">
+              Correct names
+              <strong id="finalCorrect">0</strong>
+            </div>
+            <div class="summary-box">
+              Longest streak
+              <strong id="finalStreak">0</strong>
+            </div>
+            <div class="summary-box">
+              People met
+              <strong id="finalPeople">0</strong>
+            </div>
+            <div class="summary-box">
+              Mistakes
+              <strong class="mistakes-three">3</strong>
+            </div>
+          </div>
+          <p><strong>Start over. Who names the guests?</strong></p>
+          <div class="mode-grid" aria-label="Choose a mode and start over">
+            <button class="mode-card" id="restartGeneratedButton" autofocus>
+              <strong>Game Names</strong>
+              <span>The game names every guest.</span>
+            </button>
+            <button class="mode-card" id="restartMixedButton">
+              <strong>Mixed Names</strong>
+              <span>A mix of game names and names you choose.</span>
+            </button>
+            <button class="mode-card" id="restartPlayerButton">
+              <strong>Your Names</strong>
+              <span>You name every guest.</span>
+            </button>
+          </div>
+        </div>
+      </dialog>
+    </main>
+  </div>
+
+  <script>
+    // Self-contained cocktail-party memory game using inline SVG characters and vanilla JavaScript.
+    (() => {
+      const MAX_MISTAKES = 3;
+      const CORRECT_RECALLS_PER_INTRODUCTION = 4;
+      const DISTINCT_GUESTS_PER_INTRODUCTION = 2;
+      const NAMING_MODES = {
+        generated: {
+          label: "Game Names",
+          playerNamesProbability: 0
+        },
+        mixed: {
+          label: "Mixed Names",
+          playerNamesProbability: 0.50
+        },
+        player: {
+          label: "Your Names",
+          playerNamesProbability: 1
+        }
+      };
+
+      const generatedNames = [
+        "Alex","Avery","Bailey","Blair","Cameron","Casey","Charlie","Dakota","Devon","Drew",
+        "Elliot","Emerson","Finley","Frankie","Harper","Hayden","Jamie","Jordan","Jules","Kai",
+        "Kendall","Lane","Logan","Morgan","Nico","Parker","Quinn","Reese","Riley","Robin",
+        "Rowan","Sage","Sam","Skyler","Taylor","Toby"
+      ];
+
+      const partyRemarks = [
+        "The tiny quiches are disappearing faster than anyone expected.",
+        "Someone by the window is telling an extremely dramatic story about parking.",
+        "I think the playlist just switched from jazz to disco.",
+        "The host has somehow run out of clean glasses already.",
+        "There is a very serious debate happening about whether that painting is upside down.",
+        "I just met someone who claims they make the best guacamole in the city.",
+        "The balcony is surprisingly nice if you need a quieter spot.",
+        "Someone brought a cake, but nobody seems to know what it is celebrating.",
+        "The bartender is inventing drinks based on people's shoes.",
+        "I heard there may be karaoke later, which feels dangerous.",
+        "The cheese plate is getting competitive.",
+        "Someone near the coat rack has been trying to organize a group photo for ten minutes.",
+        "The sparkling water is hidden behind the punch bowl.",
+        "I am pretty sure two strangers just discovered they went to the same summer camp.",
+        "The host keeps dimming the lights and then immediately changing their mind.",
+        "Someone just opened a bottle of champagne and the cork nearly hit the ceiling.",
+        "I found the good napkins. They were somehow underneath the dessert table.",
+        "A group near the kitchen is trying to remember all the words to an old theme song.",
+        "Someone keeps moving the bowl of mixed nuts and now nobody knows where it went.",
+        "I think the person in the corner has been holding the same appetizer for twenty minutes.",
+        "Apparently there is a secret second dessert tray coming out later.",
+        "Two people just realized they have the exact same hometown.",
+        "I overheard someone confidently giving directions to a room they have never been in.",
+        "The host says the neighbors might stop by, which could make this even more crowded.",
+        "Someone has started ranking the snacks and emotions are getting involved.",
+        "I think three different people have accidentally worn almost the same outfit.",
+        "There is a mystery coat on the bed and nobody will admit it belongs to them.",
+        "A very intense conversation about board games has broken out by the drinks table.",
+        "Someone just asked if this party has a theme, and now everyone is pretending it does.",
+        "The ice bucket is empty again. This party is really moving.",
+        "A group near the door is planning where everyone should go after this.",
+        "Someone keeps complimenting the lamp. Honestly, it is a pretty good lamp.",
+        "I just watched two people introduce themselves for the second time tonight.",
+        "The music got louder and somehow every conversation got louder with it.",
+        "Someone says there is a dog downstairs, and suddenly half the party is interested.",
+        "The punch is much stronger than it looks, according to several very confident sources."
+      ];
+
+      const introLines = [
+        "Hi! I don't think we've met yet.",
+        "Hey there! Nice to meet you.",
+        "Hello! I just arrived and figured I should introduce myself.",
+        "Hi! I keep seeing you around the room.",
+        "Oh, hello! I don't think we've been properly introduced.",
+        "Hey! Great party, huh?"
+      ];
+
+      const selfIntroLines = [
+        (name) => `I'm ${name}. Nice to meet you!`,
+        (name) => `By the way, my name is ${name}.`,
+        (name) => `I'm ${name}. I'll probably see you around.`,
+        (name) => `You can call me ${name}.`,
+        (name) => `I'm ${name}. Glad we finally met.`
+      ];
+
+      const playerNamingPrompts = [
+        "I know we've met somewhere before... what do you call me?",
+        "You seem familiar. What name should I go by?",
+        "I don't think I caught a name for myself yet.",
+        "You've got that look like you know exactly what my name should be.",
+        "All right, you name me. What should I be called?"
+      ];
+
+      const faceShapes = ["round","oval","square","heart"];
+      const skinTones = ["#f4cfb2","#dfab86","#bd805f","#925f47","#704735","#edba98","#aa7053","#593d32"];
+      const hairColors = ["#30232d","#654135","#ad613f","#d6b26e","#49405f","#813f50","#252733","#c4b8ab"];
+      const outfitColors = ["#e55937","#bd005b","#ffe974","#53a2be","#4b7f52","#7768ae","#d77a61","#5b5f97"];
+      const accentColors = ["#ffffff","#1f1f1f","#f6d6ad","#bde0fe","#f1c0e8","#caffbf"];
+      const hairstyleTypes = ["short","bob","bun","curly","side","mohawk","waves","bald","braids","locs","long","pixie"];
+      const postureTypes = ["neutral","leanLeft","leanRight","pocket","glass"];
+      const outfitTypes = ["blazer","sweater","shirt","dress","vest","cardigan"];
+
+      const elements = {
+        characterWrap: document.getElementById("characterWrap"),
+        dialogueText: document.getElementById("dialogueText"),
+        speakerLabel: document.getElementById("speakerLabel"),
+        controls: document.getElementById("controls"),
+        hintText: document.getElementById("hintText"),
+        introOverlay: document.getElementById("introOverlay"),
+        gameOverOverlay: document.getElementById("gameOverOverlay"),
+        generatedModeButton: document.getElementById("generatedModeButton"),
+        mixedModeButton: document.getElementById("mixedModeButton"),
+        playerModeButton: document.getElementById("playerModeButton"),
+        restartGeneratedButton: document.getElementById("restartGeneratedButton"),
+        restartMixedButton: document.getElementById("restartMixedButton"),
+        restartPlayerButton: document.getElementById("restartPlayerButton"),
+        peopleMetStat: document.getElementById("peopleMetStat"),
+        introductionProgress: document.getElementById("introductionProgress"),
+        correctStat: document.getElementById("correctStat"),
+        streakStat: document.getElementById("streakStat"),
+        mistakeStat: document.getElementById("mistakeStat"),
+        finalCorrect: document.getElementById("finalCorrect"),
+        finalStreak: document.getElementById("finalStreak"),
+        finalPeople: document.getElementById("finalPeople"),
+        finalGuestPortrait: document.getElementById("finalGuestPortrait"),
+        finalGuestName: document.getElementById("finalGuestName")
+      };
+
+      let gameState = {};
+
+      function resetGameState() {
+        gameState = {
+          characters: [],
+          seenCharacterIds: [],
+          warmupRecalledIds: new Set(),
+          introductionCorrect: 0,
+          introductionRecalledIds: new Set(),
+          encounterNumber: 0,
+          currentCharacter: null,
+          currentMode: null,
+          currentStep: null,
+          mistakes: 0,
+          correctNames: 0,
+          currentStreak: 0,
+          longestStreak: 0,
+          nextCharacterId: 1,
+          usedGeneratedNames: new Set(),
+          isGameOver: false,
+          selectedMode: gameState.selectedMode || "mixed"
+        };
+      }
+
+      function randomChoice(array) {
+        return array[Math.floor(Math.random() * array.length)];
+      }
+
+      function randomIndex(arrayLength) {
+        return Math.floor(Math.random() * arrayLength);
+      }
+
+      function normalizeName(value) {
+        return value.trim().toLocaleLowerCase();
+      }
+
+      function isAlphabeticName(value) {
+        return /^[A-Za-z]+$/.test(value.trim());
+      }
+
+      function getUniqueGeneratedName() {
+        const availableNames = generatedNames.filter(
+          (name) => !gameState.usedGeneratedNames.has(normalizeName(name))
+        );
+
+        if (availableNames.length > 0) {
+          const selected = randomChoice(availableNames);
+          gameState.usedGeneratedNames.add(normalizeName(selected));
+          return selected;
+        }
+
+        const alphabet = "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+        let fallbackIndex = Math.max(0, gameState.characters.length - generatedNames.length);
+        let candidate = `Guest${alphabet[fallbackIndex % alphabet.length]}`;
+
+        while (gameState.usedGeneratedNames.has(normalizeName(candidate))) {
+          fallbackIndex += 1;
+          const firstLetter = alphabet[Math.floor(fallbackIndex / alphabet.length) % alphabet.length];
+          const secondLetter = alphabet[fallbackIndex % alphabet.length];
+          candidate = `Guest${firstLetter}${secondLetter}`;
+        }
+
+        gameState.usedGeneratedNames.add(normalizeName(candidate));
+        return candidate;
+      }
+
+      function createCharacterVisual(index) {
+        // Independent, repeatable choices keep identities stable without coupling skin, clothes, and hair.
+        let seed = Math.imul(index + 1, 2654435761) >>> 0;
+        const pick = (values) => {
+          seed = (seed + 0x6d2b79f5) >>> 0;
+          let mixed = Math.imul(seed ^ (seed >>> 15), seed | 1);
+          mixed ^= mixed + Math.imul(mixed ^ (mixed >>> 7), mixed | 61);
+          const fraction = ((mixed ^ (mixed >>> 14)) >>> 0) / 4294967296;
+          return values[Math.floor(fraction * values.length)];
+        };
+        const outfit = pick(outfitTypes);
+        return {
+          faceShape: pick(faceShapes),
+          skinTone: pick(skinTones),
+          hairColor: pick(hairColors),
+          outfitColor: pick(outfitColors),
+          accentColor: pick(accentColors),
+          // Derive hair from the appearance seed, keeping redraws of this guest consistent.
+          hairstyle: hairstyleTypes[(index * 5) % hairstyleTypes.length],
+          outfit,
+          pattern: pick(["plain", "plain", "stripe", "dots"]),
+          posture: pick(postureTypes),
+          build: pick([0, 12, 24]),
+          eyewear: pick(["none", "none", "round", "square", "catEye"]),
+          jewelry: pick(["none", "studs", "hoops", "pendant"]),
+          clothingAccent: ["blazer", "shirt", "vest"].includes(outfit)
+            ? pick(["none", "bowtie", "pin"]) : pick(["none", "none", "pin"]),
+          eyeShape: pick(["almond", "round", "soft"]),
+          nose: pick(["rounded", "straight", "wide"]),
+          mouth: pick(["smile", "grin", "asymmetric", "soft"]),
+          facialHair: pick(["none", "none", "none", "mustache", "beard"]),
+          freckles: pick([false, false, true]),
+          mature: pick([false, false, false, true]),
+          eyebrowTilt: pick([-3, 0, 3, 5]),
+          eyebrowWeight: pick([3, 4, 5]),
+          eyeSpacing: pick([27, 30, 33])
+        };
+      }
+
+      function createNewCharacter() {
+        // Give each guest a fresh appearance, then store it with their name for every return.
+        // Separate artwork randomness from encounter/name rolls and avoid duplicate cast members.
+        let visual;
+        let visualSignature;
+        const existingLooks = new Set(gameState.characters.map((guest) => JSON.stringify(guest.visual)));
+        do {
+          const appearanceSeed = crypto.getRandomValues(new Uint32Array(1))[0];
+          visual = createCharacterVisual(appearanceSeed);
+          visualSignature = JSON.stringify(visual);
+        } while (existingLooks.has(visualSignature));
+        const namingMode = NAMING_MODES[gameState.selectedMode];
+        const playerNamesCharacter = Math.random() < namingMode.playerNamesProbability;
+
+        const character = {
+          id: gameState.nextCharacterId++,
+          name: playerNamesCharacter ? null : getUniqueGeneratedName(),
+          namedByPlayer: playerNamesCharacter,
+          visual,
+          introductions: 0,
+          returns: 0,
+          lastSeenEncounter: 0
+        };
+
+        gameState.characters.push(character);
+        // An earned introduction starts a fresh progress block; warm-up answers do not carry over.
+        if (gameState.characters.length >= 3) {
+          gameState.introductionCorrect = 0;
+          gameState.introductionRecalledIds.clear();
+        }
+        gameState.currentCharacter = character;
+        gameState.currentMode = "new";
+        gameState.currentStep = "intro";
+        recordEncounter(character);
+        updateStats();
+        return character;
+      }
+
+      // Record introductions and returns equally; keep only the two most recent encounters.
+      function recordEncounter(character) {
+        gameState.encounterNumber += 1;
+        character.lastSeenEncounter = gameState.encounterNumber;
+        gameState.seenCharacterIds.push(character.id);
+        gameState.seenCharacterIds = gameState.seenCharacterIds.slice(-2);
+      }
+
+      function chooseReturningCharacter() {
+        const eligible = gameState.characters.filter((character) => character.name);
+        if (eligible.length === 0) {
+          return null;
+        }
+        // Choose uniformly, excluding only the previous guest; a sole named guest can still return.
+        const previousId = gameState.seenCharacterIds.at(-1);
+        const alternatives = eligible.filter((character) => character.id !== previousId);
+        return randomChoice(alternatives.length ? alternatives : eligible);
+      }
+
+      function isIntroductionReady() {
+        if (gameState.characters.length < 2) return true;
+        if (gameState.characters.length === 2) return gameState.warmupRecalledIds.size === 2;
+        return gameState.introductionCorrect >= CORRECT_RECALLS_PER_INTRODUCTION &&
+          gameState.introductionRecalledIds.size >= DISTINCT_GUESTS_PER_INTRODUCTION;
+      }
+
+      function chooseNextEncounter() {
+        if (gameState.isGameOver) return;
+
+        // Meet two guests, recall each once, then earn each new guest through successful recall.
+        const shouldReturn = !isIntroductionReady();
+
+        if (shouldReturn) {
+          const returningCharacter = chooseReturningCharacter();
+          if (returningCharacter) {
+            gameState.currentCharacter = returningCharacter;
+            gameState.currentMode = "return";
+            gameState.currentStep = "remark";
+            returningCharacter.returns += 1;
+            recordEncounter(returningCharacter);
+            showCharacter(returningCharacter);
+            renderReturningRemark();
+            return;
+          }
+        }
+
+        const newCharacter = createNewCharacter();
+        showCharacter(newCharacter);
+        renderNewCharacterIntro();
+      }
+
+      // Mix a material color with the shared ink or paper for restrained, consistent shading.
+      const CHARACTER_INK = "#302536";
+      function mixColor(color, target, amount) {
+        const channels = [1, 3, 5].map((offset) => {
+          const start = parseInt(color.slice(offset, offset + 2), 16);
+          const end = parseInt(target.slice(offset, offset + 2), 16);
+          return Math.round(start + (end - start) * amount).toString(16).padStart(2, "0");
+        });
+        return `#${channels.join("")}`;
+      }
+
+      // Head contours and ear anchors share one coordinate system across every accessory.
+      function faceGeometry(visual) {
+        const faces = {
+          round: { earX: 71, path: "M200 82 C245 82 273 112 273 158 C273 205 244 241 200 242 C155 241 127 207 127 158 C127 111 156 82 200 82Z" },
+          oval: { earX: 64, path: "M200 77 C242 77 264 110 264 156 C264 205 239 247 200 249 C161 247 136 205 136 156 C136 110 158 77 200 77Z" },
+          square: { earX: 71, path: "M200 82 C246 82 272 104 272 143 L270 197 Q267 237 234 241 L166 241 Q133 237 130 197 L128 143 C128 104 154 82 200 82Z" },
+          heart: { earX: 69, path: "M200 80 C248 80 274 111 270 153 C267 188 247 215 218 238 Q200 252 182 238 C153 215 133 188 130 153 C126 111 152 80 200 80Z" }
+        };
+        return faces[visual.faceShape];
+      }
+
+      function faceShapeMarkup(visual, id) {
+        const { path, earX } = faceGeometry(visual);
+        const shade = mixColor(visual.skinTone, CHARACTER_INK, 0.18);
+        const ears = [-1, 1].map((side) => {
+          const x = 200 + side * earX;
+          return `<ellipse cx="${x}" cy="174" rx="12" ry="19" fill="${visual.skinTone}"/>
+            <path d="M${x - side * 2} 164 Q${x + side * 10} 172 ${x} 181" fill="none" stroke="${shade}" stroke-width="3"/>`;
+        }).join("");
+        return `${ears}<defs><clipPath id="${id}-face"><path d="${path}"/></clipPath></defs><path d="${path}" fill="${visual.skinTone}"/>
+          <path d="M246 127 Q263 181 237 218 Q220 236 194 240 Q241 245 258 209 Q276 166 260 133Z"
+            fill="${shade}" stroke="none" opacity="0.45" clip-path="url(#${id}-face)"/>
+          <path d="M153 133 Q147 148 149 158" stroke="${mixColor(visual.skinTone, '#fff8ee', 0.4)}" stroke-width="7" fill="none"/>
+          <path d="${path}" fill="none"/>`;
+      }
+
+      function hairstyleMarkup(visual, layer) {
+        const color = visual.hairColor;
+        const highlight = mixColor(color, "#fff1d9", 0.25);
+        const longBack = "M125 146 C114 73 164 59 202 66 C258 58 289 106 279 165 L287 291 Q251 313 223 285 L170 287 Q135 307 113 286Z";
+        const back = {
+          bob: `<path d="M124 150 C112 79 155 59 202 65 C260 58 287 109 277 173 L281 230 Q252 247 235 222 L163 222 Q141 243 119 228Z"/>`,
+          bun: `<circle cx="246" cy="78" r="34"/><path d="M225 53 Q257 55 266 83 M228 67 Q248 67 257 94" stroke="${highlight}" stroke-width="3" fill="none"/>`,
+          curly: `<path d="M126 171 C92 159 99 130 110 120 C91 90 120 75 137 79 C134 44 174 44 186 56 C211 27 238 51 239 62 C277 48 292 82 280 99 C312 111 300 145 277 155 L269 192 L131 191Z"/>`,
+          long: `<path d="${longBack}"/><path d="M140 162 Q125 235 139 281 M259 161 Q270 229 256 281" fill="none" stroke="${highlight}" stroke-width="4"/>`,
+          braids: [-1, 1].map((side) => `<g transform="translate(${200 + side * 66} 190) rotate(${-side * 8})">
+            <path d="M0 0 Q${side * 10} 57 0 119" fill="none" stroke="${CHARACTER_INK}" stroke-width="29"/>
+            <path d="M0 0 Q${side * 10} 57 0 119" fill="none" stroke="${color}" stroke-width="22"/>
+            ${[14, 31, 48, 65, 82, 99].map((y) => `<path d="M-9 ${y} Q0 ${y + 13} 10 ${y + 2}" stroke="${highlight}" stroke-width="3" fill="none"/>`).join("")}
+            <path d="M-10 113 L10 113" stroke="${visual.accentColor}" stroke-width="7"/></g>`).join(""),
+          locs: `<path d="${longBack}"/>${[126, 143, 258, 274].map((x, i) => `<path d="M${x} 128 Q${x - 10} 201 ${x + (i % 2 ? 5 : -3)} ${275 + i * 5}" fill="none" stroke="${highlight}" stroke-width="8"/>`).join("")}`
+        };
+        if (layer === "back") return `<g fill="${color}">${back[visual.hairstyle] || ""}</g>`;
+
+        const cap = "M130 142 C123 92 156 68 199 72 C247 66 276 97 269 139 Q249 112 229 104 Q184 126 150 119Z";
+        const front = {
+          short: `<path d="${cap}"/><path d="M148 100 Q178 80 211 88 M156 109 Q186 90 221 95" fill="none" stroke="${highlight}" stroke-width="4"/>`,
+          bob: `<path d="M126 169 C111 101 142 65 197 70 C254 64 280 100 275 164 L259 192 L252 130 Q215 125 187 99 Q167 131 145 133 L140 191Z"/><path d="M143 108 Q160 80 186 83 M213 84 Q254 87 263 117" stroke="${highlight}" stroke-width="4" fill="none"/>`,
+          bun: `<path d="M130 147 C120 100 151 72 194 77 C241 67 272 98 270 143 L257 154 L253 123 Q209 127 178 99 Q153 128 143 133 L141 157Z"/><path d="M140 111 Q154 84 176 87 M191 87 Q232 84 256 112" fill="none" stroke="${highlight}" stroke-width="3"/>`,
+          curly: `<path d="M124 150 Q108 130 125 114 Q115 92 142 88 Q145 64 170 77 Q190 57 208 77 Q236 61 247 85 Q275 78 276 104 Q293 120 274 145 L259 155 Q251 136 252 125 Q230 135 219 116 Q199 134 183 114 Q164 131 150 122 L143 155Z"/><path d="M136 111 Q130 96 145 99 M164 98 Q158 84 176 88 M202 98 Q193 79 210 87 M240 111 Q229 91 246 97" fill="none" stroke="${highlight}" stroke-width="4"/>`,
+          side: `<path d="M128 159 C115 104 140 73 188 71 C241 58 280 92 275 132 Q230 107 196 99 Q165 146 135 160Z"/><path d="M264 121 Q278 147 263 181 L255 158Z"/><path d="M144 125 Q171 82 216 84 M143 140 Q177 100 214 98" stroke="${highlight}" stroke-width="4" fill="none"/>`,
+          mohawk: `<path d="M174 112 Q159 83 181 68 L183 42 L204 58 L220 33 L231 65 L249 57 Q264 88 237 118 Q210 102 174 112Z"/><path d="M190 97 L198 70 M211 95 L220 66 M230 99 L241 78" fill="none" stroke="${highlight}" stroke-width="4"/>`,
+          waves: `<path d="M129 150 C113 108 146 66 189 75 C213 57 254 70 270 99 Q285 124 265 151 L253 123 Q232 135 215 115 Q190 135 175 116 Q149 134 139 153Z"/><path d="M142 112 Q162 86 187 99 T251 104 M156 88 Q176 76 194 88" stroke="${highlight}" stroke-width="4" fill="none"/>`,
+          bald: `<path d="M134 131 Q127 147 136 167 M266 131 Q273 147 264 167" stroke="${color}" stroke-width="8" fill="none"/><path d="M177 101 Q198 89 219 99" fill="none" stroke="${mixColor(visual.skinTone, '#fff8ee', 0.35)}" stroke-width="7"/>`,
+          braids: `<path d="${cap}"/><path d="M195 81 Q164 83 144 115 M205 81 Q237 83 259 115 M193 94 Q162 100 145 124 M207 94 Q237 102 258 126" fill="none" stroke="${highlight}" stroke-width="3"/>`,
+          locs: `<path d="${cap}"/>${[0, 1, 2, 3, 4, 5].map((i) => `<path d="M${157 + i * 17} ${88 - Math.sin(i) * 7} Q${136 + i * 20} 108 ${134 + i * 23} ${143 - i * 4}" stroke="${CHARACTER_INK}" stroke-width="17" fill="none"/><path d="M${157 + i * 17} ${88 - Math.sin(i) * 7} Q${136 + i * 20} 108 ${134 + i * 23} ${143 - i * 4}" stroke="${i % 2 ? color : highlight}" stroke-width="11" fill="none"/>`).join("")}`,
+          long: `<path d="M126 160 C113 102 145 65 200 71 C254 65 282 101 275 161 L262 210 L252 141 Q221 127 200 98 Q176 128 149 141 L140 211Z"/><path d="M187 87 Q148 95 139 153 M214 87 Q255 101 262 148" fill="none" stroke="${highlight}" stroke-width="4"/>`,
+          pixie: `<path d="M129 153 C114 112 139 76 174 79 L183 63 L202 72 L224 59 L234 76 Q272 83 272 129 L258 149 L254 119 Q230 135 205 110 Q182 138 159 126 L141 160Z"/><path d="M147 108 Q167 85 186 92 M201 92 Q221 83 243 97" fill="none" stroke="${highlight}" stroke-width="4"/>`
+        };
+        return `<g fill="${color}">${front[visual.hairstyle]}</g>`;
+      }
+
+      // Facial features stay aligned to the eyes; larger shape changes survive small mobile sizes.
+      function facialFeaturesMarkup(visual) {
+        const shade = mixColor(visual.skinTone, CHARACTER_INK, 0.3);
+        const left = 200 - visual.eyeSpacing;
+        const right = 200 + visual.eyeSpacing;
+        const eyes = [left, right].map((x) => {
+          if (visual.eyeShape === "soft") return `<path d="M${x - 9} 163 Q${x} 156 ${x + 9} 163" fill="none" stroke-width="3"/><ellipse cx="${x + 1}" cy="164" rx="3.5" ry="4.5" fill="${CHARACTER_INK}" stroke="none"/>`;
+          return `<path d="M${x - 11} 161 Q${x} ${visual.eyeShape === 'round' ? 146 : 151} ${x + 11} 161 Q${x} 172 ${x - 11} 161Z" fill="#fff8ee" stroke-width="2.5"/>
+            <ellipse cx="${x + 1}" cy="161" rx="4.2" ry="5.7" fill="${CHARACTER_INK}" stroke="none"/><circle cx="${x + 2}" cy="159" r="1.3" fill="#fff8ee" stroke="none"/>`;
+        }).join("");
+        const noses = {
+          rounded: "M198 169 Q190 184 195 187 Q201 191 207 185",
+          straight: "M199 167 L194 184 Q199 189 207 186",
+          wide: "M195 173 Q183 187 195 190 Q205 194 214 185"
+        };
+        const mouths = {
+          smile: `<path d="M182 207 Q202 225 221 205" fill="none"/>`,
+          grin: `<path d="M181 204 Q200 211 222 203 Q218 226 201 226 Q186 225 181 204Z" fill="#fff8ee" stroke-width="2.5"/><path d="M187 216 Q202 221 216 215" fill="none" stroke="${shade}" stroke-width="2"/>`,
+          asymmetric: `<path d="M184 212 Q203 219 220 204 M218 202 L223 205" fill="none"/>`,
+          soft: `<path d="M185 210 Q201 216 218 209" fill="none"/><path d="M195 223 Q202 226 209 222" fill="none" stroke="${shade}" stroke-width="2"/>`
+        };
+        const beard = visual.facialHair === "beard" ? `<path d="M145 186 Q151 202 165 209 L175 201 Q200 194 225 201 L236 210 Q250 201 257 185 L251 216 Q239 242 201 245 Q163 242 150 220Z" fill="${visual.hairColor}" stroke="none"/><path d="M181 202 Q200 196 222 202 L225 223 Q202 238 178 223Z" fill="${visual.skinTone}" stroke="none"/>` : "";
+        const mustache = visual.facialHair === "mustache" ? `<path d="M200 194 Q188 189 175 201 Q191 208 200 201 Q211 208 226 200 Q213 189 200 194Z" fill="${visual.hairColor}" stroke="none"/>` : "";
+        const freckles = visual.freckles ? [151, 159, 167, 233, 241, 249].map((x, i) => `<circle cx="${x}" cy="${183 + (i % 2) * 5}" r="1.8" fill="${shade}" stroke="none"/>`).join("") : "";
+        return `<g stroke-width="3.5">
+          <ellipse cx="157" cy="187" rx="13" ry="7" fill="#bd655c" opacity="0.16" stroke="none"/>
+          <ellipse cx="243" cy="187" rx="13" ry="7" fill="#bd655c" opacity="0.16" stroke="none"/>
+          ${beard}${freckles}
+          <path d="M${left - 11} ${142 + visual.eyebrowTilt} Q${left} ${136 + visual.eyebrowTilt} ${left + 11} 143 M${right - 11} 143 Q${right} ${135 - visual.eyebrowTilt} ${right + 11} ${142 - visual.eyebrowTilt}" fill="none" stroke="${visual.hairColor}" stroke-width="${visual.eyebrowWeight}"/>
+          ${eyes}<path d="${noses[visual.nose]}" stroke="${shade}" stroke-width="3" fill="none"/>
+          ${mustache}${mouths[visual.mouth]}
+          ${visual.mature ? `<path d="M157 171 L148 175 M243 171 L252 175 M176 196 Q171 207 175 216 M225 195 Q231 205 228 215 M183 130 Q200 126 215 130" fill="none" stroke="${shade}" stroke-width="1.8"/>` : ""}
+        </g>`;
+      }
+
+      function accessoryMarkup(visual, layer) {
+        const { earX } = faceGeometry(visual);
+        const metal = "#edbd69";
+        if (layer === "ears") {
+          if (visual.jewelry === "studs") return [-1, 1].map((side) => `<circle cx="${200 + side * (earX + 3)}" cy="188" r="4.5" fill="${metal}" stroke-width="2"/>`).join("");
+          if (visual.jewelry === "hoops") return [-1, 1].map((side) => `<ellipse cx="${200 + side * (earX + 5)}" cy="198" rx="8" ry="12" fill="none" stroke="${CHARACTER_INK}" stroke-width="5"/><ellipse cx="${200 + side * (earX + 5)}" cy="198" rx="8" ry="12" fill="none" stroke="${metal}" stroke-width="3"/>`).join("");
+          return "";
+        }
+        if (layer === "clothes") {
+          let markup = visual.jewelry === "pendant" && visual.clothingAccent !== "bowtie"
+            ? `<path d="M175 285 Q181 325 200 337 Q220 323 225 285" fill="none" stroke="${metal}" stroke-width="3"/><path d="M200 331 L207 340 L200 350 L193 340Z" fill="${visual.accentColor}" stroke-width="2"/>` : "";
+          if (visual.clothingAccent === "bowtie") markup += `<path d="M197 297 L177 286 Q173 299 177 311 L197 303 M203 297 L223 286 Q227 299 223 311 L203 303" fill="${visual.accentColor}" stroke-width="2.5"/><rect x="195" y="294" width="10" height="13" rx="3" fill="${visual.accentColor}" stroke-width="2"/>`;
+          if (visual.clothingAccent === "pin") markup += `<path d="M247 304 L252 313 L262 315 L255 322 L256 333 L247 327 L237 332 L239 321 L232 313 L243 312Z" fill="${metal}" stroke-width="2"/>`;
+          return markup;
+        }
+        if (visual.eyewear === "none") return "";
+        const left = 200 - visual.eyeSpacing;
+        const right = 200 + visual.eyeSpacing;
+        const frames = [left, right].map((x) => {
+          if (visual.eyewear === "round") return `<circle cx="${x}" cy="161" r="19"/>`;
+          if (visual.eyewear === "square") return `<rect x="${x - 20}" y="146" width="40" height="30" rx="7"/>`;
+          return `<path d="M${x - 22} 146 L${x + 22} 149 L${x + 17} 167 Q${x} 182 ${x - 16} 169Z"/>`;
+        }).join("");
+        return `<g fill="none" stroke="${visual.eyewear === 'catEye' ? '#7e3455' : CHARACTER_INK}" stroke-width="3.5">
+          ${frames}<path d="M${left + 20} 159 Q200 154 ${right - 20} 159 M${left - 20} 155 L${200 - earX} 152 M${right + 20} 155 L${200 + earX} 152"/></g>`;
+      }
+
+      function postureTransform(posture) {
+        return { leanLeft: "rotate(-3 200 500)", leanRight: "rotate(3 200 500)" }[posture] || "";
+      }
+
+      // Clothing silhouettes, sleeves, and hands all use the same shoulder and waist anchors.
+      function bodyMarkup(visual, id) {
+        const left = 123 - visual.build;
+        const right = 277 + visual.build;
+        const waist = visual.outfit === "dress" ? 88 + visual.build : 68 + visual.build;
+        const color = visual.outfitColor;
+        const shade = mixColor(color, CHARACTER_INK, 0.23);
+        const light = mixColor(color, "#fff8ee", 0.23);
+        const skinShade = mixColor(visual.skinTone, CHARACTER_INK, 0.2);
+        const pocket = visual.posture === "pocket";
+        const glass = visual.posture === "glass";
+        const torso = `M174 275 Q${left + 16} 279 ${left} 306 L${200 - waist} 550 L${200 + waist} 550 L${right} 306 Q${right - 16} 279 226 275Z`;
+        const leftArm = pocket ? `M${left + 7} 312 Q${left - 39} 383 ${left - 14} 416 L157 452` : `M${left + 7} 312 Q${left - 18} 381 ${left - 5} 470`;
+        const rightArm = glass ? `M${right - 7} 313 Q${right + 41} 409 ${right + 12} 411 Q${right - 2} 403 291 360` : `M${right - 7} 313 Q${right + 18} 381 ${right + 5} 470`;
+        const sleeveEnd = visual.outfit === "dress" ? 337 : 377;
+        const sleeveColor = visual.outfit === "vest" ? "#fff1dc" : color;
+        const hand = (x, y, flip = false) => `<g transform="translate(${x} ${y}) scale(${flip ? -1 : 1} 1)">
+          <path d="M-11 -9 Q-16 4 -11 18 Q-7 28 5 24 Q14 21 12 10 L9 -8Z" fill="${visual.skinTone}" stroke-width="3"/>
+          <path d="M-9 -3 Q-21 5 -17 13 Q-13 17 -7 8" fill="${visual.skinTone}" stroke-width="3"/>
+          <path d="M0 15 L1 22 M6 14 L6 20" fill="none" stroke="${skinShade}" stroke-width="1.5"/></g>`;
+        let details = "";
+        if (visual.outfit === "blazer") details = `<path d="M174 275 L200 293 L226 275 L241 550 L160 550Z" fill="#fff1dc"/>
+          <path d="M170 277 L149 317 L173 337 L163 351 L199 404 L183 302Z M230 277 L251 317 L227 337 L237 351 L201 404 L217 302Z" fill="${light}" stroke-width="2.5"/>
+          <path d="M200 404 L200 548 M133 437 L169 437 M232 437 L269 437" fill="none" stroke-width="3"/><circle cx="209" cy="426" r="4" fill="${visual.accentColor}"/>`;
+        if (visual.outfit === "sweater") details = `<path d="M171 277 Q200 314 229 277 L234 291 Q200 330 166 291Z" fill="${shade}" stroke-width="2"/>
+          <path d="M${201 - waist} 527 H${199 + waist} V548 H${201 - waist}Z" fill="${shade}" stroke="none"/>
+          ${[0,1,2,3,4,5,6,7,8].map((i) => `<path d="M${207 - waist + i * (waist * 2 - 14) / 8} 532 V545" stroke="${light}" stroke-width="2"/>`).join("")}`;
+        if (visual.outfit === "shirt") details = `<path d="M175 275 L200 294 L181 323 L164 286 M225 275 L200 294 L219 323 L236 286" fill="${light}" stroke-width="2.5"/>
+          <path d="M200 316 V549 M231 343 H260 V379 Q245 389 231 379Z" fill="none" stroke-width="2"/>
+          ${[339,376,413,450,487,524].map((y) => `<circle cx="205" cy="${y}" r="2.8" fill="#fff8ee" stroke-width="1.5"/>`).join("")}`;
+        if (visual.outfit === "dress") details = `<path d="M170 279 Q174 323 200 325 Q226 323 230 279 L223 276 Q200 302 177 276Z" fill="${light}" stroke-width="2"/>
+          <path d="M${200 - waist + 18} 407 Q200 420 ${200 + waist - 18} 407 L${200 + waist - 16} 422 Q200 435 ${200 - waist + 16} 422Z" fill="${shade}" stroke-width="2"/>
+          <rect x="189" y="411" width="22" height="17" rx="3" fill="none" stroke="#edbd69" stroke-width="3"/><path d="M162 447 L149 529 M237 447 L251 529" stroke="${shade}" fill="none" stroke-width="3"/>`;
+        if (visual.outfit === "vest") details = `<path d="M174 275 L200 294 L226 275 L244 336 L200 427 L156 336Z" fill="#fff1dc"/>
+          <path d="M174 275 L200 294 L183 317 L164 285 M226 275 L200 294 L217 317 L236 285" fill="#e8d5c0" stroke-width="2"/>
+          <path d="M155 305 L198 407 L198 529 L173 550 M245 305 L202 407 L202 529 L227 550" fill="none" stroke-width="3"/>
+          <path d="M140 447 H172 M229 447 H260" fill="none" stroke-width="3"/>${[425,459,493].map((y) => `<circle cx="206" cy="${y}" r="3.5" fill="${visual.accentColor}"/>`).join("")}`;
+        if (visual.outfit === "cardigan") details = `<path d="M174 275 Q200 307 226 275 L223 550 L177 550Z" fill="${visual.accentColor}"/>
+          <path d="M170 280 Q187 350 177 549 M230 280 Q213 350 223 549" fill="none" stroke="${shade}" stroke-width="10"/>
+          <path d="M131 420 H165 V456 Q148 466 131 456Z M235 420 H269 V456 Q251 466 235 456Z" fill="${light}" stroke-width="2.5"/>`;
+        const garmentPattern = visual.pattern === "plain" ? "" : `<path d="${torso}" fill="url(#${id}-fabric)" stroke="none" opacity="0.26"/>`;
+        return `<defs>
+          <pattern id="${id}-fabric" width="28" height="28" patternUnits="userSpaceOnUse">
+            ${visual.pattern === 'dots' ? `<circle cx="14" cy="14" r="3" fill="#fff8ee" stroke="none"/>` : `<path d="M0 14 H28" stroke="#fff8ee" stroke-width="5"/>`}
+          </pattern></defs>
+          <g fill="none" stroke-width="34"><path d="${leftArm}"/><path d="${rightArm}"/></g>
+          <g fill="none" stroke="${visual.skinTone}" stroke-width="27"><path d="${leftArm}"/><path d="${rightArm}"/></g>
+          <g fill="none" stroke-width="41"><path d="M${left + 7} 312 Q${left - 7} 344 ${left - 8} ${sleeveEnd}"/><path d="M${right - 7} 312 Q${right + 7} 344 ${right + 8} ${sleeveEnd}"/></g>
+          <g fill="none" stroke="${sleeveColor}" stroke-width="34"><path d="M${left + 7} 312 Q${left - 7} 344 ${left - 8} ${sleeveEnd}"/><path d="M${right - 7} 312 Q${right + 7} 344 ${right + 8} ${sleeveEnd}"/></g>
+          <path d="${torso}" fill="${color}"/>${garmentPattern}
+          <path d="M${right - 8} 326 L${200 + waist - 6} 545 L${200 + waist - 23} 545Z" fill="${shade}" stroke="none"/>
+          ${details}
+          ${pocket ? `<path d="M${left - 14} 416 L156 450" fill="none" stroke-width="31"/><path d="M${left - 14} 416 L156 450" fill="none" stroke="${visual.skinTone}" stroke-width="24"/>${hand(158, 448, true)}<path d="M145 465 L177 443" fill="none" stroke-width="4"/>` : hand(left - 5, 474)}
+          ${glass ? `<g><path d="M277 304 L314 304 L310 338 Q308 352 296 352 Q282 352 281 338Z" fill="#e5eef3" fill-opacity="0.6" stroke-width="2.5"/><path d="M283 326 L309 326 L307 339 Q296 356 285 339Z" fill="#dfae5d" stroke="none"/><path d="M296 352 V378 M285 378 H307" fill="none" stroke-width="3"/><path d="M310 305 L317 288" stroke="#fff8ee" stroke-width="3"/><path d="M282 362 Q273 347 282 344 Q288 342 290 353 L300 349 Q307 350 304 356 L296 367Z" fill="${visual.skinTone}" stroke-width="2.5"/></g>` : hand(right + 5, 474, true)}
+          ${accessoryMarkup(visual, "clothes")}`;
+      }
+
+      function renderCharacterSvg(character, { idSuffix = "", portraitOnly = false } = {}) {
+        const visual = character.visual;
+        // IDs are unique per guest so a review gallery can contain many SVGs safely.
+        const id = `guest-${character.id}${idSuffix}`;
+        const neckShade = mixColor(visual.skinTone, CHARACTER_INK, 0.2);
+        const description = `${visual.hairstyle} hair, ${visual.outfit}${visual.eyewear === 'none' ? '' : `, ${visual.eyewear} glasses`}${visual.jewelry === 'none' ? '' : `, ${visual.jewelry}`}`;
+        return `<svg viewBox="${portraitOnly ? '70 25 260 250' : '0 0 400 570'}" role="img" aria-label="Party guest: ${description}" xmlns="http://www.w3.org/2000/svg">
+          <g transform="${postureTransform(visual.posture)}" stroke="${CHARACTER_INK}" stroke-width="3.5" stroke-linecap="round" stroke-linejoin="round">
+            ${hairstyleMarkup(visual, "back")}
+            <path d="M179 220 L179 271 Q177 279 168 282 Q200 319 232 282 Q223 279 221 271 L221 220Z" fill="${visual.skinTone}"/>
+            <path d="M181 231 Q201 247 219 231 L219 253 Q204 265 181 253Z" fill="${neckShade}" stroke="none"/>
+            ${bodyMarkup(visual, id)}
+            ${faceShapeMarkup(visual, id)}
+            ${facialFeaturesMarkup(visual)}
+            ${accessoryMarkup(visual, "ears")}
+            ${hairstyleMarkup(visual, "front")}
+            ${accessoryMarkup(visual, "eyes")}
+          </g>
+        </svg>`;
+      }
+
+
+      function showCharacter(character) {
+        elements.characterWrap.classList.add("entering");
+        elements.characterWrap.innerHTML = renderCharacterSvg(character);
+        requestAnimationFrame(() => {
+          requestAnimationFrame(() => {
+            elements.characterWrap.classList.remove("entering");
+          });
+        });
+      }
+
+      function updateStats() {
+        const count = gameState.characters.length;
+        elements.introductionProgress.textContent = count < 2
+          ? "Warm-up: meet your first two guests."
+          : count === 2
+            ? `Warm-up: ${gameState.warmupRecalledIds.size} / 2 guests remembered${isIntroductionReady() ? ' — next guest unlocked!' : ''}`
+            : isIntroductionReady()
+              ? "Next guest unlocked! Continue to meet them."
+              : `Next guest: ${Math.min(gameState.introductionCorrect, CORRECT_RECALLS_PER_INTRODUCTION)} / 4 correct · ${Math.min(gameState.introductionRecalledIds.size, DISTINCT_GUESTS_PER_INTRODUCTION)} / 2 different guests`;
+        elements.peopleMetStat.textContent = gameState.characters.length;
+        elements.correctStat.textContent = gameState.correctNames;
+        elements.streakStat.textContent = gameState.currentStreak;
+        elements.mistakeStat.textContent = `${gameState.mistakes} / ${MAX_MISTAKES}`;
+      }
+
+      function setControls({ showInput = false, inputPlaceholder = "Type a name", buttonText = "Next", onClick, feedback = "" }) {
+        elements.controls.innerHTML = "";
+
+        let input = null;
+        if (showInput) {
+          input = document.createElement("input");
+          input.type = "text";
+          input.className = "name-entry";
+          input.placeholder = inputPlaceholder;
+          input.autocomplete = "off";
+          input.autocapitalize = "words";
+          input.setAttribute("aria-label", inputPlaceholder);
+          elements.controls.appendChild(input);
+        }
+
+        const button = document.createElement("button");
+        button.className = "primary-btn";
+        button.textContent = buttonText;
+        button.addEventListener("click", () => onClick(input ? input.value : ""));
+        elements.controls.appendChild(button);
+
+        if (feedback) {
+          const feedbackElement = document.createElement("div");
+          feedbackElement.className = "feedback";
+          feedbackElement.textContent = feedback;
+          feedbackElement.setAttribute("aria-label", feedback === "👍" ? "Correct" : "Incorrect");
+          elements.controls.appendChild(feedbackElement);
+        }
+
+        if (input) {
+          input.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              onClick(input.value);
+            }
+          });
+          setTimeout(() => input.focus(), 0);
+        } else {
+          button.addEventListener("keydown", (event) => {
+            if (event.key === "Enter") {
+              event.preventDefault();
+              button.click();
+            }
+          });
+          setTimeout(() => button.focus(), 0);
+        }
+      }
+
+      function renderNewCharacterIntro() {
+        const character = gameState.currentCharacter;
+        elements.speakerLabel.textContent = "New party guest";
+        elements.dialogueText.textContent = randomChoice(introLines);
+        elements.hintText.textContent = "Press Next or Enter to continue.";
+
+        setControls({
+          buttonText: "Next",
+          onClick: () => {
+            if (character.namedByPlayer) {
+              renderPlayerNamesCharacter();
+            } else {
+              renderSelfIntroduction();
+            }
+          }
+        });
+      }
+
+      function renderSelfIntroduction() {
+        const character = gameState.currentCharacter;
+        character.introductions += 1;
+        elements.speakerLabel.textContent = "Party guest";
+        elements.dialogueText.textContent = randomChoice(selfIntroLines)(character.name);
+        elements.hintText.textContent = "Try to remember both the guest's appearance and name.";
+
+        setControls({
+          buttonText: "Nice to meet you",
+          onClick: transitionToNextEncounter
+        });
+      }
+
+      function renderPlayerNamesCharacter(errorMessage = "") {
+        const character = gameState.currentCharacter;
+        elements.speakerLabel.textContent = "You";
+        elements.dialogueText.textContent = "Oh yes, I remember you! Your name is _____";
+        elements.hintText.textContent = errorMessage || "Choose an alphabetic name. Capitalization will not matter later.";
+
+        setControls({
+          showInput: true,
+          inputPlaceholder: "Give this guest a name",
+          buttonText: "Name them",
+          onClick: (value) => {
+            const trimmedName = value.trim();
+            if (!isAlphabeticName(trimmedName)) {
+              renderPlayerNamesCharacter("Please use letters only, with no spaces, numbers, or punctuation.");
+              return;
+            }
+
+            const normalized = normalizeName(trimmedName);
+            const nameAlreadyUsed = gameState.characters.some(
+              (otherCharacter) =>
+                otherCharacter.id !== character.id &&
+                otherCharacter.name &&
+                normalizeName(otherCharacter.name) === normalized
+            );
+
+            if (nameAlreadyUsed) {
+              renderPlayerNamesCharacter("That name is already being used by another guest. Pick a different name.");
+              return;
+            }
+
+            character.name = trimmedName;
+            gameState.usedGeneratedNames.add(normalized);
+            renderPlayerNamedConfirmation();
+          }
+        });
+      }
+
+      function renderPlayerNamedConfirmation() {
+        const character = gameState.currentCharacter;
+        elements.speakerLabel.textContent = character.name;
+        elements.dialogueText.textContent = `Perfect. ${character.name} it is. I'll see you around!`;
+        elements.hintText.textContent = "That name is now part of this guest's identity for the rest of the game.";
+
+        setControls({
+          buttonText: "Next guest",
+          onClick: transitionToNextEncounter
+        });
+      }
+
+      function renderReturningRemark() {
+        const character = gameState.currentCharacter;
+        elements.speakerLabel.textContent = "Familiar party guest";
+        elements.dialogueText.textContent = randomChoice(partyRemarks);
+        elements.hintText.textContent = "You have met this person before. Type their name.";
+
+        setControls({
+          showInput: true,
+          inputPlaceholder: "Their name",
+          buttonText: "Reply",
+          onClick: handleRecallAttempt
+        });
+      }
+
+      function handleRecallAttempt(value) {
+        if (gameState.isGameOver) return;
+        const character = gameState.currentCharacter;
+        const trimmedName = value.trim();
+
+        if (!isAlphabeticName(trimmedName)) {
+          elements.hintText.textContent = "Please answer using letters only.";
+          return;
+        }
+
+        const isCorrect = normalizeName(trimmedName) === normalizeName(character.name);
+
+        if (isCorrect) {
+          if (gameState.characters.length === 2) {
+            gameState.warmupRecalledIds.add(character.id);
+          } else {
+            gameState.introductionCorrect += 1;
+            gameState.introductionRecalledIds.add(character.id);
+          }
+          gameState.correctNames += 1;
+          gameState.currentStreak += 1;
+          gameState.longestStreak = Math.max(gameState.longestStreak, gameState.currentStreak);
+        } else {
+          gameState.mistakes += 1;
+          gameState.currentStreak = 0;
+        }
+
+        updateStats();
+        // Show the restart tile immediately on the third mistake, without an extra click.
+        if (gameState.mistakes >= MAX_MISTAKES) {
+          endGame();
+          return;
+        }
+        renderRecallFeedback(isCorrect, trimmedName);
+      }
+
+      function renderRecallFeedback(isCorrect, attemptedName) {
+        const character = gameState.currentCharacter;
+        elements.speakerLabel.textContent = "You";
+        elements.dialogueText.textContent = `Thanks for telling me, ${attemptedName}.`;
+        elements.hintText.textContent = isCorrect
+          ? "Correct. Nice save."
+          : `Not quite. This guest's name is ${character.name}.`;
+
+        setControls({
+          buttonText: "Continue",
+          feedback: isCorrect ? "👍" : "👎",
+          onClick: transitionToNextEncounter
+        });
+      }
+
+      function transitionToNextEncounter() {
+        elements.characterWrap.classList.add("leaving");
+        elements.controls.innerHTML = "";
+        elements.dialogueText.textContent = "Someone else is approaching...";
+        elements.speakerLabel.textContent = "Party";
+        elements.hintText.textContent = "";
+
+        setTimeout(() => {
+          elements.characterWrap.classList.remove("leaving");
+          chooseNextEncounter();
+        }, 340);
+      }
+
+      function endGame() {
+        gameState.isGameOver = true;
+        elements.finalCorrect.textContent = gameState.correctNames;
+        elements.finalStreak.textContent = gameState.longestStreak;
+        elements.finalPeople.textContent = gameState.characters.length;
+        // Use textContent for player-created names and separate paint IDs for the repeated portrait.
+        elements.finalGuestName.textContent = gameState.currentCharacter.name;
+        elements.finalGuestPortrait.innerHTML = renderCharacterSvg(gameState.currentCharacter, {
+          idSuffix: "-recap", portraitOnly: true
+        });
+        elements.controls.innerHTML = "";
+        document.body.classList.add("game-finished");
+        elements.gameOverOverlay.showModal();
+        elements.restartGeneratedButton.focus();
+      }
+
+      function startGame(mode = gameState.selectedMode || "mixed") {
+        document.body.classList.remove("welcoming");
+        gameState.selectedMode = mode;
+        resetGameState();
+        gameState.selectedMode = mode;
+        updateStats();
+        elements.introOverlay.classList.add("hidden");
+        if (elements.gameOverOverlay.open) elements.gameOverOverlay.close();
+        elements.finalGuestPortrait.innerHTML = "";
+        elements.finalGuestName.textContent = "";
+        document.body.classList.remove("game-finished");
+        chooseNextEncounter();
+        window.scrollTo(0, 0);
+      }
+
+      elements.generatedModeButton.addEventListener("click", () => startGame("generated"));
+      elements.mixedModeButton.addEventListener("click", () => startGame("mixed"));
+      elements.playerModeButton.addEventListener("click", () => startGame("player"));
+      elements.restartGeneratedButton.addEventListener("click", () => startGame("generated"));
+      elements.restartMixedButton.addEventListener("click", () => startGame("mixed"));
+      elements.restartPlayerButton.addEventListener("click", () => startGame("player"));
+
+      // Keep the finished game covered until a restart mode is chosen; native buttons handle Enter.
+      elements.gameOverOverlay.addEventListener("cancel", (event) => event.preventDefault());
+
+      // Read only on-screen information for accessible inspection and browser verification.
+      window.render_game_to_text = () => JSON.stringify({
+        mode: gameState.selectedMode,
+        encounter: gameState.currentMode,
+        gameOver: gameState.isGameOver,
+        guest: gameState.currentCharacter ? {
+          id: gameState.currentCharacter.id,
+          appearance: gameState.currentCharacter.visual
+        } : null,
+        dialogue: elements.dialogueText.textContent,
+        hint: elements.hintText.textContent,
+        peopleMet: gameState.characters.length,
+        correct: gameState.correctNames,
+        mistakes: gameState.mistakes,
+        introductionProgress: {
+          warmup: gameState.characters.length <= 2,
+          warmupRemembered: gameState.warmupRecalledIds.size,
+          correct: gameState.introductionCorrect,
+          distinctGuests: gameState.introductionRecalledIds.size,
+          ready: isIntroductionReady()
+        }
+      });
+
+      // Preview the same SVG artwork used in play, without reserving any guest identities or names.
+      const previewLooks = [
+        { seed: 4, hairstyle: "braids", outfit: "blazer", outfitColor: "#e55937", hairColor: "#30232d", facialHair: "none" },
+        { seed: 15, hairstyle: "curly", outfit: "shirt", outfitColor: "#ffe974", skinTone: "#925f47", facialHair: "none", eyewear: "round" },
+        { seed: 6, hairstyle: "bob", outfit: "sweater", outfitColor: "#bd005b", skinTone: "#dfab86", facialHair: "none", mouth: "grin", eyewear: "catEye" }
+      ];
+      document.getElementById("landingCast").innerHTML = previewLooks.map(({ seed, ...traits }, index) => {
+        const visual = { ...createCharacterVisual(seed), ...traits, posture: "neutral", jewelry: "hoops" };
+        return `<div class="landing-guest">${renderCharacterSvg({ id: `preview-${index}`, visual })}</div>`;
+      }).join("");
+
+      resetGameState();
+      updateStats();
+    })();
+  </script>
+</body>
+</html>
