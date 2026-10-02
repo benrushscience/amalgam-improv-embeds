@@ -71,10 +71,10 @@
     .card:hover img,
     .card:focus-visible img { filter: saturate(1.15); transform: scale(1.06); }
 
-    /* Keep the reusable Indie Power Hour art focused on performers rather than its past date. */
-    .card.indie-card img { transform: scale(2.2); }
-    .card.indie-card:hover img,
-    .card.indie-card:focus-visible img { transform: scale(2.28); }
+    /* Reframe the map screenshot as a graphic background so map controls do not distract from the card. */
+    .card.festival-card img { filter: brightness(0.66) saturate(1.12); object-position: center 40%; transform: scale(1.32); }
+    .card.festival-card:hover img,
+    .card.festival-card:focus-visible img { filter: brightness(0.72) saturate(1.2); transform: scale(1.4); }
 
     .card:hover { transform: translateY(-4px); }
 
@@ -210,29 +210,29 @@
     // image: "./assets/my-new-photo.jpg"
     const cards = [
       {
-        title: "Story-prov — September 30",
-        eyebrow: "Stories brought to life",
-        summary: "Storytellers share a story, then improvisers bring it to life in a one-of-a-kind live show.",
-        href: "https://www.amalgamimprov.com/story-prov",
-        image: "./assets/Story-prov Square September 2026.png",
-        alt: "Story-prov on September 30, 2026"
-      },
-      {
-        title: "Indie Power Hour — October 1",
-        eyebrow: "Three teams. One hour.",
-        summary: "Three top-tier Madison improv teams bring their own powerhouse styles to an electrifying night of comedy.",
-        href: "https://www.amalgamimprov.com/shop/p/indie-power-hour-2026-10-01",
-        image: "./assets/Indie Power Hour Square Image 2026-09-03.png",
-        alt: "Indie Power Hour on October 1, 2026",
-        className: "indie-card"
-      },
-      {
         title: "Open Jam — October 8",
         eyebrow: "All skill levels",
         summary: "A welcoming improv jam for everyone, including first-timers, with plenty of room to play and connect.",
         href: "https://www.amalgamimprov.com/shop/p/open-jam-2026-10-08",
         image: "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/1787501617311-APQBNSTA7JY6CI3VS3TN/Open%2BJam%2B-%2BOctober%2B8%2B2026.jpg",
         alt: "Open Jam on October 8, 2026"
+      },
+      {
+        title: "Amalgam Logo T-shirt",
+        eyebrow: "Wear indie improv",
+        summary: "Show your love for Amalgam and independent improv with an official logo T-shirt.",
+        href: "https://www.amalgamimprov.com/shop/p/amalgam-t-shirt",
+        image: "https://images.squarespace-cdn.com/content/v1/66ca092dcc6bcf37713df36d/a7efe89b-ebce-4f4b-9430-9c178f43f9ba/unisex-staple-t-shirt-black-heather-front-6a9316f659612.png?format=1000w",
+        alt: "Black heather Amalgam logo T-shirt"
+      },
+      {
+        title: "Explore the Improv Festival Map",
+        eyebrow: "Find your next festival",
+        summary: "Discover improv festivals around the world and filter by location, year, or date.",
+        href: "https://www.amalgamimprov.com/improv-festival-map",
+        image: "./assets/Improv Group Map Screenshot 2026-08-21.png",
+        alt: "Map of improv communities around the world",
+        className: "festival-card"
       }
     ];
 
