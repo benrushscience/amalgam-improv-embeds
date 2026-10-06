@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#FFFFFF">
+  <title>A Field Guide to Beliefs and Values</title>
+  <link rel="icon" href="data:,">
+  <!-- Brand typography: Oswald headings and Arimo body copy, with local fallbacks. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="field-guide.css?v=plain-scenarios">
+  <!-- Local reference data keeps this guide independent of the design studies. -->
+  <script src="content.js" defer></script>
+  <script src="scene-prompts.js?v=three-independent-scenes" defer></script>
+  <script src="field-guide.js?v=three-independent-scenes" defer></script>
+</head>
+<body>
+  <a class="skip" href="#entry-title">Skip to selected entry</a>
+  <main>
+    <!-- A compact introduction keeps the reference itself near the top of the page. -->
+    <section class="guide-intro" aria-labelledby="guide-title">
+      <div><h1 id="guide-title">A Field Guide to Beliefs and Values</h1>
+        <p>In improv, beliefs and values give your character reasons to act, react, and disagree. They help you make choices from the character’s point of view as a scene unfolds. A <strong>value</strong> is something a character considers important, such as fairness, family, or freedom. A <strong>belief</strong> is an idea they accept as true or hold about how things ought to be, such as “People can change” or “Everyone should follow the same rules.” Browse the <strong>Values</strong> or <strong>Beliefs</strong> index, open a family, or search for an idea. Choose an entry, try its scene setup and character line, and follow related entries to develop the character’s point of view.</p>
+      </div>
+      <button class="motion-control" id="motion-control" aria-pressed="false"><span aria-hidden="true">◌</span> <span id="motion-label">Pause motion</span></button>
+    </section>
+    <details class="guide-help">
+      <summary>How to use an entry</summary>
+      <div class="help-content">
+        <p>Let your scene partner’s offers test the character’s convictions. Notice when two motivations conflict, and let the character surprise you rather than treating an entry as a fixed personality type.</p>
+        <p><strong>Example scenarios and lines</strong> offers three independent situations with a line for each. Pick one to explore, adapt it to your scene, and respond to your partner’s choices.</p>
+      </div>
+    </details>
+    <div class="reference-shell">
+      <aside class="reference-index" aria-label="Reference index">
+        <div class="index-tools" id="reference-index"><div class="index-heading"><h2>The index</h2><span aria-hidden="true">↘</span></div>
+          <div class="type-switch" role="group" aria-label="Browse collection"><button data-type="value" aria-pressed="true">Values</button><button data-type="belief" aria-pressed="false">Beliefs</button></div>
+          <label class="search-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg><span class="sr-only">Search values and beliefs</span><input id="search" type="search" placeholder="Find a conviction…" autocomplete="off"></label>
+          <div class="index-meta"><span id="result-count" role="status"></span><button id="expand-families">Expand all</button></div>
+        </div>
+        <nav class="index-list" id="index-list" aria-label="Families and entries"></nav>
+      </aside>
+      <div class="reading-column">
+        <article id="entry-panel" class="entry-panel" aria-labelledby="entry-title"></article>
+      </div>
+    </div>
+  </main>
+  <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+  <noscript><p class="no-script">Enable JavaScript to browse this interactive field guide.</p></noscript>
+</body>
+</html>
