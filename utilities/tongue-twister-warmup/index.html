@@ -1,0 +1,432 @@
+<!doctype html>
+<!-- Tongue twister warm-up v7: standalone HTML for a Squarespace iframe. -->
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Tongue Twister Warm-up</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400..700&amp;family=Oswald:wght@400..700&amp;display=swap">
+  <style>
+    /* Amalgam palette and site typography; system fallbacks keep the embed usable offline. */
+    :root {
+      --amalgam-orange: #E55937;
+      --amalgam-yellow: #FFE974;
+      --amalgam-paper: #F7F6F3;
+      --amalgam-pink: #BD005B;
+      --amalgam-black: #000000;
+      --border: rgb(0 0 0 / 30%);
+      color-scheme: light;
+      font-family: "Arimo", Arial, sans-serif;
+      color: var(--amalgam-paper);
+      background: var(--amalgam-orange);
+    }
+    * { box-sizing: border-box; }
+    body { margin: 0; padding: clamp(16px, 4vw, 32px); }
+    main { max-width: 820px; margin: auto; }
+    h1, h2, h3 { font-family: "Oswald", Impact, sans-serif; }
+    h1 { font-size: clamp(1.9rem, 6vw, 2.7rem); letter-spacing: -.015em; line-height: 1.1; margin: 8px 0 14px; }
+    p { line-height: 1.55; margin: 8px 0; }
+    .eyebrow { font-size: .73rem; font-weight: 750; letter-spacing: .15em; text-transform: uppercase; color: inherit; }
+    .intro { max-width: 640px; color: inherit; }
+    button, select, input { font: inherit; }
+    button, select { min-height: 44px; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; }
+    button { cursor: pointer; background: var(--amalgam-yellow); color: var(--amalgam-black); font-weight: 650; }
+    button:hover:not(:disabled) { background: var(--amalgam-yellow); border-color: var(--amalgam-black); box-shadow: 0 2px 0 var(--amalgam-black); }
+    button:disabled { border-style: dashed; cursor: default; box-shadow: none; }
+    select:disabled { border-style: dashed; cursor: default; }
+    button.primary { border-color: var(--amalgam-black); font-weight: 700; }
+    :focus-visible { outline: 3px solid var(--amalgam-black); outline-offset: 4px; }
+    [hidden] { display: none !important; }
+    .chooser { display: grid; grid-template-columns: minmax(0, 1fr) auto; gap: 10px; align-items: end; margin: 24px 0 18px; }
+    label, legend { font-size: .88rem; font-weight: 650; }
+    .chooser label { display: grid; gap: 8px; }
+    select { width: 100%; min-width: 0; background: var(--amalgam-yellow); color: var(--amalgam-black); text-overflow: ellipsis; }
+    .stage { color: #FFFFFF; background: var(--amalgam-pink); border: 1px solid var(--border); border-radius: 18px; padding: clamp(18px, 4vw, 32px); }
+    .stage-top { display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px; font-size: .78rem; color: inherit; }
+    .phrase { margin: 24px 0; text-align: center; font-size: clamp(1.6rem, 4.8vw, 2.4rem); line-height: 1.65; font-weight: 650; letter-spacing: -.025em; overflow-wrap: anywhere; }
+    .word { display: inline-block; position: relative; border-radius: 5px; padding: 0 .09em; }
+    /* Highlight without changing font metrics, padding, or borders, so words never reflow between beats. */
+    .word.active { color: inherit; box-shadow: inset 0 -4px var(--amalgam-yellow); }
+    .word.spoken { color: inherit; }
+    .beat-track { position: relative; height: 14px; border: 1px solid var(--amalgam-black); border-radius: 4px; background: var(--amalgam-yellow); overflow: hidden; }
+    .beat-fill { height: 100%; background: var(--amalgam-pink); width: 0; }
+    .beat-divisions { position: absolute; inset: 0; display: flex; }
+    .beat-divisions span { flex: 1; border-right: 2px solid var(--amalgam-black); }
+    .beat-divisions span:last-child { border: 0; }
+    .playhead { position: absolute; top: 0; bottom: 0; width: 3px; background: var(--amalgam-black); left: 0; }
+    .beat-caption { display: flex; justify-content: space-between; gap: 12px; font-size: .78rem; color: inherit; margin-top: 9px; }
+    .mode-switch { display: flex; align-items: center; gap: 12px; min-height: 48px; margin-top: 20px; cursor: pointer; font-size: 1rem; }
+    input[type="checkbox"], input[type="radio"] { accent-color: var(--amalgam-black); width: 20px; height: 20px; margin: 0; flex-shrink: 0; }
+    .hint { font-size: .86rem; color: inherit; }
+    .settings { margin: 18px 0; display: grid; grid-template-columns: 1fr 1fr; gap: 16px; }
+    .control { color: var(--amalgam-black); border: 1px solid var(--border); border-radius: 14px; background: var(--amalgam-yellow); padding: 18px; min-width: 0; }
+    .control-heading { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; }
+    output { font-size: 1.5rem; font-weight: 750; color: var(--amalgam-black); }
+    output small { font-size: .7rem; font-weight: 600; }
+    input[type="range"] { accent-color: var(--amalgam-pink); width: 100%; height: 36px; margin: 12px 0 0; cursor: pointer; }
+    .ticks { display: flex; justify-content: space-between; font-size: .74rem; color: var(--amalgam-black); padding: 0 3px; }
+    fieldset { padding: 0; border: 0; margin: 0 0 14px; }
+    legend { margin-bottom: 10px; }
+    .loop-options { display: flex; flex-wrap: wrap; gap: 10px; }
+    .loop-options label { background: var(--amalgam-yellow); color: var(--amalgam-black); display: flex; align-items: center; gap: 9px; border: 1px solid var(--border); border-radius: 10px; padding: 10px 14px; min-height: 44px; cursor: pointer; }
+    .loop-options label:has(:checked) { background: var(--amalgam-yellow); border-color: var(--amalgam-black); }
+    .sound { display: flex; align-items: center; gap: 10px; min-height: 44px; cursor: pointer; }
+    .transport { display: flex; flex-wrap: wrap; gap: 10px; margin-top: 15px; }
+    #status { min-height: 1.55em; margin-top: 13px; font-size: .88rem; }
+    footer { border-top: 1px solid var(--border); margin-top: 24px; padding-top: 15px; }
+    @media (max-width: 520px) { .settings { grid-template-columns: 1fr; gap: 10px; } .chooser { grid-template-columns: 1fr; } .chooser button { justify-self: start; } }
+    @media (prefers-reduced-motion: reduce) { .playhead { display: none; } }
+  </style>
+</head>
+<body>
+  <main>
+    <header>
+      <div class="eyebrow">Vocal warm-ups · Diction</div>
+      <h1>Give your words a workout.</h1>
+      <p class="intro">Choose one of 50 tongue twisters and say it aloud slowly. Repeat it, finishing every sound as clearly as possible. Build speed only when the words feel easy to articulate.</p>
+    </header>
+
+    <!-- Reading mode is the default; the same phrase becomes the interactive score. -->
+    <div class="chooser">
+      <label for="phrase-select">Choose a tongue twister<select id="phrase-select"></select></label>
+      <button id="random" type="button">Surprise me ↗</button>
+    </div>
+    <section class="stage" aria-label="Tongue twister">
+      <div class="stage-top"><span id="phrase-number"></span><span id="focus"></span></div>
+      <p id="phrase" class="phrase"></p>
+      <div id="pacing" hidden>
+        <div class="beat-track" aria-hidden="true">
+          <div class="beat-fill" id="beat-fill"></div><div class="beat-divisions" id="beat-divisions"></div><div class="playhead" id="playhead"></div>
+        </div>
+        <div class="beat-caption"><span id="word-position">Ready when you are</span><span id="pass-position">Pass 1 of 1</span></div>
+      </div>
+    </section>
+
+    <label class="mode-switch"><input id="interactive" type="checkbox" aria-controls="interactive-controls pacing">Interactive mode</label>
+    <p class="hint" id="mode-help">Read at your own pace, or turn on interactive mode for guided pacing. Choose your tempo, total passes, and loop option, then press Start Interactive. Say each highlighted word as the beat bar moves: one whole word per beat, even with several syllables. Adjust the tempo while you speak, keeping every sound clear.</p>
+    <section id="interactive-controls" aria-label="Interactive warm-up controls" hidden>
+      <!-- Native sliders supply a touch-friendly dial with keyboard arrow-key support. -->
+      <div class="settings">
+        <div class="control">
+          <div class="control-heading"><label for="tempo">Tempo</label><output id="tempo-value" for="tempo">50 <small>BPM</small></output></div>
+          <input id="tempo" type="range" min="20" max="180" step="1" value="50" aria-describedby="tempo-help">
+          <div class="ticks" aria-hidden="true"><span>20 · slower</span><span>faster · 180</span></div>
+          <p class="hint" id="tempo-help">Adjust as you go. Give every word its full beat.</p>
+        </div>
+        <div class="control">
+          <div class="control-heading"><label for="repeats">Total passes</label><output id="repeats-value" for="repeats">1</output></div>
+          <input id="repeats" type="range" min="1" max="6" step="1" value="1" aria-valuetext="1 pass" aria-describedby="repeat-help">
+          <div class="ticks" aria-hidden="true"><span>1</span><span>2</span><span>3</span><span>4</span><span>5</span><span>∞</span></div>
+          <p class="hint" id="repeat-help">One pass by default. ∞ keeps going until you stop.</p>
+        </div>
+      </div>
+      <fieldset id="loop-settings">
+        <legend>What happens on the next pass?</legend>
+        <div class="loop-options">
+          <label><input type="radio" name="loop-mode" value="single" checked>Single phrase loop</label>
+          <label><input type="radio" name="loop-mode" value="random">Random combo loop</label>
+        </div>
+      </fieldset>
+      <p class="hint" id="loop-help">Repeat this phrase for the selected number of passes, with one quiet beat between passes.</p>
+      <label class="sound"><input type="checkbox" id="metronome">Metronome click <span class="hint">· optional</span></label>
+      <div class="transport">
+        <button class="primary" id="start" type="button">Start Interactive</button>
+        <button id="pause" type="button" disabled>Pause</button>
+        <button id="stop" type="button" disabled>Stop</button>
+      </div>
+      <p id="status" role="status">Ready. Start slowly and let each word land.</p>
+    </section>
+    <footer><p class="hint">Keep your jaw easy and your consonants crisp. If sounds blur together, lower the tempo and try again. Accuracy is the warm-up.</p></footer>
+    <noscript>Enable JavaScript to browse the 50 tongue twisters and use interactive pacing.</noscript>
+  </main>
+  <script>
+    (() => {
+      'use strict';
+
+      // The editable dictionary mixes familiar short exercises with original alliterative phrases.
+      // Each whitespace-separated word receives exactly one beat; punctuation stays with its word.
+      const tongueTwisters = [
+        { text: 'Red leather, yellow leather.', focus: 'L / R' },
+        { text: 'Unique New York.', focus: 'N / Y / K' },
+        { text: 'She sells seashells by the seashore.', focus: 'S / SH' },
+        { text: 'Peter Piper picked a peck of pickled peppers.', focus: 'P' },
+        { text: 'How much wood would a woodchuck chuck if a woodchuck could chuck wood?', focus: 'W / CH' },
+        { text: 'Toy boat, toy boat, toy boat.', focus: 'T / B' },
+        { text: 'Irish wristwatch, Swiss wristwatch.', focus: 'R / S / W' },
+        { text: 'Eleven benevolent elephants.', focus: 'L / V / N' },
+        { text: 'A proper copper coffee pot.', focus: 'P / K' },
+        { text: 'Freshly fried flying fish.', focus: 'F / FR / FL' },
+        { text: 'Six slippery snails slid slowly seaward.', focus: 'S / SL' },
+        { text: 'Three free throws.', focus: 'TH / F / R' },
+        { text: 'Truly rural.', focus: 'R / L' },
+        { text: 'A big black bug bit a big black bear.', focus: 'B / BL' },
+        { text: 'Which witch wished which wicked wish?', focus: 'W / CH / SH' },
+        { text: 'Lesser leather never weathered wetter weather better.', focus: 'L / TH / W' },
+        { text: 'Round the rugged rocks the ragged rascal ran.', focus: 'R' },
+        { text: 'Six thick thistle sticks.', focus: 'S / TH / ST' },
+        { text: 'Can you can a can as a canner can can a can?', focus: 'K / N' },
+        { text: 'I scream, you scream, we all scream for ice cream.', focus: 'SK / KR' },
+        { text: 'Four fine fresh fish for you.', focus: 'F / FR' },
+        { text: 'Black background, brown background.', focus: 'BL / BR / GR' },
+        { text: 'Green glass globes glow greenly.', focus: 'G / GL / GR' },
+        { text: 'Crisp crusts crackle crisply.', focus: 'KR / ST' },
+        { text: 'Brave brown bakers bake brittle bread.', focus: 'B / BR' },
+        { text: 'Purple paper puppets pop past pink pillows.', focus: 'P' },
+        { text: 'Tiny tired turtles tap ten tin trays.', focus: 'T / TR' },
+        { text: 'Dizzy ducks dodge dozens of dusty drums.', focus: 'D / DR' },
+        { text: 'Kind kings carry crooked copper kettles.', focus: 'K / KR' },
+        { text: 'Giggling geese gather golden garden grapes.', focus: 'G / GR' },
+        { text: 'Five fluffy foxes fluff flat fleece.', focus: 'F / FL' },
+        { text: 'Vivian views vivid velvet vests.', focus: 'V' },
+        { text: 'Thin thistles thrive through thick thickets.', focus: 'TH' },
+        { text: 'Those other brothers bathe their father.', focus: 'Voiced TH' },
+        { text: 'Seven sleepy seals sip salty soup.', focus: 'S' },
+        { text: 'Zany zebras zigzag past buzzing zippers.', focus: 'Z' },
+        { text: 'Shy sheep share shiny shells.', focus: 'SH' },
+        { text: 'Cheerful chicks choose chunky cheddar chips.', focus: 'CH' },
+        { text: 'Jolly judges juggle giant ginger jars.', focus: 'J' },
+        { text: 'Many merry mice make messy midnight muffins.', focus: 'M' },
+        { text: 'Nine nimble newts nibble narrow noodles.', focus: 'N' },
+        { text: 'Long lilac ribbons loop loosely round little ladders.', focus: 'L / R' },
+        { text: 'Rory rarely rearranges rows of red roses.', focus: 'R' },
+        { text: 'Wendy wears warm wool while Walter winds wire.', focus: 'W' },
+        { text: 'Yellow yaks yawn in yesterday’s yard.', focus: 'Y' },
+        { text: 'Holly holds hot honey high above her hat.', focus: 'H' },
+        { text: 'Spring sparrows sprint past sprouting sprouts.', focus: 'SP / SPR' },
+        { text: 'Strictly striped strings stretch straight.', focus: 'STR / ST' },
+        { text: 'Plump plum petals plop onto plain plates.', focus: 'PL' },
+        { text: 'Quick queens quietly question quirky quails.', focus: 'KW' }
+      ];
+      const ids = ['phrase-select', 'random', 'phrase', 'phrase-number', 'focus', 'interactive', 'interactive-controls',
+        'pacing', 'beat-fill', 'beat-divisions', 'playhead', 'word-position', 'pass-position', 'tempo', 'tempo-value',
+        'repeats', 'repeats-value', 'loop-settings', 'loop-help', 'metronome', 'start', 'pause', 'stop', 'status'];
+      const ui = Object.fromEntries(ids.map(id => [id, document.getElementById(id)]));
+      let selectedIndex = 0;
+      let words = [];
+      let wordIndex = 0;
+      let pass = 1;
+      let phase = 'word';
+      let state = 'idle';
+      let elapsedBeat = 0;
+      let lastFrame = 0;
+      let frameId = 0;
+      let randomBag = [];
+      let audioContext;
+      let audioGeneration = 0;
+
+      // Populate the selector and render words using textContent, so dictionary edits stay safe.
+      tongueTwisters.forEach((entry, index) => ui['phrase-select'].add(new Option(`${index + 1}. ${entry.text}`, index)));
+      function renderPhrase() {
+        const entry = tongueTwisters[selectedIndex];
+        ui['phrase-select'].value = selectedIndex;
+        ui['phrase-number'].textContent = `PHRASE ${String(selectedIndex + 1).padStart(2, '0')} / 50`;
+        ui.focus.textContent = `Sound focus: ${entry.focus}`;
+        ui.phrase.replaceChildren();
+        words = entry.text.split(/\s+/).map((word, index) => {
+          const span = document.createElement('span');
+          span.className = 'word';
+          span.textContent = word;
+          if (index) ui.phrase.append(' ');
+          ui.phrase.append(span);
+          return span;
+        });
+        ui['beat-divisions'].replaceChildren(...words.map(() => document.createElement('span')));
+      }
+
+      // Shuffle a complete deck and avoid a repeated phrase at deck boundaries.
+      function nextRandom() {
+        if (!randomBag.length) {
+          randomBag = tongueTwisters.map((_, index) => index);
+          for (let index = randomBag.length - 1; index > 0; index--) {
+            const swap = Math.floor(Math.random() * (index + 1));
+            [randomBag[index], randomBag[swap]] = [randomBag[swap], randomBag[index]];
+          }
+        }
+        if (randomBag[randomBag.length - 1] === selectedIndex) {
+          const alternative = randomBag.findIndex(index => index !== selectedIndex);
+          if (alternative === -1) { randomBag = []; return nextRandom(); }
+          [randomBag[alternative], randomBag[randomBag.length - 1]] = [randomBag[randomBag.length - 1], randomBag[alternative]];
+        }
+        return randomBag.pop();
+      }
+      function limit() { return Number(ui.repeats.value) === 6 ? Infinity : Number(ui.repeats.value); }
+      function randomMode() { return document.querySelector('input[name="loop-mode"]:checked').value === 'random'; }
+      function say(message) { ui.status.textContent = message; }
+
+      // Highlight whole words and mark each beat in the bar without announcing every tick to screen readers.
+      function drawWord() {
+        const active = state !== 'idle' && phase === 'word';
+        words.forEach((word, index) => {
+          word.classList.toggle('active', active && index === wordIndex);
+          word.classList.toggle('spoken', state !== 'idle' && (phase === 'rest' ? !randomMode() : index < wordIndex));
+          if (active && index === wordIndex) word.setAttribute('aria-current', 'step');
+          else word.removeAttribute('aria-current');
+        });
+        ui['word-position'].textContent = state === 'idle' ? 'Ready when you are' : phase === 'rest' ? 'One beat to reset' : `Word ${wordIndex + 1} of ${words.length}`;
+        ui['pass-position'].textContent = pass > limit() ? `Pass ${pass} · final pass` : `Pass ${pass} of ${limit() === Infinity ? '∞' : limit()}`;
+        drawBar();
+      }
+      function drawBar() {
+        const progress = state === 'idle' ? 0 : phase === 'rest' ? 1 : (wordIndex + elapsedBeat) / words.length;
+        ui['beat-fill'].style.width = `${progress * 100}%`;
+        ui.playhead.style.left = `calc(${progress * 100}% - ${progress > 0 ? 3 : 0}px)`;
+      }
+      function syncButtons() {
+        const busy = state !== 'idle';
+        ui.start.disabled = busy;
+        ui.pause.disabled = !busy;
+        ui.pause.textContent = state === 'paused' ? 'Resume' : 'Pause';
+        ui.stop.disabled = !busy;
+        ui['phrase-select'].disabled = busy;
+        ui.random.disabled = busy;
+        ui['loop-settings'].disabled = busy;
+      }
+
+      // Create audio only after an explicit opt-in gesture; the clock works without audio support.
+      async function enableAudio() {
+        const generation = ++audioGeneration;
+        if (!ui.metronome.checked) return;
+        try {
+          const AudioAPI = window.AudioContext || window.webkitAudioContext;
+          if (!AudioAPI) throw new Error('Audio unavailable');
+          audioContext ||= new AudioAPI();
+          await audioContext.resume();
+        } catch {
+          if (generation !== audioGeneration) return;
+          ui.metronome.checked = false;
+          say('Audio is unavailable in this browser. Visual pacing is still ready.');
+        }
+      }
+      function clickBeat() {
+        if (!ui.metronome.checked || audioContext?.state !== 'running') return;
+        const oscillator = audioContext.createOscillator();
+        const gain = audioContext.createGain();
+        const now = audioContext.currentTime;
+        oscillator.frequency.value = wordIndex === 0 ? 1000 : 750;
+        gain.gain.setValueAtTime(.065, now);
+        gain.gain.exponentialRampToValueAtTime(.001, now + .035);
+        oscillator.connect(gain).connect(audioContext.destination);
+        oscillator.start(now);
+        oscillator.stop(now + .04);
+        oscillator.onended = () => { oscillator.disconnect(); gain.disconnect(); };
+      }
+
+      // Integrate beat fractions: live tempo changes preserve position within the current word.
+      // Slow frames never skip words or emit a burst of catch-up clicks.
+      function tick(now) {
+        if (state !== 'running') return;
+        const delta = now - lastFrame;
+        lastFrame = now;
+        if (delta > 1000) { pauseRun('Paused after an interruption. Resume when you’re ready.'); return; }
+        elapsedBeat += delta * Number(ui.tempo.value) / 60000;
+        if (elapsedBeat >= 1) {
+          elapsedBeat = 0;
+          if (phase === 'rest') {
+            pass++;
+            wordIndex = 0;
+            phase = 'word';
+            clickBeat();
+          } else if (wordIndex + 1 < words.length) {
+            wordIndex++;
+            clickBeat();
+          } else if (pass >= limit()) {
+            finishRun();
+            return;
+          } else {
+            phase = 'rest';
+            if (randomMode()) { selectedIndex = nextRandom(); renderPhrase(); }
+          }
+          drawWord();
+        }
+        drawBar();
+        frameId = requestAnimationFrame(tick);
+      }
+      function startRun() {
+        state = 'running';
+        phase = 'word';
+        pass = 1;
+        wordIndex = 0;
+        elapsedBeat = 0;
+        lastFrame = performance.now();
+        syncButtons();
+        drawWord();
+        say('One whole word per beat. Adjust the tempo whenever you need.');
+        // Resume is normally already unlocked by the checkbox, but retry if the browser suspended it.
+        enableAudio();
+        clickBeat();
+        frameId = requestAnimationFrame(tick);
+      }
+      function pauseRun(message = 'Paused. Resume continues from this word.') {
+        cancelAnimationFrame(frameId);
+        state = 'paused';
+        syncButtons();
+        say(message);
+      }
+      function stopRun(message = 'Stopped. Start again from the beginning of this phrase.') {
+        cancelAnimationFrame(frameId);
+        state = 'idle';
+        pass = 1;
+        wordIndex = 0;
+        elapsedBeat = 0;
+        phase = 'word';
+        syncButtons();
+        drawWord();
+        say(message);
+      }
+      function finishRun() {
+        const finishedPasses = pass;
+        stopRun(`Complete — ${finishedPasses} ${finishedPasses === 1 ? 'pass' : 'passes'}. Keep that clarity as you build speed.`);
+        ui['word-position'].textContent = 'Complete · every word counts';
+        ui['pass-position'].textContent = `${finishedPasses} ${finishedPasses === 1 ? 'pass' : 'passes'} complete`;
+        ui['beat-fill'].style.width = '100%';
+        ui.playhead.style.left = 'calc(100% - 3px)';
+      }
+
+      // Keep live controls available, while phrase and sequence choices stay fixed during a run.
+      ui.interactive.addEventListener('change', () => {
+        stopRun('Ready. Start slowly and let each word land.');
+        ui['interactive-controls'].hidden = !ui.interactive.checked;
+        ui.pacing.hidden = !ui.interactive.checked;
+      });
+      ui['phrase-select'].addEventListener('change', () => { selectedIndex = Number(ui['phrase-select'].value); renderPhrase(); stopRun('Phrase selected. Ready when you are.'); });
+      ui.random.addEventListener('click', () => { selectedIndex = nextRandom(); renderPhrase(); stopRun('New phrase selected. Give every sound some space.'); });
+      ui.tempo.addEventListener('input', () => { ui['tempo-value'].innerHTML = `${ui.tempo.value} <small>BPM</small>`; });
+      ui.repeats.addEventListener('input', () => {
+        ui['repeats-value'].textContent = limit() === Infinity ? '∞' : limit();
+        ui.repeats.setAttribute('aria-valuetext', limit() === Infinity ? 'Infinite passes, until stopped' : `${limit()} ${limit() === 1 ? 'pass' : 'passes'}`);
+        // If a new limit is already satisfied during a rest, stop without adding another pass.
+        if (state !== 'idle' && phase === 'rest' && pass >= limit()) finishRun();
+        else drawWord();
+      });
+      ui['loop-settings'].addEventListener('change', () => {
+        ui['loop-help'].textContent = randomMode()
+          ? 'Start with this phrase, then get a different random phrase each pass. Choose 2–5 or ∞ to build a combo; one quiet beat previews the next phrase.'
+          : 'Repeat this phrase for the selected number of passes, with one quiet beat between passes.';
+      });
+      ui.metronome.addEventListener('change', enableAudio);
+      ui.start.addEventListener('click', startRun);
+      ui.stop.addEventListener('click', () => stopRun());
+      ui.pause.addEventListener('click', () => {
+        if (state === 'running') pauseRun();
+        else if (state === 'paused') {
+          state = 'running';
+          lastFrame = performance.now();
+          enableAudio();
+          syncButtons();
+          say('Continuing. Keep your articulation clear and easy.');
+          frameId = requestAnimationFrame(tick);
+        }
+      });
+
+      // Background tabs pause instead of silently advancing; leaving the document cancels playback.
+      document.addEventListener('visibilitychange', () => { if (document.hidden && state === 'running') pauseRun('Paused while the page was hidden. Resume when you’re ready.'); });
+      window.addEventListener('pagehide', () => { stopRun(); audioContext?.suspend(); });
+      renderPhrase();
+      drawWord();
+    })();
+  </script>
+</body>
+</html>

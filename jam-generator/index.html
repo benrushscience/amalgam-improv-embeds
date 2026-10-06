@@ -6,14 +6,24 @@
   <title>Jam Generator | Amalgam Improv</title>
 </head>
 <body>
-<!-- Jam Generator for Squarespace: configurable warm-up, drill, and game counts -->
+<!-- Jam Generator for Squarespace: short-form activities and a guided long-form outline -->
 <div id="amalgam-jam-generator" class="ajg">
   <div class="ajg-header">
-    <div class="ajg-title">Jam Generator</div>
-    <div id="ajg-subtitle" class="ajg-subtitle">3 warm-ups &bull; 1 drill &bull; 5 games</div>
+    <h1 class="ajg-title">Jam Generator</h1>
+    <!-- Native checkbox supplies keyboard access and the switch's checked state. -->
+    <label class="ajg-mode-control">
+      <span id="ajg-short-label" class="ajg-mode-label ajg-mode-active">Short-form</span>
+      <input id="ajg-longform" type="checkbox" role="switch" aria-label="Use long-form jam" aria-describedby="ajg-mode-help">
+      <span class="ajg-switch-track" aria-hidden="true"><span class="ajg-switch-thumb"></span></span>
+      <span id="ajg-long-label" class="ajg-mode-label">Long-form</span>
+    </label>
   </div>
 
-  <div class="ajg-counts" aria-label="Jam size controls">
+  <p class="ajg-intro">Choose your jam style, then click <strong>Generate Jam</strong> to build a facilitator-ready plan. Each activity includes directions; use <strong>Copy to Clipboard</strong> to take the plan with you.</p>
+  <p id="ajg-mode-help" class="ajg-mode-help">Short-form: choose how many warm-ups, drills, and games you want. Generate again for a fresh mix.</p>
+  <div id="ajg-subtitle" class="ajg-subtitle" aria-live="polite">3 warm-ups &bull; 1 drill &bull; 5 games</div>
+
+  <div id="ajg-counts" class="ajg-counts" aria-label="Short-form jam size controls">
     <div class="ajg-counter">
       <span class="ajg-counter-label">Warm-ups</span>
       <button class="ajg-counter-btn" type="button" data-count-key="warmUps" data-count-step="-1" aria-label="Decrease warm-ups">-</button>
@@ -35,8 +45,8 @@
   </div>
 
   <div class="ajg-controls">
-    <button id="ajg-generate" class="ajg-btn">Generate Jam</button>
-    <button id="ajg-copy" class="ajg-btn ajg-btn-secondary" type="button">Copy to Clipboard</button>
+    <button id="ajg-generate" class="ajg-btn" type="button">Generate Jam</button>
+    <button id="ajg-copy" class="ajg-btn ajg-btn-secondary" type="button" disabled>Copy to Clipboard</button>
   </div>
 
   <div id="ajg-meta" class="ajg-meta" aria-live="polite"></div>
@@ -46,7 +56,7 @@
       <thead>
         <tr>
           <th style="width: 18%">Slot</th>
-          <th style="width: 18%">Game name</th>
+          <th style="width: 18%">Activity name</th>
           <th style="width: 18%">Type</th>
           <th>Description</th>
         </tr>
@@ -60,7 +70,7 @@
   </div>
 
   <div class="ajg-footer">
-    <span class="ajg-note">Note: Selection is random without replacement within each slot.</span>
+    <span id="ajg-note" class="ajg-note">Short-form activities are chosen at random without repeats in the plan.</span>
   </div>
 </div>
 
@@ -86,13 +96,15 @@
 
   .ajg-header{
     display:flex;
-    align-items:flex-end;
+    align-items:center;
     justify-content:space-between;
+    flex-wrap: wrap;
     gap: 14px;
     margin-bottom: 12px;
   }
 
   .ajg-title{
+    margin: 0;
     font-size: 22px;
     font-weight: 800;
     letter-spacing: 0.2px;
@@ -100,6 +112,7 @@
   }
 
   .ajg-subtitle{
+    display: inline-block;
     font-size: 14px;
     font-weight: 700;
     color: var(--ajg-black);
@@ -107,7 +120,70 @@
     border: 2px solid var(--ajg-black);
     padding: 6px 10px;
     border-radius: 999px;
-    white-space: nowrap;
+    line-height: 1.5;
+  }
+
+  /* Jam-style slider and brief instructions work on narrow embeds too. */
+  .ajg-mode-control{
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    cursor: pointer;
+    color: var(--ajg-black);
+    font-size: 14px;
+    font-weight: 800;
+    padding: 8px 0;
+  }
+  .ajg-mode-control input{
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    opacity: 0;
+  }
+  .ajg-switch-track{
+    display: inline-block;
+    width: 54px;
+    height: 30px;
+    box-sizing: border-box;
+    border: 2px solid var(--ajg-black);
+    border-radius: 999px;
+    background: var(--ajg-yellow);
+    padding: 3px;
+    transition: background 0.2s ease;
+  }
+  .ajg-switch-thumb{
+    display: block;
+    width: 20px;
+    height: 20px;
+    border-radius: 50%;
+    background: var(--ajg-black);
+    transition: transform 0.2s ease;
+  }
+  .ajg-mode-control input:checked + .ajg-switch-track{
+    background: var(--ajg-pink);
+  }
+  .ajg-mode-control input:checked + .ajg-switch-track .ajg-switch-thumb{
+    background: white;
+    transform: translateX(20px);
+  }
+  .ajg-mode-control input:focus-visible + .ajg-switch-track{
+    outline: 3px solid var(--ajg-pink);
+    outline-offset: 4px;
+  }
+  .ajg-mode-active{ text-decoration: underline; text-underline-offset: 4px; }
+  .ajg-intro, .ajg-mode-help{
+    color: var(--ajg-black);
+    font-size: 14px;
+    line-height: 1.6;
+    margin: 0 0 10px;
+  }
+  .ajg [hidden]{ display: none !important; }
+  .ajg-description-part{ margin: 0; line-height: 1.5; }
+  .ajg-description-part + .ajg-description-part{ margin-top: 8px; }
+  .ajg-btn:disabled{ opacity: 0.5; cursor: default; }
+  @media (prefers-reduced-motion: reduce){
+    .ajg-switch-track, .ajg-switch-thumb{ transition: none; }
   }
 
   .ajg-counts{
@@ -259,6 +335,28 @@
     font-size: 12px;
     color: #333;
   }
+
+  /* Stack each activity on mobile so the overview and directions stay in view. */
+  @media (max-width: 640px){
+    .ajg-table{ display: block; min-width: 0; }
+    .ajg-table thead{ display: none; }
+    .ajg-table tbody, .ajg-table tbody tr{ display: block; }
+    .ajg-table tbody tr{ border-bottom: 2px solid var(--ajg-black); }
+    .ajg-table tbody tr:last-child{ border-bottom: 0; }
+    .ajg-table tbody td{
+      display: block;
+      border-bottom: 0;
+      padding: 10px 14px;
+    }
+    .ajg-table tbody td + td{ padding-top: 0; }
+    .ajg-table tbody td[data-label]::before{
+      content: attr(data-label);
+      display: block;
+      font-size: 11px;
+      font-weight: 800;
+      margin-bottom: 4px;
+    }
+  }
 </style>
 
 <script>
@@ -405,6 +503,81 @@
       { name: "Character Swap", type: "Game / drill", description: "Start a scene with clear characters. Call Swap, and players exchange characters, traits, or points of view while continuing the scene.", difficulty: 4 },
     ];
 
+    // --- Long-form facilitation material adapted from Amalgam's Level 1 curriculum ---
+    // Source: Level 1 Course- The Shallows Curriculum, Classes 1 and 2 (read 2026-09-29).
+    // https://docs.google.com/document/d/18ke7_B1boNC1uDyJZ-lyl4mpAjL3JWIUrBggzSo5d60/edit
+    // Keep the teaching sequence fixed; vary only the name game and two warm-ups.
+    const LONG_FORM_STEPS = {
+      boundaries: {
+        name: "Boundaries and access needs",
+        type: "Welcome / agreements",
+        description: "A group check-in establishes what everyone needs to participate comfortably and support one another. Directions: Invite names, optional pronouns, and any access needs or physical and content boundaries people want the group to know. No one needs to explain a boundary. Remind everyone that observing is participating, touch requires consent, and players can pause or step out. Agree to listen, support each other, and celebrate mistakes."
+      },
+      fourLineScenes: {
+        name: "Four-line robot scenes",
+        type: "Scenework / base reality",
+        description: 'Fast two-person scenes practice establishing characters, location, and activity in exactly four lines. Self-endowments give information about your own character; partner endowments give information about the other character. Directions: Form an initiating queue and a responding queue. The first player from each steps forward. Round 1: (1) A says "I am..."; (2) B says "I am..."; (3) A says "We are in..."; (4) B says "We are doing...". Stop immediately after line four. Both players switch queues and join the back. Give everyone several turns in both roles. Round 2: replace the first two lines with "You are..." and keep the location and activity lines. Accept each endowment, keep the pace moving, and gently correct missed or out-of-order lines.'
+      },
+      sweepEdits: {
+        name: "Sweep edits: overview and practice",
+        type: "Editing / ensemble support",
+        description: "A sweep edit is a clear crossing in front of a scene that ends it and opens the stage for the next one. Directions: Demonstrate a sweep across the front of the playing area; the current players return to the backline. Explain that a laugh, satisfying moment, or high point can be a good ending, and an edit can also help a scene that has lost momentum. The editor has first opportunity to start the next scene, and a teammate joins promptly. Practice a few short scenes with sweeps. Share editing responsibility, stay attentive on the backline, and edit without waiting to plan a perfect next scene."
+      },
+      montage: {
+        name: "Montage",
+        type: "Long-form / scene sequence",
+        description: "A montage is a series of separate scenes inspired by one suggestion, joined by sweep edits. Scenes may use direct or more distant associations with the suggestion; they do not all need to share characters or a plot. Directions: Split the group into two teams. Announce the set length, take one suggestion, and have the first team play primarily two-person scenes while teammates listen on the backline. Players sweep their own scenes and support each new initiation. Call the end when time is up, then switch teams so everyone performs. Encourage clear characters, locations, and activities, shared editing, and support for every player."
+      }
+    };
+
+    const LONG_FORM_NAME_GAMES = [
+      {
+        name: "Name and energy passing",
+        type: "Name game / focus",
+        description: "A circle name game passes attention while helping everyone learn one another's names. Directions: Start by pointing to someone and saying your own name; the receiver does the same. Next, point to someone and say their name. If the group is ready, add a third level: point to the next receiver but say the name of the person they should pass to afterward. Prioritize accuracy over speed and welcome asking for a name at any point."
+      },
+      {
+        name: "Name & Gesture Circle",
+        type: "Name game / movement",
+        description: "A name-learning circle pairs each person's name with a memorable gesture. Directions: Each player says their name and makes a comfortable gesture. Everyone repeats the name and gesture together, then move to the next person. Repeat a round to help names stick."
+      },
+      {
+        name: "Alliterations",
+        type: "Name game / wordplay",
+        description: "A name-learning circle pairs each person's name with an adjective beginning with the same sound. Directions: Each player introduces themselves with an adjective and their name. The group repeats it. If the group wants an extra memory challenge, repeat earlier names before adding the next one; asking for help is welcome."
+      }
+    ];
+
+    // Reuse familiar warm-up directions, adding an explanation before each one.
+    const LONG_FORM_WARM_UPS = [
+      { name: "Zip Zap Zop", overview: "A focus-passing circle game cycles through Zip, Zap, and Zop with clear gestures and eye contact." },
+      { name: "Pass the Clap", overview: "A shared-clap circle exercise builds attention and timing between neighboring players." },
+      { name: "Mirror", overview: "A partner movement exercise builds close observation and shared physical attention." },
+      { name: "Sound Ball", overview: "An imaginary-ball game passes sounds around the group to warm up listening and spontaneous responses." },
+      { name: "Space Walk / Tempo Walk", overview: "A movement warm-up builds awareness of the room and responsiveness to changes in pace and energy." },
+      { name: "Red Ball", overview: "An imaginary-object exercise practices accepting and preserving an object's size, weight, and identity." },
+      { name: "Word Association Circle", overview: "A quick word-association circle warms up listening and spontaneous connections between ideas." },
+      { name: "Count to 20 (No Plan)", overview: "A group listening challenge builds shared attention by counting without a predetermined speaker order." }
+    ].map(({ name, overview }) => {
+      const activity = ACTIVITIES.find(item => item.name === name);
+      if (!activity) throw new Error(`Missing long-form warm-up: ${name}`);
+      return { ...activity, description: `${overview} Directions: ${activity.description}` };
+    });
+
+    LONG_FORM_WARM_UPS.push(
+      {
+        name: "Electric Company",
+        type: "Warm-up / listening",
+        description: "A circle sound exercise combines individual syllables into playful made-up words. Directions: Two consecutive players each offer one syllable. The whole group repeats the combined word exactly as heard, then the next pair supplies a new word. Real words are unnecessary. If comfortable, increase to three contributors and three-syllable words."
+      },
+      {
+        name: "Convergence",
+        type: "Warm-up / association",
+        description: "An ensemble association game moves from two unrelated words toward two players saying the same word together. Directions: Two players count to three and each say a word at the same time. Repeat both words clearly. Two new volunteers count to three and offer words connecting the previous pair. Continue until a pair matches, celebrate, then start again with new words. Invite different voices so the same players do not dominate."
+      }
+    );
+
+    let jamMode = "short";
     const MAX_COUNT = 12;
     const selectedCounts = {
       warmUps: 3,
@@ -497,10 +670,8 @@
       return { warmUps: finalWarmUps, drills: finalDrills, games: finalGames, requested: counts };
     }
 
-    function renderJam(jam) {
-      const tbody = document.getElementById("ajg-tbody");
-      const meta = document.getElementById("ajg-meta");
-
+    // Give both jam styles the same display and clipboard row format.
+    function shortFormRows(jam) {
       const rows = [];
 
       jam.warmUps.forEach((a, idx) => {
@@ -520,24 +691,63 @@
         rows.push({ slot: `Game ${idx + 1}`, slotClass: "ajg-slot ajg-slot-game", activity: a });
       });
 
+      return rows;
+    }
+
+    function generateLongFormRows() {
+      const nameGame = sampleWithoutReplacement(LONG_FORM_NAME_GAMES, 1)[0];
+      const warmUps = sampleWithoutReplacement(LONG_FORM_WARM_UPS, 2);
+      return [
+        { slot: "Boundaries", slotClass: "ajg-slot ajg-slot-drill", activity: LONG_FORM_STEPS.boundaries },
+        { slot: "Name game", slotClass: "ajg-slot ajg-slot-warmup", activity: nameGame },
+        ...warmUps.map((activity, index) => ({ slot: `Warm-up ${index + 1}`, slotClass: "ajg-slot ajg-slot-warmup", activity })),
+        { slot: "Four-line scenes", slotClass: "ajg-slot ajg-slot-drill", activity: LONG_FORM_STEPS.fourLineScenes },
+        { slot: "Sweep edits", slotClass: "ajg-slot ajg-slot-drill", activity: LONG_FORM_STEPS.sweepEdits },
+        { slot: "Montage", slotClass: "ajg-slot ajg-slot-game", activity: LONG_FORM_STEPS.montage }
+      ];
+    }
+
+    // Separate the overview and directions visually while keeping plain-text copying.
+    function descriptionHtml(description) {
+      const divider = " Directions: ";
+      const splitAt = description.indexOf(divider);
+      if (splitAt === -1) return escapeHtml(description);
+      const overview = description.slice(0, splitAt);
+      const directions = description.slice(splitAt + divider.length);
+      return `<p class="ajg-description-part">${escapeHtml(overview)}</p><p class="ajg-description-part"><strong>Directions:</strong> ${escapeHtml(directions)}</p>`;
+    }
+
+    function renderJam(rows) {
+      const tbody = document.getElementById("ajg-tbody");
+      const meta = document.getElementById("ajg-meta");
+
       tbody.innerHTML = rows.map(r => {
         return `
           <tr>
             <td class="${r.slotClass}">
               <span class="ajg-pill">${r.slot}</span>
             </td>
-            <td><strong>${escapeHtml(r.activity.name)}</strong></td>
-            <td>${escapeHtml(r.activity.type)}</td>
-            <td>${escapeHtml(r.activity.description)}</td>
+            <td data-label="Activity name"><strong>${escapeHtml(r.activity.name)}</strong></td>
+            <td data-label="Type">${escapeHtml(r.activity.type)}</td>
+            <td data-label="Description">${descriptionHtml(r.activity.description)}</td>
           </tr>
         `;
       }).join("");
 
       const now = new Date();
-      meta.textContent = `Generated: ${now.toLocaleString()}`;
+      const styleName = jamMode === "long" ? "Long-form" : "Short-form";
+      meta.textContent = `${styleName} jam generated: ${now.toLocaleString()}`;
+      document.getElementById("ajg-copy").disabled = rows.length === 0;
 
       // Store last jam for copy
       window.__AJG_LAST_JAM__ = rows;
+    }
+
+    function generateCurrentJam() {
+      const rows = jamMode === "long"
+        ? generateLongFormRows()
+        : shortFormRows(generateJam(selectedCounts));
+      renderJam(rows);
     }
 
     function escapeHtml(value) {
@@ -558,13 +768,13 @@
         return `${r.slot}\t${a.name}\t${a.type}\t${a.description}`;
       });
 
-      const header = "Slot\tGame name\tType\tDescription";
+      const header = "Slot\tActivity name\tType\tDescription";
       const text = [header, ...lines].join("\n");
 
       try {
         await navigator.clipboard.writeText(text);
         const meta = document.getElementById("ajg-meta");
-        meta.textContent = "Copied to clipboard âœ…";
+        meta.textContent = "Copied to clipboard.";
       } catch (error) {
         const meta = document.getElementById("ajg-meta");
         meta.textContent = "Copy failed (browser blocked clipboard). You can manually select the table instead.";
@@ -577,7 +787,26 @@
 
     function updateSubtitle() {
       const subtitle = document.getElementById("ajg-subtitle");
-      subtitle.textContent = `${selectedCounts.warmUps} warm-ups | ${selectedCounts.drills} drills | ${selectedCounts.games} games`;
+      subtitle.textContent = jamMode === "long"
+        ? "Boundaries / name game / 2 warm-ups / four-line scenes / sweep edits / montage"
+        : `${selectedCounts.warmUps} warm-ups | ${selectedCounts.drills} drills | ${selectedCounts.games} games`;
+    }
+
+    // A style change immediately replaces the displayed and copied plan.
+    function updateMode() {
+      const isLongForm = document.getElementById("ajg-longform").checked;
+      jamMode = isLongForm ? "long" : "short";
+      document.getElementById("ajg-counts").hidden = isLongForm;
+      document.getElementById("ajg-short-label").classList.toggle("ajg-mode-active", !isLongForm);
+      document.getElementById("ajg-long-label").classList.toggle("ajg-mode-active", isLongForm);
+      document.getElementById("ajg-mode-help").textContent = isLongForm
+        ? "Long-form: follow the outline from boundaries through montage. Generate again to change the name game and two warm-ups; the scene practice and teaching sequence stay in place."
+        : "Short-form: choose how many warm-ups, drills, and games you want. Generate again for a fresh mix.";
+      document.getElementById("ajg-note").textContent = isLongForm
+        ? "Follow the rows in order. Adapt pacing to your group; each new plan chooses one name game and two different warm-ups."
+        : "Short-form activities are chosen at random without repeats in the plan.";
+      updateSubtitle();
+      generateCurrentJam();
     }
 
     function renderCounters() {
@@ -602,10 +831,8 @@
         });
       });
 
-      generateButton.addEventListener("click", () => {
-        const jam = generateJam(selectedCounts);
-        renderJam(jam);
-      });
+      generateButton.addEventListener("click", generateCurrentJam);
+      document.getElementById("ajg-longform").addEventListener("change", updateMode);
 
       copyButton.addEventListener("click", () => {
         copyToClipboard();
