@@ -4,7 +4,7 @@
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <meta name="theme-color" content="#ffffff">
-  <title>A Field Guide to Character</title>
+  <title>Character Field Guide</title>
   <link rel="icon" href="data:,">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
@@ -21,16 +21,16 @@
   <script src="emotion-entries.js" defer></script>
   <script src="want-entries.js" defer></script>
   <script src="character-content.js" defer></script>
+  <script src="character-icons.js" defer></script>
   <script src="character-guide.js" defer></script>
 </head>
 <body>
   <a class="skip" href="#entry-title">Skip to selected entry</a>
   <main>
     <section class="guide-intro" aria-labelledby="guide-title">
-      <div><h1 id="guide-title">A Field Guide to Character</h1>
+      <div><h1 id="guide-title">Character Field Guide</h1>
         <p>Start with one choice: how your character moves, sounds, acts, feels, or sees the world. Explore an example, then let your scene partner’s offers shape what happens next. You don’t need to decide everything before you begin.</p>
       </div>
-      <button class="motion-control" id="motion-control" aria-pressed="false"><span aria-hidden="true">◌</span> <span id="motion-label">Pause motion</span></button>
     </section>
     <!-- Seven entry points stay visible without crowding the family index. -->
     <nav class="collection-navigation" aria-label="Character collections">
@@ -49,15 +49,14 @@
     <div class="reference-shell">
       <aside class="reference-index" aria-label="Reference index">
         <div class="index-tools" id="reference-index">
-          <div class="index-heading"><h2>The index</h2><span aria-hidden="true">↘</span></div>
-          <label class="search-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg><span class="sr-only">Search all character choices</span><input id="search" type="search" placeholder="Search all character choices…" autocomplete="off"></label>
-          <h3 id="collection-title"></h3><p class="collection-description" id="collection-description"></p>
+          <div class="index-heading"><h2 id="collection-title">Index</h2></div>
+          <p class="collection-description" id="collection-description"></p>
           <div id="collection-resource"></div>
           <div class="index-meta"><span id="result-count" role="status"></span><button id="expand-families">Expand all</button></div>
         </div>
-        <nav class="index-list" id="index-list" aria-label="Families and entries"></nav>
+        <nav class="index-list" id="index-list" aria-label="Families and entries" tabindex="0"></nav>
       </aside>
-      <div class="reading-column"><article id="entry-panel" class="entry-panel" aria-labelledby="entry-title"></article></div>
+      <div class="reading-column" role="region" aria-label="Selected character attribute" tabindex="0"><article id="entry-panel" class="entry-panel" aria-labelledby="entry-title"></article></div>
     </div>
   </main>
   <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>

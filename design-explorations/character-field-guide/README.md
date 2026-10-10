@@ -12,7 +12,7 @@ python -m http.server 8771 --bind 127.0.0.1 --directory design-explorations/char
 - Includes 30 entries each for physicality, voice, behaviors, and wants, plus all 48 emotions from the Amalgam emotion wheel.
 - Includes 240 entries and 720 scenario-and-line pairs in total across all seven collections.
 - Groups visible/audible choices separately from internal motivations in the collection navigation.
-- Retains a persistent desktop family index, global search, direct entry URLs, browser history, motion control, and responsive layout.
+- Retains a persistent desktop family index, direct entry URLs, browser history, and responsive layout.
 - Connections are editorial suggestions across collections, not claims that a physical or vocal choice determines psychology.
 
 ## Reference and editorial decisions
@@ -33,6 +33,6 @@ Run `node design-explorations/character-field-guide/validate-content.cjs` from t
 
 The validator checks the emotion taxonomy against the saved reference. Add `--wheel-source "C:/path/to/downloaded-emotion-wheel.html"` to also compare that reference against a fresh copy of the embedded live wheel HTML.
 
-Browser review covered each collection, cross-collection search and empty results, related links, browser back, motion pause, and a narrow viewport. Screenshots are in `design-review-images`.
+The current interface uses static minimalist SVG line icons only in the main reading panel, text-only category selectors, light borders, and independently scrolling index and reading panels. Search and animation controls are omitted. `character-icons.js` owns the category illustrations. Browser review covered category switching, removed controls, and the updated layout. Screenshots are in `design-review-images`.
 
 This folder is a standalone design study. It does not replace or publish `values-beliefs-fieldguide`.
