@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#ffffff">
+  <title>A Field Guide to Character</title>
+  <link rel="icon" href="data:,">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&family=Oswald:wght@400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="field-guide.css">
+  <link rel="stylesheet" href="character-guide.css">
+  <!-- Existing convictions remain intact; new collections extend the same reference model. -->
+  <script src="base-content.js" defer></script>
+  <script src="scene-prompts.js" defer></script>
+  <script src="conviction-entries.js" defer></script>
+  <script src="physicality-entries.js" defer></script>
+  <script src="voice-entries.js" defer></script>
+  <script src="behavior-entries.js" defer></script>
+  <script src="emotion-entries.js" defer></script>
+  <script src="want-entries.js" defer></script>
+  <script src="character-content.js" defer></script>
+  <script src="character-guide.js" defer></script>
+</head>
+<body>
+  <a class="skip" href="#entry-title">Skip to selected entry</a>
+  <main>
+    <section class="guide-intro" aria-labelledby="guide-title">
+      <div><h1 id="guide-title">A Field Guide to Character</h1>
+        <p>Start with one choice: how your character moves, sounds, acts, feels, or sees the world. Explore an example, then let your scene partner’s offers shape what happens next. You don’t need to decide everything before you begin.</p>
+      </div>
+      <button class="motion-control" id="motion-control" aria-pressed="false"><span aria-hidden="true">◌</span> <span id="motion-label">Pause motion</span></button>
+    </section>
+    <!-- Seven entry points stay visible without crowding the family index. -->
+    <nav class="collection-navigation" aria-label="Character collections">
+      <div class="collection-group"><p>What we see &amp; hear</p><div class="collection-buttons">
+        <button data-type="physicality" aria-pressed="true">Physicality<small>How they move</small></button>
+        <button data-type="voice" aria-pressed="false">Voice<small>How they sound</small></button>
+        <button data-type="behavior" aria-pressed="false">Behaviors<small>What they repeat</small></button>
+      </div></div>
+      <div class="collection-group"><p>What’s happening within</p><div class="collection-buttons">
+        <button data-type="emotion" aria-pressed="false">Emotions<small>What they feel</small></button>
+        <button data-type="want" aria-pressed="false">Wants<small>What they seek</small></button>
+        <button data-type="value" aria-pressed="false">Values<small>What matters</small></button>
+        <button data-type="belief" aria-pressed="false">Beliefs<small>What they believe</small></button>
+      </div></div>
+    </nav>
+    <div class="reference-shell">
+      <aside class="reference-index" aria-label="Reference index">
+        <div class="index-tools" id="reference-index">
+          <div class="index-heading"><h2>The index</h2><span aria-hidden="true">↘</span></div>
+          <label class="search-label"><svg viewBox="0 0 24 24" aria-hidden="true"><circle cx="10" cy="10" r="6"></circle><path d="m15 15 5 5"></path></svg><span class="sr-only">Search all character choices</span><input id="search" type="search" placeholder="Search all character choices…" autocomplete="off"></label>
+          <h3 id="collection-title"></h3><p class="collection-description" id="collection-description"></p>
+          <div id="collection-resource"></div>
+          <div class="index-meta"><span id="result-count" role="status"></span><button id="expand-families">Expand all</button></div>
+        </div>
+        <nav class="index-list" id="index-list" aria-label="Families and entries"></nav>
+      </aside>
+      <div class="reading-column"><article id="entry-panel" class="entry-panel" aria-labelledby="entry-title"></article></div>
+    </div>
+  </main>
+  <p class="sr-only" id="announcement" role="status" aria-live="polite"></p>
+  <noscript><p class="no-script">Enable JavaScript to browse the character field guide.</p></noscript>
+</body>
+</html>

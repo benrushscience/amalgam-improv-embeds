@@ -1,0 +1,255 @@
+{
+  "source": "https://www.amalgamimprov.com/emotion-wheel",
+  "embeddedSource": "https://benrushscience.github.io/amalgam-improv-embeds/emotion-wheel/",
+  "reviewed": "2026-10-09",
+  "families": [
+    {
+      "id": "joy",
+      "name": "Joy",
+      "definition": "A family of pleasant emotional experiences related to enjoyment, satisfaction, reward, possibility, or things going well.",
+      "emotions": [
+        {
+          "name": "Contentment",
+          "definition": "A calm sense of satisfaction with the way things are right now."
+        },
+        {
+          "name": "Amusement",
+          "definition": "Pleasure sparked by something funny, playful, absurd, or entertaining."
+        },
+        {
+          "name": "Delight",
+          "definition": "A vivid burst of pleasure in response to something especially enjoyable, charming, or pleasing."
+        },
+        {
+          "name": "Excitement",
+          "definition": "High-energy positive anticipation or engagement with something appealing."
+        },
+        {
+          "name": "Relief",
+          "definition": "Pleasure and release that follow the ending, reduction, or avoidance of something stressful or threatening."
+        },
+        {
+          "name": "Hope",
+          "definition": "A positive orientation toward a desired future outcome that still contains some uncertainty."
+        }
+      ]
+    },
+    {
+      "id": "surprise",
+      "name": "Surprise",
+      "definition": "A family of responses to novelty or events that differ from what was expected, causing attention to rapidly shift.",
+      "emotions": [
+        {
+          "name": "Interest",
+          "definition": "Engaged attention toward something experienced as novel, meaningful, or worth exploring."
+        },
+        {
+          "name": "Astonishment",
+          "definition": "Strong surprise caused by something far outside what you expected."
+        },
+        {
+          "name": "Amazement",
+          "definition": "Surprise mixed with wonder, admiration, or the sense that something is remarkable."
+        },
+        {
+          "name": "Startlement",
+          "definition": "A brief automatic jolt of attention caused by a sudden unexpected event."
+        },
+        {
+          "name": "Shock",
+          "definition": "Intense surprise that temporarily makes an event difficult to fully process."
+        },
+        {
+          "name": "Confusion",
+          "definition": "Uncertainty that arises when information, events, or expectations do not fit together clearly."
+        }
+      ]
+    },
+    {
+      "id": "anger",
+      "name": "Anger",
+      "definition": "A family of activating responses to obstruction, mistreatment, violation, unfairness, or something perceived as wrong.",
+      "emotions": [
+        {
+          "name": "Annoyance",
+          "definition": "Relatively mild anger caused by something bothersome, repetitive, or inconvenient."
+        },
+        {
+          "name": "Frustration",
+          "definition": "Anger or agitation that develops when progress toward a goal is blocked."
+        },
+        {
+          "name": "Resentment",
+          "definition": "Persistent anger associated with feeling unfairly treated, overlooked, burdened, or wronged."
+        },
+        {
+          "name": "Indignation",
+          "definition": "Anger specifically triggered by something perceived as unfair, unethical, or unjust."
+        },
+        {
+          "name": "Outrage",
+          "definition": "Intense anger in response to a serious perceived violation, injustice, or unacceptable action."
+        },
+        {
+          "name": "Fury",
+          "definition": "Extremely intense anger accompanied by powerful emotional and physical activation."
+        }
+      ]
+    },
+    {
+      "id": "fear",
+      "name": "Fear",
+      "definition": "A family of responses to perceived danger, vulnerability, uncertainty, or the possibility of harm.",
+      "emotions": [
+        {
+          "name": "Unease",
+          "definition": "A mild sense that something may be wrong or unsafe even when the source is not fully clear."
+        },
+        {
+          "name": "Nervousness",
+          "definition": "Restless or activated concern about an upcoming challenge, evaluation, or uncertain event."
+        },
+        {
+          "name": "Apprehension",
+          "definition": "Concern or hesitation about something unpleasant that may happen."
+        },
+        {
+          "name": "Dread",
+          "definition": "Strong anticipatory fear accompanied by an expectation of something deeply unpleasant."
+        },
+        {
+          "name": "Alarm",
+          "definition": "A rapid, activated fear response to a possible immediate threat."
+        },
+        {
+          "name": "Terror",
+          "definition": "Overwhelming fear in response to an extreme or immediate perceived threat."
+        }
+      ]
+    },
+    {
+      "id": "sadness",
+      "name": "Sadness",
+      "definition": "A family of responses to loss, disappointment, separation, helplessness, or something valued being absent.",
+      "emotions": [
+        {
+          "name": "Disappointment",
+          "definition": "Sadness that follows when reality falls short of what you hoped for or expected."
+        },
+        {
+          "name": "Loneliness",
+          "definition": "Emotional pain associated with feeling insufficiently connected, understood, or accompanied."
+        },
+        {
+          "name": "Melancholy",
+          "definition": "A quiet, reflective, or lingering sadness that may not have one immediate or easily identified cause."
+        },
+        {
+          "name": "Sorrow",
+          "definition": "Deep sadness associated with misfortune, hurt, loss, or circumstances you wish were different."
+        },
+        {
+          "name": "Grief",
+          "definition": "Deep sadness and adjustment associated with losing a person, relationship, role, place, possibility, or other valued part of life."
+        },
+        {
+          "name": "Despair",
+          "definition": "Intense sadness accompanied by the feeling that a painful situation may not improve."
+        }
+      ]
+    },
+    {
+      "id": "disgust",
+      "name": "Disgust",
+      "definition": "A family of aversive responses that motivate rejection, avoidance, withdrawal, or psychological distance.",
+      "emotions": [
+        {
+          "name": "Distaste",
+          "definition": "A relatively mild dislike or aversion toward something experienced as unpleasant."
+        },
+        {
+          "name": "Aversion",
+          "definition": "A strong inclination to avoid or withdraw from something experienced as unpleasant."
+        },
+        {
+          "name": "Revulsion",
+          "definition": "An intense, often visceral form of disgust that produces a strong desire to recoil."
+        },
+        {
+          "name": "Contempt",
+          "definition": "A dismissive feeling that a person, behavior, or attitude is unworthy of respect."
+        },
+        {
+          "name": "Moral Disgust",
+          "definition": "Strong aversion toward behavior perceived as profoundly unethical, degrading, or corrupt."
+        },
+        {
+          "name": "Loathing",
+          "definition": "Intense and often sustained disgust or hatred toward a person, behavior, object, or idea."
+        }
+      ]
+    },
+    {
+      "id": "connection",
+      "name": "Connection",
+      "definition": "A family of affiliative experiences that draw us toward other people through closeness, care, appreciation, and shared meaning.",
+      "emotions": [
+        {
+          "name": "Affection",
+          "definition": "Warm fondness and positive regard for someone or something familiar and valued."
+        },
+        {
+          "name": "Tenderness",
+          "definition": "Gentle warmth and care toward someone perceived as precious, vulnerable, or deserving of softness."
+        },
+        {
+          "name": "Compassion",
+          "definition": "Concern for another person's difficulty accompanied by a desire for their suffering to lessen."
+        },
+        {
+          "name": "Admiration",
+          "definition": "Warm appreciation for qualities, abilities, choices, or achievements you consider valuable."
+        },
+        {
+          "name": "Gratitude",
+          "definition": "Warm appreciation for something beneficial, meaningful, or generous that you have received or recognized."
+        },
+        {
+          "name": "Love",
+          "definition": "Deep care, attachment, and valuing of another person, group, place, activity, or meaningful part of life."
+        }
+      ]
+    },
+    {
+      "id": "self-conscious",
+      "name": "Self-Conscious",
+      "definition": "A family of emotions shaped by awareness and evaluation of yourself, your actions, your identity, or how you believe others perceive you.",
+      "emotions": [
+        {
+          "name": "Awkwardness",
+          "definition": "Social discomfort that arises when expectations about what to say or do feel unclear."
+        },
+        {
+          "name": "Embarrassment",
+          "definition": "Discomfort following a social mistake, awkward exposure, or moment in which you believe you appeared foolish."
+        },
+        {
+          "name": "Guilt",
+          "definition": "Distress about something you believe you did, failed to do, or contributed to that violated your values."
+        },
+        {
+          "name": "Shame",
+          "definition": "Painful self-evaluation in which a mistake, exposure, or perceived shortcoming feels connected to your worth or identity."
+        },
+        {
+          "name": "Humiliation",
+          "definition": "Pain associated with feeling publicly lowered, degraded, powerless, or stripped of dignity."
+        },
+        {
+          "name": "Pride",
+          "definition": "Positive self-evaluation connected to an achievement, quality, effort, identity, or group affiliation you value."
+        }
+      ]
+    }
+  ]
+}
