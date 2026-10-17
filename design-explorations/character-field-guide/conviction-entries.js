@@ -37,7 +37,7 @@
     },
     {
       id:'b31', type:'belief', family:'opportunity', kind:'Worldview', name:'Life offers more possibilities than we can use.',
-      meaning:'An assumption that worthwhile opportunities are plentiful, so missing one possibility does not close off a meaningful future.',
+      meaning:"Missing one chance does not exhaust what life can offer. Other worthwhile paths are available to discover or create.",
       cue:'Let abundance shape a concrete choice: share an opening, release a missed chance, or explore another route. Your partner can reveal what this outlook costs or makes possible.',
       relatedNames:['Adventure','Variety','Freedom'], relatedIds:['b32','emotion-9','want-2'],
       scenes:[
@@ -48,7 +48,7 @@
     },
     {
       id:'b32', type:'belief', family:'opportunity', kind:'Worldview', name:'Good opportunities are rare; you have to secure yours.',
-      meaning:'An assumption that worthwhile openings are scarce and easily lost, making early commitment or protecting one’s access feel necessary.',
+      meaning:"Worthwhile openings are limited and easily lost, so securing access quickly matters more than waiting for a perfect moment.",
       cue:'Choose the opportunity your character fears losing. Show what they do to secure it, while allowing your partner to question whether it is really the last chance.',
       relatedNames:['Safety','Ambition','Wealth'], relatedIds:['b31','emotion-2','want-7'],
       scenes:[
@@ -59,7 +59,7 @@
     },
     {
       id:'b33', type:'belief', family:'patterns', kind:'Worldview', name:'Even confusing events have explanations we can discover.',
-      meaning:'An assumption that apparent disorder is understandable with enough observation, questions, or investigation.',
+      meaning:"Confusing events have discoverable causes or patterns. Careful observation and questions can turn mystery into understanding.",
       cue:'Choose a puzzling detail and pursue an explanation with your partner. Let new evidence change your theory rather than making your character automatically correct.',
       relatedNames:['Curiosity','Mastery'], relatedIds:['b8','emotion-32','behavior-5'],
       scenes:[
@@ -70,7 +70,7 @@
     },
     {
       id:'b34', type:'belief', family:'agency', kind:'Worldview', name:'The world is gradually getting better.',
-      meaning:'An assumption that, despite setbacks and uneven change, life is moving toward better conditions over time.',
+      meaning:"Despite setbacks and uneven gains, living conditions and human possibilities tend to improve over time.",
       cue:'Choose a sign of improvement your character trusts. Let that larger outlook affect their response to a present setback without erasing what their partner is experiencing.',
       relatedNames:['Inclusion','Justice','Sustainability'], relatedIds:['b35','b6','emotion-9'],
       scenes:[
@@ -81,7 +81,7 @@
     },
     {
       id:'b35', type:'belief', family:'agency', kind:'Worldview', name:'The things that make life good are disappearing.',
-      meaning:'An assumption that valued qualities of life are being lost over time, making preservation or resistance to change feel urgent.',
+      meaning:"Important qualities of life are being eroded by change, making preservation feel urgent and promises of progress hard to trust.",
       cue:'Decide what your character sees slipping away. Let them notice losses selectively, while leaving room for your partner to offer a different view of the same change.',
       relatedNames:['Tradition','Community','Stability'], relatedIds:['b34','b28','emotion-45'],
       scenes:[
@@ -92,7 +92,7 @@
     },
     {
       id:'b36', type:'belief', family:'patterns', kind:'Worldview', name:'Changing one thing affects more than we can see.',
-      meaning:'An assumption that events and systems are interconnected, so a local decision can have consequences beyond its obvious target.',
+      meaning:"People, events, and systems depend on one another. A decision in one place can produce effects far beyond its immediate target.",
       cue:'Follow one consequence of an ordinary choice. Invite your partner to consider another connection instead of claiming to predict every outcome.',
       relatedNames:['Sustainability','Community','Compassion'], relatedIds:['b30','b21','want-8'],
       scenes:[
@@ -103,7 +103,7 @@
     },
     {
       id:'b37', type:'belief', family:'meaning', kind:'Worldview', name:'The world needs something I can contribute.',
-      meaning:'An assumption that one’s particular abilities, perspective, or care have a needed place in the larger world.',
+      meaning:"Your particular abilities, perspective, or care can meet a real need; participating in the world makes a difference.",
       cue:'Choose a specific contribution your character believes matters. Let them offer it and listen to how the other person actually needs it.',
       relatedNames:['Selflessness','Mastery','Recognition'], relatedIds:['b27','emotion-5','want-8'],
       scenes:[
@@ -114,7 +114,7 @@
     },
     {
       id:'b38', type:'belief', family:'agency', kind:'Worldview', name:'Some situations are better accepted than improved.',
-      meaning:'An assumption that trying to optimize or control every circumstance can cost more than living with what is already there.',
+      meaning:"Continually trying to fix or control a situation can cost more than living with its imperfections.",
       cue:'Choose something your character is willing to leave as it is. Make acceptance an active choice that can coexist with care, rather than simply disengaging from the scene.',
       relatedNames:['Enjoyment','Deep relationships','Stability'], relatedIds:['b9','emotion-10','physicality-3'],
       scenes:[
@@ -125,7 +125,7 @@
     },
     {
       id:'b39', type:'belief', family:'meaning', kind:'Worldview', name:'Ordinary places contain things worth admiring.',
-      meaning:'An assumption that beauty and interest are present in everyday surroundings, rather than confined to exceptional places or experiences.',
+      meaning:"Beauty and interest can be found in familiar surroundings when someone takes time to notice everyday details.",
       cue:'Notice a precise detail in the shared environment and invite your partner to see it. Let that attention change how you spend an ordinary moment.',
       relatedNames:['Curiosity','Enjoyment','Creativity'], relatedIds:['emotion-34','voice-2'],
       scenes:[
@@ -136,7 +136,7 @@
     },
     {
       id:'b40', type:'belief', family:'meaning', kind:'Worldview', name:'Even serious situations have an absurd side.',
-      meaning:'An assumption that incongruity and humor can exist alongside real stakes, allowing a person to notice absurdity without denying that something matters.',
+      meaning:"Contradictions and incongruities can be funny even when the stakes are real. Noticing humor does not have to erase the seriousness of the situation.",
       cue:'Find the mismatch inside a serious situation. Share the observation in a way that lets your partner decide whether humor connects you in this moment.',
       relatedNames:['Enjoyment','Creativity','Deep relationships'], relatedIds:['b29','emotion-25','voice-6'],
       scenes:[

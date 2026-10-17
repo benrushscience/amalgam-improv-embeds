@@ -488,7 +488,7 @@ window.referenceContent = {
       ],
       "action": "Gives the late arrival a chance to explain.",
       "pressure": "What would challenge their first impression of another person?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Unkind behavior is usually a mistake, misunderstanding, or response to difficulty rather than a deliberate wish to hurt someone."
     },
     {
       "id": "b2",
@@ -502,7 +502,7 @@ window.referenceContent = {
       ],
       "action": "Negotiates clear terms before sharing resources.",
       "pressure": "What would challenge their first impression of another person?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Personal interests tend to come before concern for others, even when someone presents an offer as generous or selfless."
     },
     {
       "id": "b3",
@@ -517,7 +517,7 @@ window.referenceContent = {
       ],
       "action": "Hands the new member a real responsibility.",
       "pressure": "What would challenge their first impression of another person?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Being trusted gives people a reason to take responsibility and live up to another person’s confidence in them."
     },
     {
       "id": "b4",
@@ -531,7 +531,7 @@ window.referenceContent = {
       ],
       "action": "Hides a worry instead of asking the group for help.",
       "pressure": "What would challenge their first impression of another person?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Revealing fears, needs, or weaknesses gives other people information they can use to gain power over you."
     },
     {
       "id": "b5",
@@ -546,7 +546,7 @@ window.referenceContent = {
       ],
       "action": "Stays beside a friend after an embarrassing mistake.",
       "pressure": "What would challenge their first impression of another person?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Commitment to someone should endure mistakes, setbacks, and embarrassment, rather than depend on the relationship staying easy."
     },
     {
       "id": "b6",
@@ -561,7 +561,7 @@ window.referenceContent = {
       ],
       "action": "Offers a second attempt after a failed audition.",
       "pressure": "What happens when their usual way of making change stops working?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Abilities and habits are not fixed; practice and sustained effort can change what a person is capable of doing."
     },
     {
       "id": "b7",
@@ -576,7 +576,7 @@ window.referenceContent = {
       ],
       "action": "Asks what support a struggling colleague was missing.",
       "pressure": "What happens when their usual way of making change stops working?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Resources, opportunities, and outside pressures shape results. Hard work alone cannot overcome every obstacle."
     },
     {
       "id": "b8",
@@ -591,7 +591,7 @@ window.referenceContent = {
       ],
       "action": "Asks why the meeting needs a leader at all.",
       "pressure": "What happens when their usual way of making change stops working?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Examining what everyone takes for granted can reveal options that familiar ways of thinking have hidden."
     },
     {
       "id": "b9",
@@ -606,7 +606,7 @@ window.referenceContent = {
       ],
       "action": "Assigns everyone a task before they have agreed on a plan.",
       "pressure": "What happens when their usual way of making change stops working?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Clear personal leadership keeps uncertainty from becoming disorder. Leaving decisions to others feels more likely to let things go wrong."
     },
     {
       "id": "b10",
@@ -621,7 +621,7 @@ window.referenceContent = {
       ],
       "action": "Declines the role their family has always expected them to take.",
       "pressure": "What happens when their usual way of making change stops working?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Each person should decide what kind of life to pursue, even when family or society has a different future in mind."
     },
     {
       "id": "b11",
@@ -636,7 +636,7 @@ window.referenceContent = {
       ],
       "action": "Walks into an unfamiliar gathering and introduces themself.",
       "pressure": "What would make them reconsider how much uncertainty to accept?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "New places and experiences are likely to offer discoveries, relationships, or chances that make exploration worthwhile."
     },
     {
       "id": "b12",
@@ -650,7 +650,7 @@ window.referenceContent = {
       ],
       "action": "Checks the details before accepting an unexpected invitation.",
       "pressure": "What would make them reconsider how much uncertainty to accept?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "An unknown situation may hide dangers, so checking details and planning safeguards should come before relaxing into it."
     },
     {
       "id": "b13",
@@ -665,7 +665,7 @@ window.referenceContent = {
       ],
       "action": "Writes a rota before anyone starts using the shared room.",
       "pressure": "What would make them reconsider how much uncertainty to accept?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Shared expectations help people coordinate, settle disagreements, and understand what they can count on from one another."
     },
     {
       "id": "b14",
@@ -680,7 +680,7 @@ window.referenceContent = {
       ],
       "action": "Changes the schedule when an unexpected guest arrives.",
       "pressure": "What would make them reconsider how much uncertainty to accept?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Changing the approach as circumstances change is more useful than following a plan that no longer fits."
     },
     {
       "id": "b15",
@@ -694,7 +694,7 @@ window.referenceContent = {
       ],
       "action": "Pauses the exciting plan to check whether everyone is comfortable.",
       "pressure": "What would make them reconsider how much uncertainty to accept?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Avoiding injury or damage should take priority over the possible benefits of a gamble, especially when others would bear the consequences."
     },
     {
       "id": "b16",
@@ -709,7 +709,7 @@ window.referenceContent = {
       ],
       "action": "Refuses an exception to the deadline, even for a friend.",
       "pressure": "Who benefits from their definition of fairness, and who might question it?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "People deserve consistent standards. Exceptions based on identity, relationships, or status make a decision unfair."
     },
     {
       "id": "b17",
@@ -724,7 +724,7 @@ window.referenceContent = {
       ],
       "action": "Gives extra rehearsal time to the person who needs it.",
       "pressure": "Who benefits from their definition of fairness, and who might question it?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "People face different obstacles, so a fair chance may require extra time, resources, or assistance for those who need more support."
     },
     {
       "id": "b18",
@@ -740,7 +740,7 @@ window.referenceContent = {
       ],
       "action": "Argues that the person who did more work deserves a larger share.",
       "pressure": "Who benefits from their definition of fairness, and who might question it?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Credit, pay, and other rewards should be proportional to the work someone puts in and the contribution they make."
     },
     {
       "id": "b19",
@@ -755,7 +755,7 @@ window.referenceContent = {
       ],
       "action": "Reports a violation even though a popular leader committed it.",
       "pressure": "Who benefits from their definition of fairness, and who might question it?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Wealth, influence, and public standing should not exempt anyone from legal duties or accountability."
     },
     {
       "id": "b20",
@@ -769,7 +769,7 @@ window.referenceContent = {
       ],
       "action": "Interprets a promotion as evidence that someone earned it.",
       "pressure": "Who benefits from their definition of fairness, and who might question it?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Good and bad outcomes generally reflect a person’s conduct or merit. This outlook can lead someone to credit success or blame hardship on the individual."
     },
     {
       "id": "b21",
@@ -784,7 +784,7 @@ window.referenceContent = {
       ],
       "action": "Chooses the shared garden over a private parking space.",
       "pressure": "Which commitment wins when two important people need different things?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "When private preferences conflict with shared needs, the well-being of the larger group should take priority."
     },
     {
       "id": "b22",
@@ -798,7 +798,7 @@ window.referenceContent = {
       ],
       "action": "Asks whether the volunteer actually wants the assignment.",
       "pressure": "Which commitment wins when two important people need different things?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "A duty should be willingly accepted. Other people should not decide someone’s promises, roles, or commitments for them."
     },
     {
       "id": "b23",
@@ -813,7 +813,7 @@ window.referenceContent = {
       ],
       "action": "Turns down an opportunity to help a relative through a difficult week.",
       "pressure": "Which commitment wins when two important people need different things?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Being there for relatives takes priority when career advancement or personal achievement competes with family responsibilities."
     },
     {
       "id": "b24",
@@ -827,7 +827,7 @@ window.referenceContent = {
       ],
       "action": "Admits a resentment instead of pretending everything is fine.",
       "pressure": "Which commitment wins when two important people need different things?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "A close relationship depends on letting someone know your real feelings and experiences, including truths that are difficult to share."
     },
     {
       "id": "b25",
@@ -842,7 +842,7 @@ window.referenceContent = {
       ],
       "action": "Saves a place for a newcomer at a crowded table.",
       "pressure": "Which commitment wins when two important people need different things?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Strangers deserve concern and help too; familiarity or membership in your own circle should not determine whose needs matter."
     },
     {
       "id": "b26",
@@ -856,7 +856,7 @@ window.referenceContent = {
       ],
       "action": "Finds significance in an encounter others dismiss as coincidence.",
       "pressure": "What would they do if someone they love finds meaning somewhere else?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Individual lives belong to a larger purpose, even when that purpose cannot be fully understood or explained."
     },
     {
       "id": "b27",
@@ -871,7 +871,7 @@ window.referenceContent = {
       ],
       "action": "Starts a new ritual because it expresses what matters now.",
       "pressure": "What would they do if someone they love finds meaning somewhere else?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "A meaningful life is built through chosen relationships, actions, and commitments rather than waiting for a purpose to be assigned."
     },
     {
       "id": "b28",
@@ -886,7 +886,7 @@ window.referenceContent = {
       ],
       "action": "Keeps an old ceremony even before understanding all of it.",
       "pressure": "What would they do if someone they love finds meaning somewhere else?",
-      "meaning": "An assumption this character treats as true about people or the world."
+      "meaning": "Inherited practices may preserve lessons learned over generations, even when the reasons behind those practices are no longer obvious."
     },
     {
       "id": "b29",
@@ -901,7 +901,7 @@ window.referenceContent = {
       ],
       "action": "Turns an ordinary errand into a small celebration.",
       "pressure": "What would they do if someone they love finds meaning somewhere else?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Pleasure, play, and delight have value in themselves; an enjoyable experience does not need to earn money or achieve a practical goal."
     },
     {
       "id": "b30",
@@ -916,7 +916,7 @@ window.referenceContent = {
       ],
       "action": "Repairs the old equipment despite the convenience of replacing it.",
       "pressure": "What would they do if someone they love finds meaning somewhere else?",
-      "meaning": "A conviction about how people ought to act or how things ought to be."
+      "meaning": "Present-day choices carry responsibilities toward people not yet born, including preserving the conditions they will need to live well."
     }
   ]
 };
