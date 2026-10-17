@@ -20,11 +20,11 @@ window.characterScenePrompts = {
   "v2": [
     {
       "setup": "Before your engagement party, your fiancé asks you to pretend you love sailing to impress their parents.",
-      "line": "I want them to meet the person you’re actually marrying. I get seasick in a bath."
+      "line": "I want your parents to meet the person you’re actually marrying. I get seasick in a bath."
     },
     {
       "setup": "At a job interview, the recruiter suggests concealing your years as a circus performer.",
-      "line": "That’s where I learned to manage a crew. If you hire me, you’re hiring that part too."
+      "line": "The circus is where I learned to manage a crew. If you hire me, you’re hiring that part too."
     },
     {
       "setup": "In a recording booth, your producer asks you to sing in an accent you do not have.",
@@ -35,11 +35,11 @@ window.characterScenePrompts = {
   "v3": [
     {
       "setup": "While clearing your late grandfather’s attic with your sister, you find a locked box.",
-      "line": "Before we throw it out, I want to know why Grandpa kept the key on his necklace."
+      "line": "Before we throw this box out, I want to know why Grandpa kept the key on his necklace."
     },
     {
       "setup": "On your first submarine shift, the engineer tells you to ignore a faint tapping sound.",
-      "line": "It stops every time we turn. Could we listen before we decide it’s nothing?"
+      "line": "The tapping stops every time we turn. Could we listen before we decide the noise is nothing?"
     },
     {
       "setup": "At a speed-dating table, your date lists their job, height, and favorite restaurant.",
@@ -118,7 +118,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a ceramics studio, a customer asks to buy the bowl you put in the reject pile.",
-      "line": "Let me make you one with a rim I’m proud of. I don’t want my mistake being the thing you use every morning."
+      "line": "Let me make you a bowl with a rim I’m proud of. I don’t want my mistake being the thing you use every morning."
     }
   ],
   // Ambition
@@ -148,7 +148,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "In a theater loading bay, a stagehand starts carrying chairs onto the truck one at a time.",
-      "line": "Hold that door. If we stack four on the trolley, we can finish before the next delivery."
+      "line": "Hold that door. If we stack four chairs on the trolley, we can finish before the next delivery."
     }
   ],
   // Influence
@@ -170,7 +170,7 @@ window.characterScenePrompts = {
   "v12": [
     {
       "setup": "At a company celebration, your manager takes credit for the display you built.",
-      "line": "I’m glad everyone likes it. I spent six weekends building that, and I’d like you to say my name."
+      "line": "I’m glad everyone likes the display. I spent six weekends building the display, and I’d like you to say my name."
     },
     {
       "setup": "In a lab, your research partner submits a paper without your name on it.",
@@ -178,7 +178,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At your daughter’s graduation dinner, everyone thanks her father for helping her study.",
-      "line": "I’m proud of her too. I’d also like someone to remember the person quizzing her at midnight."
+      "line": "I’m proud of our daughter too. I’d also like someone to remember the person quizzing her at midnight."
     }
   ],
   // Wealth
@@ -189,7 +189,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a record fair, your friend urges you to keep a rare album you could sell for a large profit.",
-      "line": "I love it, but that price gets me closer to owning my apartment. I’m taking the offer."
+      "line": "I love this album, but that price gets me closer to owning my apartment. I’m taking the offer."
     },
     {
       "setup": "In a contract negotiation, your new employer offers an impressive title instead of a raise.",
@@ -200,7 +200,7 @@ window.characterScenePrompts = {
   "v14": [
     {
       "setup": "At a lakeside cabin, your friend wants to take the boat out as thunder begins.",
-      "line": "I’m tying it up. You can call me boring from the dry side of the window."
+      "line": "I’m tying the boat up. You can call me boring from the dry side of the window."
     },
     {
       "setup": "Before a school trip, another chaperone says you can count the children after the bus departs.",
@@ -208,7 +208,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "On a film set, the director asks you to use a damaged ladder for one quick shot.",
-      "line": "The shot can wait. Bring the replacement ladder and I’ll light it again."
+      "line": "The shot can wait. Bring the replacement ladder and I’ll set the lights again."
     }
   ],
   // Stability
@@ -223,7 +223,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a foster-care meeting, a coordinator suggests another short placement for a child in your home.",
-      "line": "Tell me what it would take for her to stay. I want her to unpack the suitcase this time."
+      "line": "Tell me what our foster daughter would need in order to stay. I want her to unpack the suitcase this time."
     }
   ],
   // Duty
@@ -249,7 +249,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a supermarket checkout, your child begs you to add treats to a carefully budgeted shop.",
-      "line": "I want them too. We’re sticking to this list so we can pay for your trip on Friday."
+      "line": "I want those treats too. We’re sticking to this list so we can pay for your trip on Friday."
     },
     {
       "setup": "In a writer’s room, your collaborator invites you to browse holiday rentals instead of finishing the draft.",
@@ -264,7 +264,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "Before a ship’s launch, a junior officer suggests skipping the old naming ceremony.",
-      "line": "The crew gets to hear her name before we sail. Bring everyone up on deck."
+      "line": "The crew gets to hear the ship’s name before we sail. Bring everyone up on deck."
     },
     {
       "setup": "At your wedding rehearsal, the officiant asks whether you want to keep your grandparents’ procession music.",
@@ -279,18 +279,18 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a university dormitory, your roommate asks why you keep stopping to pray during exam week.",
-      "line": "This is when I need it most. Five minutes reminds me I’m more than this result."
+      "line": "Exam week is when I need prayer most. Five minutes reminds me I’m more than this result."
     },
     {
       "setup": "After a storm damages your small chapel, a neighbor asks why you are repairing a building with almost no congregation.",
-      "line": "This is where I come to remember what I believe. Will you hold the ladder while I mend the window?"
+      "line": "This chapel is where I come to remember what I believe. Will you hold the ladder while I mend the window?"
     }
   ],
   // Family
   "v20": [
     {
       "setup": "While packing for a work trip, your brother arrives after a breakup with a suitcase.",
-      "line": "Put it in the spare room. You don’t have to explain everything before you stay."
+      "line": "Put your suitcase in the spare room. You don’t have to explain everything before you stay."
     },
     {
       "setup": "At a police station, your estranged sister asks whether you really came to collect her.",
@@ -320,11 +320,11 @@ window.characterScenePrompts = {
   "v22": [
     {
       "setup": "At a block meeting, your neighbor suggests closing the shared garden to everyone outside the street.",
-      "line": "Half the people who water it live around the corner. They belong in this decision too."
+      "line": "Half the people who water our shared garden live around the corner. Those neighbors belong in this decision too."
     },
     {
       "setup": "At a library closure hearing, a developer describes the building as an underused parcel of land.",
-      "line": "That’s where our walking group meets and our children wait after school. Come see what happens there before you call it empty."
+      "line": "Our library is where our walking group meets and our children wait after school. Come see what happens there before you call the building empty."
     },
     {
       "setup": "In a village after a power outage, your lodger wants to keep the generator entirely for your house.",
@@ -339,11 +339,11 @@ window.characterScenePrompts = {
     },
     {
       "setup": "In a sports-club office, a recruiter offers you a place if you abandon your doubles partner mid-season.",
-      "line": "Ask me after the final. I’m finishing what I started with her."
+      "line": "Ask me after the final. I’m finishing the season with my doubles partner."
     },
     {
       "setup": "At a newspaper desk, your editor asks you to distance yourself from the colleague who trained you.",
-      "line": "I’m not pretending I never learned from him because his last article went badly."
+      "line": "I’m not pretending I never learned from my colleague because his last article went badly."
     }
   ],
   // Compassion
@@ -365,11 +365,11 @@ window.characterScenePrompts = {
   "v25": [
     {
       "setup": "On a crowded overnight train, your friend sees you offer your seat to an exhausted passenger.",
-      "line": "Take it. I can stand for this stretch—you look like you’ve been awake for days."
+      "line": "Take my seat. I can stand for this stretch—you look like you’ve been awake for days."
     },
     {
       "setup": "At a research conference, your junior colleague loses their presentation slot when the schedule runs late.",
-      "line": "Take mine. This is your first chance to show the work; I’ve had plenty."
+      "line": "Take my presentation slot. This is your first chance to show your work; I’ve had plenty."
     },
     {
       "setup": "At a holiday camp, another counselor admits they have not had a single quiet meal all week.",
@@ -395,15 +395,15 @@ window.characterScenePrompts = {
   "v27": [
     {
       "setup": "In a repair shop, your coworker admits a customer was charged for work you never did.",
-      "line": "Call them back. We’re correcting the bill before we close."
+      "line": "Call the customer back. We’re correcting the bill before we close."
     },
     {
       "setup": "At a housing office, your supervisor tells you to file a tenant’s complaint where nobody will find it.",
-      "line": "Stamp it received. If we dismiss it, we’re going to give her a reason she can challenge."
+      "line": "Stamp the tenant’s complaint received. If we dismiss the complaint, we’re going to give the tenant a reason she can challenge."
     },
     {
       "setup": "At a sports awards ceremony, you learn that a disqualified athlete has finally been cleared.",
-      "line": "Then we give him the medal in front of everyone who watched us take it away."
+      "line": "Then we give the cleared athlete the medal in front of everyone who watched us take it away."
     }
   ],
   // Equality
@@ -429,7 +429,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a book-club gathering, everyone keeps speaking over a new member with a stammer.",
-      "line": "Wait—she hasn’t finished. I want to hear what she thought of the ending."
+      "line": "Wait—our new member hasn’t finished. I want to hear what she thought of the ending."
     },
     {
       "setup": "At a software launch, your designer says keyboard navigation can wait until next year.",
@@ -444,7 +444,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At your fishing dock, a deckhand suggests keeping the undersized catch because nobody is inspecting today.",
-      "line": "Put them back. I want this harbor feeding us when you’re running the boat."
+      "line": "Put the undersized fish back. I want this harbor feeding us when you’re running the boat."
     },
     {
       "setup": "At a costume department, a producer orders new fabric for an entire chorus.",
@@ -455,7 +455,7 @@ window.characterScenePrompts = {
   "b1": [
     {
       "setup": "In your shared kitchen, your roommate accuses a new neighbor of taking a parcel.",
-      "line": "Let’s knock and ask. They might have picked it up so it wouldn’t sit in the rain."
+      "line": "Let’s knock and ask our new neighbor. Our neighbor might have picked up the parcel to keep it out of the rain."
     },
     {
       "setup": "At a hotel desk, a guest angrily demands a room before check-in.",
@@ -463,7 +463,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a dog park, your walking companion assumes a stranger approaching with a lead wants to complain.",
-      "line": "Let’s hear them first. They might have found the collar we lost."
+      "line": "Let’s hear the person with the lead first. That stranger might have found the collar we lost."
     }
   ],
   // People look after themselves first.
@@ -493,18 +493,18 @@ window.characterScenePrompts = {
     },
     {
       "setup": "In a family jewelry shop, your father refuses to let your younger brother meet a customer alone.",
-      "line": "Give him this appointment. He won’t learn to be responsible while we keep proving we don’t trust him."
+      "line": "Give my brother this appointment. He won’t learn to be responsible while we keep proving we don’t trust him."
     }
   ],
   // Vulnerability invites exploitation.
   "b4": [
     {
       "setup": "In a rehearsal room, your scene partner notices you are frightened of the director.",
-      "line": "Don’t tell them I’m nervous. They’ll use it to take the part away."
+      "line": "Don’t tell the director I’m nervous. The director will use my nerves to take the part away."
     },
     {
       "setup": "Before a championship match, your coach asks whether an old injury is bothering you.",
-      "line": "Don’t write it on the board. If the other team hears, every tackle will land there."
+      "line": "Don’t write my knee injury on the board. If the other team hears, every tackle will land on that knee."
     },
     {
       "setup": "At an inheritance meeting, your cousin asks why you have brought so many documents.",
@@ -519,7 +519,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a band meeting, the others want to drop your drummer after a poorly received performance.",
-      "line": "We didn’t become a band only for the nights we sound good. Give him a chance to fix it with us."
+      "line": "We didn’t become a band only for the nights we sound good. Give our drummer a chance to fix the set with us."
     },
     {
       "setup": "At a hospital reception, an old neighbor says your visits are unnecessary now that their recovery is taking months.",
@@ -545,11 +545,11 @@ window.characterScenePrompts = {
   "b7": [
     {
       "setup": "At your shop, your supervisor calls a colleague lazy for arriving late.",
-      "line": "The first bus gets here at eight-ten. We keep scheduling her for eight."
+      "line": "The first bus gets here at eight-ten. We keep scheduling our colleague for eight."
     },
     {
       "setup": "At an art-school admissions meeting, another tutor calls a portfolio unpolished.",
-      "line": "She made these at a kitchen table between night shifts. Give her studio access before you decide this is her limit."
+      "line": "This applicant made these drawings at a kitchen table between night shifts. Give her studio access before you decide this is her limit."
     },
     {
       "setup": "In a farm office, your brother blames himself for the failed harvest.",
@@ -594,7 +594,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a university advice desk, a parent answers every question you ask their son.",
-      "line": "I need to hear which course he wants. He’s the one who will be sitting in the lectures."
+      "line": "I need to hear which course your son wants. He’s the one who will be sitting in the lectures."
     },
     {
       "setup": "In a palace wardrobe, the heir tells you they want to become a gardener instead of taking the throne.",
@@ -613,22 +613,22 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a small publishing house, a colleague wants to reject a manuscript because it fits no existing category.",
-      "line": "Let me read the strange one. Maybe we’re about to find a shelf we don’t have yet."
+      "line": "Let me read that uncategorizable manuscript. Maybe we’re about to find a shelf we don’t have yet."
     }
   ],
   // Unfamiliar situations require vigilance.
   "b12": [
     {
       "setup": "At a remote holiday cottage, your partner wants to accept a stranger’s invitation to a party.",
-      "line": "Let’s find out where it is and how we get home before we get in their car."
+      "line": "Let’s find out where the party is and how we get home before we get in a stranger’s car."
     },
     {
       "setup": "At a secondhand-car lot, your partner is ready to buy a vehicle after a quick drive.",
-      "line": "Let’s have an independent mechanic look at it before the excitement signs the cheque."
+      "line": "Let’s have an independent mechanic look at this car before the excitement signs the cheque."
     },
     {
       "setup": "On a polar expedition, the new guide points toward an unmarked shortcut.",
-      "line": "Show me where it joins the mapped route. I’m not taking the team across ice we haven’t checked."
+      "line": "Show me where your shortcut joins the mapped route. I’m not taking the team across ice we haven’t checked."
     }
   ],
   // Clear rules make cooperation possible.
@@ -673,7 +673,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a children’s camp, another leader wants to continue the ridge walk as lightning approaches.",
-      "line": "We’re heading down now. They can be disappointed in me while we get them somewhere sheltered."
+      "line": "We’re heading down now. The children can be disappointed in me while we get everyone somewhere sheltered."
     }
   ],
   // Fairness means applying the same rules to everyone.
@@ -695,15 +695,15 @@ window.characterScenePrompts = {
   "b17": [
     {
       "setup": "In a pottery class, your fellow teacher objects to one student getting extra time.",
-      "line": "She’s learning to use her other hand. Another ten minutes gives her a real chance to finish."
+      "line": "Our student is learning to use her other hand. Another ten minutes gives her a real chance to finish."
     },
     {
       "setup": "At a hiking-club start point, another organizer objects that one walker has a lighter pack.",
-      "line": "Their knee can’t carry that weight. We can share it so they can join the walk."
+      "line": "That walker’s knee can’t carry a full pack. We can share the weight so our fellow hiker can join the walk."
     },
     {
       "setup": "At a library homework session, a volunteer asks why one child gets your attention for twice as long.",
-      "line": "He’s still learning the language the instructions are in. Equal minutes wouldn’t give him the same chance."
+      "line": "This child is still learning the language the instructions are in. Equal minutes wouldn’t give him the same chance."
     }
   ],
   // Rewards should reflect effort and contribution.
@@ -714,7 +714,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a software company, your cofounder wants equal bonuses despite being absent for most of the launch.",
-      "line": "Show me what each of us delivered. The payout should reflect who got this over the line."
+      "line": "Show me what each of us delivered. The payout should reflect who got our software launched."
     },
     {
       "setup": "In a communal orchard, a neighbor who never helped with the trees wants half the apples.",
@@ -740,15 +740,15 @@ window.characterScenePrompts = {
   "b20": [
     {
       "setup": "At an office party, you congratulate a coworker on beating you to a promotion.",
-      "line": "You got it because you earned it. I need to work out what I didn’t do well enough."
+      "line": "You got the promotion because you earned the job. I need to work out what I didn’t do well enough."
     },
     {
       "setup": "At a horse stable, your brother complains that another rider inherited a better horse.",
-      "line": "She keeps winning because she’s the better rider. Stop looking for a reason she doesn’t deserve it."
+      "line": "Your rival keeps winning because she’s the better rider. Stop looking for a reason she doesn’t deserve those wins."
     },
     {
       "setup": "In a repair-shop queue, your friend says a bad week has left them unable to pay for their broken car.",
-      "line": "You keep putting off looking after it. Maybe this is what finally makes you take maintenance seriously."
+      "line": "You keep putting off looking after your car. Maybe this breakdown finally makes you take maintenance seriously."
     }
   ],
   // Community needs should come before individual preferences.
@@ -759,7 +759,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At an apartment laundry room, your roommate wants to occupy every machine to finish sooner.",
-      "line": "Leave two free. Finishing our washing isn’t the only thing happening in this building."
+      "line": "Leave two washing machines free. Finishing our washing isn’t the only thing happening in this building."
     },
     {
       "setup": "At a fishing-village meeting, your uncle wants to sell the rescue boat to fund his own expansion.",
@@ -770,11 +770,11 @@ window.characterScenePrompts = {
   "b22": [
     {
       "setup": "At a club meeting, your friend volunteers you to organize the annual trip.",
-      "line": "Ask me before you put my name down. I haven’t agreed to run it."
+      "line": "Ask me before you put my name down. I haven’t agreed to run the annual trip."
     },
     {
       "setup": "At a wedding-planning session, a couple asks you to pressure a reluctant friend into giving a speech.",
-      "line": "A speech means more if they want to give it. Let’s ask what they’d actually enjoy doing."
+      "line": "A speech means more if your friend wants to give one. Let’s ask what your friend would actually enjoy doing."
     },
     {
       "setup": "At a monastery, your pupil admits they are considering leaving before taking their vows.",
@@ -808,29 +808,29 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a campsite, your friend apologizes for snapping, but you keep insisting everything is fine.",
-      "line": "Actually, it hurt. I want us to talk about it so I don’t carry it into the whole weekend."
+      "line": "Actually, being snapped at hurt. I want us to talk about what you said so I don’t carry that hurt into the whole weekend."
     }
   ],
   // Care should extend beyond the people we already know.
   "b25": [
     {
       "setup": "At a crowded community supper, your friend saves the last seat for someone you both know.",
-      "line": "They haven’t arrived. This person is standing here with a plate—let’s make a place now."
+      "line": "Our friend hasn’t arrived. This guest is standing here with a plate—let’s make a place now."
     },
     {
       "setup": "At a motorway service station, your traveling companion wants to ignore a stranded family.",
-      "line": "We can spare ten minutes to help them find a tow. They shouldn’t need to know us to ask."
+      "line": "We can spare ten minutes to help that stranded family find a tow. Strangers shouldn’t need to know us to ask."
     },
     {
       "setup": "At a winter clothing drive, your coworker proposes reserving the warmest coats for staff relatives.",
-      "line": "Give them to whoever needs them most. This collection wasn’t only for people with a connection to us."
+      "line": "Give the warmest coats to whoever needs them most. This collection wasn’t only for people with a connection to us."
     }
   ],
   // Life has a purpose beyond individual understanding.
   "b26": [
     {
       "setup": "At a train station, you tell your sister that missing your train led to meeting an old friend.",
-      "line": "I can’t explain it, but I think I was meant to be there for her today."
+      "line": "I can’t explain the timing, but I think I was meant to meet my old friend today."
     },
     {
       "setup": "At a hospice garden, your uncle asks why you still plant bulbs you may never see flower.",
@@ -838,7 +838,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a remote observatory, your research assistant asks whether studying the sky has ended your sense of wonder.",
-      "line": "It’s made it larger. Knowing how a star burns doesn’t tell me why being here feels like a gift."
+      "line": "Studying the sky has made my wonder larger. Knowing how a star burns doesn’t tell me why being here feels like a gift."
     }
   ],
   // People create meaning through their choices.
@@ -864,7 +864,7 @@ window.characterScenePrompts = {
     },
     {
       "setup": "At a sailing workshop, a trainee dismisses an old knot as obsolete.",
-      "line": "Tie it with wet gloves before you replace it. The people who taught us this had reasons."
+      "line": "Tie that old knot with wet gloves before you replace it. The sailors who taught us this knot had reasons."
     },
     {
       "setup": "At a village seed exchange, an investor offers to replace every local variety with one high-yield crop.",
@@ -875,7 +875,7 @@ window.characterScenePrompts = {
   "b29": [
     {
       "setup": "At home, your roommate asks why you spent an hour building a tiny cardboard castle.",
-      "line": "Because I liked making it. You can be the king if you stop asking what it’s for."
+      "line": "Because I liked making this cardboard castle. You can be the king if you stop asking what the castle is for."
     },
     {
       "setup": "At a municipal park, a budget officer asks you to justify a small patch of flowers children like to visit.",
@@ -883,22 +883,22 @@ window.characterScenePrompts = {
     },
     {
       "setup": "During a language lesson, your tutor asks why you want to learn a song you will never perform.",
-      "line": "Because I love how it sounds. I don’t need an audience to want to sing it."
+      "line": "Because I love how this song sounds. I don’t need an audience to want to sing the song."
     }
   ],
   // We owe future generations a livable planet.
   "b30": [
     {
       "setup": "At a town planning meeting, your colleague proposes paving the last wetland for a shopping center.",
-      "line": "Our children will live with this after the ribbon-cutting. I want a plan that leaves the wetland intact."
+      "line": "Our children will live with a paved wetland long after the ribbon-cutting. I want a plan that leaves the wetland intact."
     },
     {
       "setup": "At a toy-company meeting, your designer offers a cheaper plastic that cannot be repaired or recycled.",
-      "line": "A child will outgrow this in a year. The material shouldn’t become their problem for the rest of their life."
+      "line": "A child will outgrow this toy in a year. The plastic shouldn’t become their problem for the rest of their life."
     },
     {
       "setup": "At a forestry office, your retiring supervisor suggests cutting the slow-growing trees before the next budget review.",
-      "line": "The people who planted them waited for us. We can leave something for the people after us."
+      "line": "The people who planted these trees waited for us. We can leave trees for the people after us."
     }
   ]
 };

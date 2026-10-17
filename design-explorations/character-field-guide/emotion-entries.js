@@ -114,11 +114,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a thrift shop, your friend finds the exact lunchbox you had as a child.",
-        "line": "Open it. Please tell me the little astronaut is still inside."
+        "line": "Open the lunchbox. Please tell me the little astronaut is still inside."
       },
       {
         "setup": "On a research boat, your colleague spots the animal you have searched for all season.",
-        "line": "It came back. You were right to keep the engine off."
+        "line": "The whale came back. You were right to keep the engine off."
       },
       {
         "setup": "At home, your teenager serves you the first meal they cooked alone.",
@@ -145,7 +145,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a costume shop, your friend brings out the first fitting of your parade outfit.",
-        "line": "It has wings. Please tell me we are allowed to try the wings right now."
+        "line": "My parade outfit has wings. Please tell me we are allowed to try the wings right now."
       },
       {
         "setup": "At a train platform, your daughter hands you tickets for the trip you have been planning together.",
@@ -168,7 +168,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a repair counter, the technician returns the camera containing your wedding photos.",
-        "line": "You found them? Even the blurry one of my dad?"
+        "line": "You found my wedding photos? Even the blurry photo of my dad?"
       },
       {
         "setup": "In a rehearsal room, your director says your forgotten entrance worked beautifully.",
@@ -176,7 +176,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a railway platform, your friend arrives holding the pet carrier you misplaced.",
-        "line": "There you both are. I have apologized to every cat in this station."
+        "line": "There you are with my cat. I have apologized to every other cat in this station."
       }
     ]
   },
@@ -194,7 +194,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a station, you wait with your sister for the first train after a long closure.",
-        "line": "If this one runs, Mum can visit without asking anyone for a lift."
+        "line": "If this train runs, Mum can visit without asking anyone for a lift."
       },
       {
         "setup": "In a greenhouse, you show your partner a tiny green shoot in a neglected pot.",
@@ -225,7 +225,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a community garden, your neighbor grows beans in a pattern you have never seen.",
-        "line": "You planted them in a spiral. Does that change how they grow?"
+        "line": "You planted your beans in a spiral. Does the spiral change how the beans grow?"
       },
       {
         "setup": "During a hotel night shift, a guest asks whether anyone remembers the building's old ballroom.",
@@ -251,11 +251,11 @@ window.characterEmotions = [
       },
       {
         "setup": "In your grandmother's kitchen, she casually translates a radio broadcast in a language you never knew she spoke.",
-        "line": "You understood all of that? We have been using a phrasebook together for twenty years."
+        "line": "You understood that whole radio broadcast? We have been using a phrasebook together for twenty years."
       },
       {
         "setup": "At a laboratory, your assistant reveals that yesterday's tiny seedling has grown through the ceiling.",
-        "line": "That was in a yogurt pot when I went home."
+        "line": "That enormous plant was in a yogurt pot when I went home."
       }
     ]
   },
@@ -274,7 +274,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a puppet workshop, the maker brings a wooden bird to life with a tiny movement of their hand.",
-        "line": "I know those are strings, and I still want to open the window for it."
+        "line": "I know your bird is made of wood and strings, and I still want to open the window for the bird."
       },
       {
         "setup": "On a rooftop, your neighbor lets you see Saturn through a telescope for the first time.",
@@ -300,7 +300,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "While you inventory a quiet toy shop with a coworker, a mechanical parrot suddenly speaks.",
-        "line": "Oh! That one has batteries. I was about to introduce myself."
+        "line": "Oh! That mechanical parrot has batteries. I was about to introduce myself."
       },
       {
         "setup": "At your desk, your partner unexpectedly appears in the doorway while you are absorbed in a letter.",
@@ -326,7 +326,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At your family shop, your brother reveals that he sold the business that morning.",
-        "line": "You sold it? I am still wearing the apron. Who am I opening for tomorrow?"
+        "line": "You sold our shop? I am still wearing the apron. Who am I opening for tomorrow?"
       },
       {
         "setup": "At an awards dinner, the host tells you that the anonymous donor who saved your project is your estranged father.",
@@ -352,7 +352,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a hotel desk, the clerk gives you a key labeled “yesterday.”",
-        "line": "Is that a room, or have I missed something very large?"
+        "line": "Is “yesterday” a room, or have I missed something very large?"
       },
       {
         "setup": "In a family kitchen, your brother introduces someone as both his boss and his student.",
@@ -405,7 +405,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "In a music lesson, your teacher asks you to try the same passage for the tenth time.",
-        "line": "I can hear it in my head. My fingers are attending a different lesson."
+        "line": "I can hear this passage in my head. My fingers are attending a different lesson."
       },
       {
         "setup": "At a council office, a clerk hands you another form to save the local tree.",
@@ -413,7 +413,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a shared kitchen, your roommate puts another dirty cup in the sink you just cleared.",
-        "line": "I want to see the bottom once. Just once, together."
+        "line": "I want to see the bottom of this sink once. Just once, together."
       }
     ]
   },
@@ -439,7 +439,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a campsite, your friend complains about the tent you carried all day.",
-        "line": "We can discuss its flaws after you carry one."
+        "line": "We can discuss the tent’s flaws after you carry a tent all day."
       }
     ]
   },
@@ -488,7 +488,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a restaurant office, you discover that the owner has kept the staff's tips all summer.",
-        "line": "They worked those double shifts. Put every dollar back before you ask them to serve another table."
+        "line": "Your staff worked those double shifts. Put every dollar of their tips back before you ask another server to serve a table."
       },
       {
         "setup": "At a rescue shelter, a sponsor asks you to stage a distressed animal for an advertisement.",
@@ -519,7 +519,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a council chamber, a rival jokes about the forged complaint that cost your family its home.",
-        "line": "Look at me when you say it was a joke. We are still living out of suitcases."
+        "line": "Look at me when you call your forged complaint a joke. We are still living out of suitcases."
       }
     ]
   },
@@ -541,11 +541,11 @@ window.characterEmotions = [
       },
       {
         "setup": "During your first shift in a shop, the manager closes the blinds whenever a particular car passes.",
-        "line": "Is there a reason we keep doing that?"
+        "line": "Is there a reason we close the blinds whenever that car passes?"
       },
       {
         "setup": "At a reunion dinner, your old friend avoids every question about the person who organized it.",
-        "line": "You keep changing the subject when I say her name. Did I miss something?"
+        "line": "You keep changing the subject when I mention our reunion organizer. Did I miss something?"
       }
     ]
   },
@@ -564,7 +564,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "Outside a courtroom, you rehearse the first sentence of your testimony with your sister.",
-        "line": "Do I say my full name even if they have just said my full name?"
+        "line": "Do I say my full name even if the judge has just said my full name?"
       },
       {
         "setup": "In a restaurant cloakroom, you ask your date for a moment before meeting their parents.",
@@ -595,11 +595,11 @@ window.characterEmotions = [
       },
       {
         "setup": "Outside your old school, a former classmate asks you to enter the reunion together.",
-        "line": "What if they still call me Captain Glue?"
+        "line": "What if our old classmates still call me Captain Glue?"
       },
       {
         "setup": "At a restaurant, your partner slides a sealed envelope across the table.",
-        "line": "Before I open this, are we still ordering dessert?"
+        "line": "Before I open this envelope, are we still ordering dessert?"
       }
     ]
   },
@@ -618,15 +618,15 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "In an office lift, you and your colleague approach the meeting where layoffs will be announced.",
-        "line": "I know what those envelopes mean. I watched them put one at every chair."
+        "line": "I know what those layoff envelopes mean. I watched our managers put an envelope at every chair."
       },
       {
         "setup": "Outside your parents' house, you hold the pieces of the heirloom your brother asked you to repair.",
-        "line": "Once we ring that bell, I have to tell her there isn't a vase in this box anymore."
+        "line": "Once we ring that bell, I have to tell Mum there isn’t a vase in this box anymore."
       },
       {
         "setup": "In a rehearsal hall, you wait for the director who always singles you out during notes.",
-        "line": "He has put my chair in the middle again. I was hoping today would be different."
+        "line": "The director has put my chair in the middle again. I was hoping today would be different."
       }
     ]
   },
@@ -680,7 +680,7 @@ window.characterEmotions = [
       },
       {
         "setup": "On a fantasy expedition, you and your partner hide as a dragon's eye appears at your window.",
-        "line": "It can see us. Don't let go of my hand."
+        "line": "The dragon can see us. Don’t let go of my hand."
       }
     ]
   },
@@ -699,11 +699,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a train station, your sibling explains that your father could not make the visit.",
-        "line": "I brought the chessboard. I thought we might finish that game."
+        "line": "I brought the chessboard. I thought Dad and I might finish our game."
       },
       {
         "setup": "At a science fair, your partner shows you the participation ribbon.",
-        "line": "They did not ask how the submarine worked?"
+        "line": "The science fair judges did not ask how our submarine worked?"
       },
       {
         "setup": "At a campsite, your friend reveals the telescope is missing a lens.",
@@ -782,7 +782,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At an orchard after a storm, you stand beside the grower surveying the fallen trees.",
-        "line": "You planted that row when we started school. I'm so sorry to see it like this."
+        "line": "You planted that row of apple trees when we started school. I’m so sorry to see those trees on the ground."
       },
       {
         "setup": "At a station, your friend explains that caring for their parents means leaving the town they love.",
@@ -804,11 +804,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "In an old workshop, you and your sister sort your late father’s tools.",
-        "line": "He labeled the broken ones too. He always thought there would be time."
+        "line": "Dad labeled the broken tools too. He always thought there would be time."
       },
       {
         "setup": "At a closing theater, your colleague asks you to switch off the lobby light.",
-        "line": "Can we leave it on until we have finished talking?"
+        "line": "Can we leave the lobby light on until we have finished talking?"
       },
       {
         "setup": "In a garden, your neighbor asks where the old apple tree stood.",
@@ -839,7 +839,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a village hall, your neighbor brings another rejected appeal to save the local bus service.",
-        "line": "We filled their forms, went to their meetings, found the money. I don't see a door left to knock on."
+        "line": "We filled the council’s forms, went to the council’s meetings, found the money. I don’t see a door left to knock on."
       }
     ]
   },
@@ -865,7 +865,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a costume fitting, your partner asks what you think of the shiny imitation-fur collar.",
-        "line": "It feels rather like being hugged by a damp carpet."
+        "line": "This imitation-fur collar feels rather like being hugged by a damp carpet."
       }
     ]
   },
@@ -891,7 +891,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a school art room, a teacher offers you a tray of sticky modeling paste.",
-        "line": "Can I cut the paper shapes instead? I can't bear that stuff on my fingers."
+        "line": "Can I cut the paper shapes instead? I can’t bear that sticky modeling paste on my fingers."
       }
     ]
   },
@@ -909,11 +909,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a holiday rental, you and the host open a refrigerator that has been unplugged for weeks.",
-        "line": "Close it. Please close it before you explain the deposit."
+        "line": "Close the refrigerator. Please close the door before you explain the deposit."
       },
       {
         "setup": "In an antique shop, the dealer reveals that the decorative jar contains preserved parasites.",
-        "line": "I was holding that against my cheek to see the pattern."
+        "line": "I was holding that parasite jar against my cheek to see the pattern."
       },
       {
         "setup": "At a bakery, your coworker lifts a flour sack and finds insects moving underneath it.",
@@ -939,7 +939,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a campaign office, a candidate rehearses pretending to remember a volunteer's name.",
-        "line": "You've had six months to learn it. Perhaps that could be tomorrow's policy."
+        "line": "You’ve had six months to learn your volunteer’s name. Perhaps learning names could be tomorrow’s policy."
       },
       {
         "setup": "At a shared workbench, a rival claims expertise while asking you how to switch on the equipment.",
@@ -962,15 +962,15 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a charity gala, the organizer admits that the beneficiary stories were invented to sell expensive tables.",
-        "line": "You put suffering on the place cards because it matched the theme. Take my name off this."
+        "line": "You put invented suffering on the place cards because it matched the theme. Take my name off this gala."
       },
       {
         "setup": "In a housing office, a coworker proposes charging desperate applicants to move their files to the top.",
-        "line": "They are sleeping in cars, and you see a queue we can sell?"
+        "line": "Our applicants are sleeping in cars, and you see a queue we can sell?"
       },
       {
         "setup": "At a school fundraiser, a sponsor offers money only if struggling children are filmed thanking them on cue.",
-        "line": "Their difficulty isn't a performance you bought. We will find another sponsor."
+        "line": "Those children’s difficulty isn’t a performance you bought. We will find another sponsor."
       }
     ]
   },
@@ -992,11 +992,11 @@ window.characterEmotions = [
       },
       {
         "setup": "In a collector's showroom, a dealer offers you a trophy from the cruel animal contests you campaigned to end.",
-        "line": "I don't want to own a prettier piece of it. I want that whole practice gone."
+        "line": "I don’t want to own a prettier piece of those cruel animal contests. I want that whole practice gone."
       },
       {
         "setup": "At a family meeting, your cousin suggests reviving the annual contest where relatives ridicule one another.",
-        "line": "I hated it at twelve, I hate it now, and I won't teach our children to enjoy it."
+        "line": "I hated our family ridicule contest at twelve, I hate the contest now, and I won’t teach our children to enjoy humiliating each other."
       }
     ]
   },
@@ -1014,11 +1014,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a bus stop, your partner again produces the wrong timetable.",
-        "line": "You have carried that one through three changes of government."
+        "line": "You have carried that wrong timetable through three changes of government."
       },
       {
         "setup": "In a rehearsal room, your old scene partner uses their familiar warm-up sound.",
-        "line": "There it is. Now it feels like a show."
+        "line": "There’s your warm-up sound. Now the rehearsal feels like a show."
       },
       {
         "setup": "At a family kitchen table, your brother carefully cuts the crusts off his toast.",
@@ -1040,7 +1040,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a repair shop, you show the owner a worn toy belonging to your grown son.",
-        "line": "Leave the crooked smile if you can. That is the part he loved."
+        "line": "Leave the toy’s crooked smile if you can. That is the part my son loved."
       },
       {
         "setup": "In a rehearsal room, your partner struggles to share a personal monologue.",
@@ -1048,7 +1048,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a bus stop, your father keeps practicing the route to your new home.",
-        "line": "We can take it together today. You can lead."
+        "line": "We can take the bus route to my home together today. You can lead."
       }
     ]
   },
@@ -1067,7 +1067,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a bus station, a stranger is struggling to read a cancellation notice while comforting a tired child.",
-        "line": "I can check the next departure while you sit with her, if that would help."
+        "line": "I can check the next departure while you sit with your child, if that would help."
       },
       {
         "setup": "In a rehearsal studio, your partner admits they have forgotten the steps after a difficult week.",
@@ -1075,7 +1075,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a repair shop, your apprentice expects to be dismissed after breaking a customer's lamp.",
-        "line": "I can see how frightened you are. Come sit down and we'll work out how to put it right."
+        "line": "I can see how frightened you are. Come sit down and we’ll work out how to replace the customer’s lamp."
       }
     ]
   },
@@ -1098,7 +1098,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a council office, your colleague admits a costly mistake before anyone else discovers it.",
-        "line": "You could have let the paperwork hide that. I respect you for standing up."
+        "line": "You could have let the paperwork hide your mistake. I respect you for standing up."
       },
       {
         "setup": "At a tailor's bench, you watch your aunt turn a damaged coat into a beautifully fitted jacket.",
@@ -1200,11 +1200,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "In a café, your date realizes you rehearsed your greeting with the barista.",
-        "line": "He was supposed to be on his break by now."
+        "line": "The barista was supposed to be on his break by now."
       },
       {
         "setup": "At a staff meeting, your manager opens the slideshow containing your holiday karaoke photo.",
-        "line": "That is not the graph, but it was a strong quarter."
+        "line": "My karaoke photo is not the graph, but it was a strong quarter."
       },
       {
         "setup": "In a library, your old teacher hears you bragging that you never needed school.",
@@ -1226,7 +1226,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a school fair, you face the child whose raffle ticket you misplaced.",
-        "line": "I put it in the wrong box. You trusted me with it."
+        "line": "I put your raffle ticket in the wrong box. You trusted me with your ticket."
       },
       {
         "setup": "In a greenhouse, you confess to your neighbor that you forgot their plants.",
@@ -1234,7 +1234,7 @@ window.characterEmotions = [
       },
       {
         "setup": "At a café, you admit sharing something your friend told you privately.",
-        "line": "I wanted to sound informed. It was not mine to tell."
+        "line": "I wanted to sound informed. Your secret was not mine to tell."
       }
     ]
   },
@@ -1256,7 +1256,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a rehearsal, your mentor hears you mock a beginner’s mistake.",
-        "line": "That sounded worse out loud. I learned that mistake from you."
+        "line": "My joke about that beginner sounded worse out loud. You helped me through that same mistake."
       },
       {
         "setup": "At a family table, your child discovers you never finished the course you bragged about.",
@@ -1279,7 +1279,7 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "After a staff meeting, you confront the manager who projected your private mistake for everyone to laugh at.",
-        "line": "You could have spoken to me at my desk. You made me stand there while they laughed."
+        "line": "You could have spoken to me at my desk. You made me stand there while my coworkers laughed."
       },
       {
         "setup": "Outside a restaurant, you speak to your date after the host loudly mocked your inability to pay.",
@@ -1287,7 +1287,7 @@ window.characterEmotions = [
       },
       {
         "setup": "In a dance studio, you talk to the instructor after they used your audition as a public example of failure.",
-        "line": "I came here to learn. I didn't know that meant becoming the joke they take home."
+        "line": "I came here to learn. I didn’t know learning meant becoming the joke the other dancers take home."
       }
     ]
   },
@@ -1306,11 +1306,11 @@ window.characterEmotions = [
     "scenes": [
       {
         "setup": "At a bike workshop, your apprentice finishes their first repair without help.",
-        "line": "I am going to ride this one home."
+        "line": "I am going to ride the bike you repaired home."
       },
       {
         "setup": "At a courthouse, your sister shows you the papers for her new business.",
-        "line": "They spelled your name right. On your own door."
+        "line": "The sign makers spelled your name right. On your own business’s door."
       },
       {
         "setup": "In a community garden, your neighbor tastes the first tomato you grew.",

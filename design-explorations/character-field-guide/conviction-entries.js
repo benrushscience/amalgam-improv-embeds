@@ -19,9 +19,9 @@
       cue:'Choose whose authority your character recognizes and why. Let disagreement coexist with a choice to defer, consult, or follow their lead.',
       relatedIds:['b13','v16','v23','physicality-5'],
       scenes:[
-        ['On a research ship, your fellow scientist wants to overrule the captain’s decision to return to port.', 'I wanted another day out here too. She’s the captain; we follow her decision.'],
-        ['At a school concert rehearsal, an experienced parent tries to change the student conductor’s tempo.', 'She has the baton. Let her finish telling us how she wants this played.'],
-        ['In a restaurant kitchen, your colleague asks you to bypass the newly appointed head chef and approve a menu change.', 'I trained him, but it’s his kitchen now. Bring him the idea and let him decide.']
+        ['On a research ship, your fellow scientist wants to overrule the captain’s decision to return to port.', 'I wanted another day out here too. The captain commands this ship; we follow her decision.'],
+        ['At a school concert rehearsal, an experienced parent tries to change the student conductor’s tempo.', 'Our student conductor has the baton. Let her finish telling us how she wants this played.'],
+        ['In a restaurant kitchen, your colleague asks you to bypass the newly appointed head chef and approve a menu change.', 'I trained our new head chef, but it’s his kitchen now. Bring him the menu idea and let him decide.']
       ]
     },
     {
@@ -31,7 +31,7 @@
       relatedIds:['v18','v19','b28','physicality-7'],
       scenes:[
         ['At a neighborhood planning meeting, a developer proposes putting a vending machine inside the community memorial.', 'You cannot turn our memorial into a vending machine. Put it by the car park.'],
-        ['In a family kitchen, your cousin wants to use the bowl reserved for a remembrance ceremony to mix party snacks.', 'Use any other bowl. That one holds the names we read each year.'],
+        ['In a family kitchen, your cousin wants to use the bowl reserved for a remembrance ceremony to mix party snacks.', 'Use any other bowl. Our remembrance bowl holds the names we read each year.'],
         ['At a mountain campsite, your business partner suggests selling naming rights to the spring your group has sworn to protect.', 'We promised to keep this spring beyond anyone’s ownership. That includes a sponsor’s name.']
       ]
     },
@@ -42,7 +42,7 @@
       relatedNames:['Adventure','Variety','Freedom'], relatedIds:['b32','emotion-9','want-2'],
       scenes:[
         ['At a market stall, your sibling worries that another baker has taken the last available pitch on the main street.', 'There are weddings, night markets, and that café with no kitchen. We have more places to try than cakes to bake.'],
-        ['In a university corridor, your friend considers hiding an internship notice so fewer people will apply.', 'Put it back on the board. This isn’t the only door either of us will ever get.'],
+        ['In a university corridor, your friend considers hiding an internship notice so fewer people will apply.', 'Put the internship notice back on the board. This internship isn’t the only door either of us will ever get.'],
         ['At a travel desk, your partner learns that your first-choice island ferry is sold out.', 'Look at that map. We could spend our whole lives choosing harbors and still miss most of them.']
       ]
     },
@@ -53,8 +53,8 @@
       relatedNames:['Safety','Ambition','Wealth'], relatedIds:['b31','emotion-2','want-7'],
       scenes:[
         ['At an apartment viewing, your roommate wants to sleep on the decision before applying.', 'There are six people measuring the windows. I’m filling out the form before we leave.'],
-        ['Backstage at a music venue, your bandmate suggests declining an unexpected opening slot until you feel more ready.', 'They don’t ask unknown bands twice. Tell them we can set up in ten minutes.'],
-        ['In a pottery studio, your partner wants to release your reserved kiln slot because you only have a few pieces ready.', 'Keep the booking. Last time we gave it up, we waited four months to fire anything.']
+        ['Backstage at a music venue, your bandmate suggests declining an unexpected opening slot until you feel more ready.', 'Venue managers don’t ask unknown bands twice. Tell the manager we can set up in ten minutes.'],
+        ['In a pottery studio, your partner wants to release your reserved kiln slot because you only have a few pieces ready.', 'Keep the kiln booking. Last time we gave up our slot, we waited four months to fire anything.']
       ]
     },
     {
@@ -74,7 +74,7 @@
       cue:'Choose a sign of improvement your character trusts. Let that larger outlook affect their response to a present setback without erasing what their partner is experiencing.',
       relatedNames:['Inclusion','Justice','Sustainability'], relatedIds:['b35','b6','emotion-9'],
       scenes:[
-        ['Outside a town hall, your colleague is discouraged when a new accessibility proposal is delayed.', 'Ten years ago they wouldn’t even put us on the agenda. I think we’ll get the ramp, and I’m coming back with you.'],
+        ['Outside a town hall, your colleague is discouraged when a new accessibility proposal is delayed.', 'Ten years ago the council wouldn’t even put us on the agenda. I think we’ll get the ramp, and I’m coming back with you.'],
         ['At a family dinner, your uncle says one ugly news story proves that nothing ever improves.', 'That story is awful. I still think your grandchildren are growing up with more choices than we had.'],
         ['In a river-cleanup shed, your teammate wants to quit after another afternoon collecting rubbish.', 'I remember when nothing nested on that bank. We found three nests today. This is moving somewhere.']
       ]
@@ -96,7 +96,7 @@
       cue:'Follow one consequence of an ordinary choice. Invite your partner to consider another connection instead of claiming to predict every outcome.',
       relatedNames:['Sustainability','Community','Compassion'], relatedIds:['b30','b21','want-8'],
       scenes:[
-        ['At a café staff meeting, your co-owner suggests closing one hour earlier to reduce costs.', 'Before we change it, ask who waits here for the last bus. This hour is doing more than selling coffee.'],
+        ['At a café staff meeting, your co-owner suggests closing one hour earlier to reduce costs.', 'Before we change our closing time, ask who waits here for the last bus. Our final hour is doing more than selling coffee.'],
         ['In an orchard, your neighbor proposes removing the untidy hedge between your properties.', 'The birds nest there, and they eat what damages the fruit. We’re moving more than a boundary.'],
         ['At a theater, the producer wants to move opening night without consulting the other volunteers.', 'The costume crew shares childcare with the lighting crew. Pull that date and we need to see what else comes with it.']
       ]
@@ -109,7 +109,7 @@
       scenes:[
         ['At a relief center, the coordinator asks a retired radio operator what they can do with the donated equipment.', 'I can get these sets talking to each other. There’s still a reason I learned all those frequencies.'],
         ['In a school office, a teacher worries that a newly arrived family cannot read any of the welcome materials.', 'I speak their language. Give me the folder; this is something I can make easier.'],
-        ['At a neighborhood meeting, your friend says your knowledge of old footpaths is too obscure to be useful.', 'They need a route to the clinic that avoids the main road. I know one. This is my bit.']
+        ['At a neighborhood meeting, your friend says your knowledge of old footpaths is too obscure to be useful.', 'Our neighbors need a route to the clinic that avoids the main road. I know a footpath. Finding that route is my bit.']
       ]
     },
     {
@@ -119,7 +119,7 @@
       relatedNames:['Enjoyment','Deep relationships','Stability'], relatedIds:['b9','emotion-10','physicality-3'],
       scenes:[
         ['At a rainy picnic, your partner starts planning a complicated move to three separate cars.', 'The food is dry under this tree. Let’s hear the rain and have lunch where we are.'],
-        ['In a family kitchen, your brother wants to redesign your grandmother’s uneven handwritten recipe book.', 'We can read it. I like that the cake page still has her corrections.'],
+        ['In a family kitchen, your brother wants to redesign your grandmother’s uneven handwritten recipe book.', 'We can read Grandma’s recipe book. I like that the cake page still has her corrections.'],
         ['At a dance class, your spouse apologizes for never quite mastering the turn and proposes extra drills at home.', 'We came here to dance together. I don’t need us to turn perfectly to enjoy this.']
       ]
     },

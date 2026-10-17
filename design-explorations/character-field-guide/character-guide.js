@@ -4,7 +4,6 @@
   const {entries, families} = window.referenceContent;
   const collections = window.characterCollections;
   const findEntry = id => entries.find(entry => entry.id === id);
-  const findFamily = entry => families.find(family => family.id === entry.family && family.type === entry.type);
   const escape = value => String(value).replace(/[&<>"']/g, character => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[character]));
   const initialEntry = findEntry(new URLSearchParams(location.search).get('entry')) || findEntry('physicality-1');
   const state = {selected:initialEntry.id, type:initialEntry.type, open:new Set([initialEntry.family])};
@@ -50,13 +49,12 @@
   // The reading panel updates immediately, without animated transitions.
   function renderEntry() {
     const entry = findEntry(state.selected);
-    const family = findFamily(entry);
     const connections = related(entry);
     const scenes = window.characterScenePrompts[entry.id];
     const kindExplanation = collections[entry.type].question;
     panel.innerHTML = `
       <div class="entry-body"><div class="entry-heading"><p class="entry-kind">${entry.kind} <span aria-hidden="true">·</span> ${kindExplanation}</p><h2 id="entry-title" tabindex="-1" class="${entry.type === 'belief' ? 'belief-title' : ''}">${escape(entry.name)}</h2><div class="entry-symbol" aria-hidden="true">${window.characterIcon(entry.type)}</div></div>
-      <section class="reading-section meaning-section" aria-labelledby="meaning-heading"><div class="section-heading"><h3 id="meaning-heading">What it means</h3></div><p class="entry-meaning">${escape(entry.meaning)}</p><p class="family-context"><span aria-hidden="true">↳</span>Family: ${escape(family.name)}</p>${entry.cue ? `<div class="choice-cue"><div><h4>Try this choice</h4><p>${escape(entry.cue)}</p></div></div>` : ''}</section>
+      <section class="reading-section meaning-section" aria-labelledby="meaning-heading"><div class="section-heading"><h3 id="meaning-heading">What it means</h3></div><p class="entry-meaning">${escape(entry.meaning)}</p>${entry.cue ? `<div class="choice-cue"><div><h4>Try this choice</h4><p>${escape(entry.cue)}</p></div></div>` : ''}</section>
       <section class="reading-section scene-section" aria-labelledby="scene-heading"><div class="section-heading"><h3 id="scene-heading">Example scenarios and lines</h3></div><p class="section-intro">Three separate scenes. Choose a situation to explore and make the line your own.</p><div class="scene-examples">${scenes.map((prompt,index) => scenePrompt(prompt,index + 1)).join('')}</div></section>
       <section class="reading-section connections" aria-labelledby="connections-heading"><div class="section-heading"><h3 id="connections-heading">Explore another layer</h3></div><p class="section-intro">Possible connections, not a character formula. Try one alongside this choice, or discover a different combination.</p><div class="connection-list">${connections.map((item,index) => `<button class="connection" data-related="${item.id}"><span class="connection-title">${escape(item.name)}<small>${collections[item.type].name}</small></span><span class="connection-arrow" aria-hidden="true">↗</span></button>`).join('')}</div></section></div>`;
     document.title = `${entry.name} · Character Field Guide`;
