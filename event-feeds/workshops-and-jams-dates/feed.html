@@ -12,6 +12,18 @@
     .rss-echo-rings { background: linear-gradient(135deg, #fffdf9, #f9e7ef, #fff8d1); background-size: 180% 180%; isolation: isolate; overflow: hidden; position: relative; animation: rss-echo-color-drift 16s ease-in-out infinite; }
     .rss-echo-rings::after { background: repeating-radial-gradient(circle, transparent 0 10px, rgb(189 0 91 / 0.16) 11px 14px, transparent 15px 23px); border-radius: 50%; content: ''; height: 240px; pointer-events: none; position: absolute; right: -110px; top: -105px; width: 240px; z-index: 0; animation: rss-echo-expand 11s ease-in-out infinite; }
     .rss-echo-rings > * { position: relative; z-index: 1; }
+    /* Keep the scrollbar on the gradient panel's right edge, not on its iframe. */
+    html { overflow: hidden; }
+    body { margin: 8px; }
+    .feed-container.rss-echo-rings {
+      box-sizing: border-box;
+      height: calc(100vh - 16px);
+      overflow-x: hidden;
+      overflow-y: auto;
+      scrollbar-gutter: stable;
+      scrollbar-color: #bd005b #f9e7ef;
+    }
+    .feed-container:focus-visible { outline: 2px solid #bd005b; outline-offset: 2px; }
     @keyframes rss-echo-color-drift { 50% { background-position: 100% 100%; } }
     @keyframes rss-echo-expand { 50% { opacity: 0.35; transform: scale(1.17); } }
     @media (prefers-reduced-motion: reduce) { .rss-echo-rings, .rss-echo-rings::after { animation: none; } }
@@ -99,7 +111,7 @@
   </style>
 </head>
 <body>
-  <div class="feed-container rss-echo-rings">
+  <div class="feed-container rss-echo-rings" role="region" aria-label="Upcoming event listings" tabindex="0">
     <div id="loading-state" class="loading-state">
       <div class="loading-spinner"></div>
       <span>Loading events</span>
@@ -336,18 +348,5 @@
       });
   </script>
 
-  <script>
-    // Size the nested feed to its content, including additional loaded events.
-    const feedContainer = document.querySelector('.feed-container');
-    let lastReportedHeight = 0;
-    function reportFeedHeight() {
-      const height = Math.ceil(feedContainer.getBoundingClientRect().height + 16);
-      if (height <= 16 || height === lastReportedHeight) return;
-      lastReportedHeight = height;
-      window.parent.postMessage({ type: 'amalgam-feed-height', height }, location.origin);
-    }
-    new ResizeObserver(reportFeedHeight).observe(feedContainer);
-    window.addEventListener('load', reportFeedHeight);
-  </script>
 </body>
 </html>
