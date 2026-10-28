@@ -1,0 +1,353 @@
+<!-- Squarespace embed: Workshops & Jams only (Event Type = Workshop or Jam) -->
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1.0" />
+  <title>Workshops & Jams</title>
+  <style>
+    body { font-family: Arial, sans-serif; background-color: #f4f4f4; color: #333; }
+    .feed-container { max-width: 1600px; margin: 0 auto; padding: 20px; background-color: #fff; box-shadow: 0 0 10px rgba(0,0,0,0.1); border-radius: 8px; }
+    /* Low-opacity Echo Rings add motion while keeping event details readable. */
+    .rss-echo-rings { background: linear-gradient(135deg, #fffdf9, #f9e7ef, #fff8d1); background-size: 180% 180%; isolation: isolate; overflow: hidden; position: relative; animation: rss-echo-color-drift 16s ease-in-out infinite; }
+    .rss-echo-rings::after { background: repeating-radial-gradient(circle, transparent 0 10px, rgb(189 0 91 / 0.16) 11px 14px, transparent 15px 23px); border-radius: 50%; content: ''; height: 240px; pointer-events: none; position: absolute; right: -110px; top: -105px; width: 240px; z-index: 0; animation: rss-echo-expand 11s ease-in-out infinite; }
+    .rss-echo-rings > * { position: relative; z-index: 1; }
+    @keyframes rss-echo-color-drift { 50% { background-position: 100% 100%; } }
+    @keyframes rss-echo-expand { 50% { opacity: 0.35; transform: scale(1.17); } }
+    @media (prefers-reduced-motion: reduce) { .rss-echo-rings, .rss-echo-rings::after { animation: none; } }
+    .event { border-bottom: 1px solid #ddd; padding: 20px 0; }
+    .event:last-child { border-bottom: none; }
+    .event h3 { margin: 0 0 10px; font-size: 1.5em; }
+    .event p { margin: 8px 0; }
+    .event a { color: #007BFF; text-decoration: none; }
+    .event a:hover { text-decoration: underline; }
+    .actions { margin-top: 10px; display: flex; gap: 12px; flex-wrap: wrap; }
+    .btn { padding: 8px 12px; border: 1px solid #007BFF; border-radius: 6px; }
+    .empty-state { text-align: center; color: #666; padding: 24px 0; }
+
+
+    .load-more-wrap {
+      margin-top: 16px;
+      text-align: center;
+    }
+
+    .load-more-btn {
+      padding: 10px 16px;
+      border: 1px solid #007BFF;
+      border-radius: 6px;
+      background: #fff;
+      color: #007BFF;
+      cursor: pointer;
+      font: inherit;
+    }
+
+    .load-more-btn:hover {
+      background: #eef6ff;
+    }
+.loading-state {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 12px 0;
+      color: #666;
+      font-size: 0.95rem;
+    }
+
+    /* Echo Rings spinner inspired by Amalgam's psychedelic circle mark. */
+    .loading-spinner {
+      border: 3px solid #bd005b;
+      border-radius: 50%;
+      color: #bd005b;
+      flex-shrink: 0;
+      height: 32px;
+      position: relative;
+      width: 32px;
+      animation: echo-ring 1.5s ease-in-out infinite;
+    }
+
+    .loading-spinner::before,
+    .loading-spinner::after {
+      border: 3px solid currentColor;
+      border-radius: 50%;
+      content: '';
+      left: 50%;
+      position: absolute;
+      top: 50%;
+      transform: translate(-50%, -50%);
+    }
+
+    .loading-spinner::before {
+      height: 60%;
+      width: 60%;
+      animation: echo-ring-inner 1.5s ease-in-out 0.18s infinite reverse;
+    }
+
+    .loading-spinner::after {
+      height: 25%;
+      width: 25%;
+      animation: echo-ring-inner 1.5s ease-in-out 0.36s infinite;
+    }
+
+    @keyframes echo-ring { 50% { opacity: 0.18; transform: scale(0.42); } }
+    @keyframes echo-ring-inner { 50% { opacity: 0.18; transform: translate(-50%, -50%) scale(0.42); } }
+    @media (prefers-reduced-motion: reduce) { .loading-spinner, .loading-spinner::before, .loading-spinner::after { animation: none; } }
+  </style>
+  <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:ital,wght@0,400..700;1,400..700&family=Oswald:wght@200..700&display=swap">
+  <style>
+    h1, h2, h3 { font-family: "Oswald", Impact, sans-serif; }
+    p { font-family: "Arimo", Arial, sans-serif; }
+  </style>
+</head>
+<body>
+  <div class="feed-container rss-echo-rings">
+    <div id="loading-state" class="loading-state">
+      <div class="loading-spinner"></div>
+      <span>Loading events</span>
+    </div>
+    <div id="rss-feed"></div>
+  </div>
+
+  <script>
+    // ---------- Configuration ----------
+    const rssUrl =
+      'https://script.google.com/macros/s/AKfycbyKAy9w0-nFU9FLYFxLAonIssaUnAgImseLr7NICtXvCe1wnd-yiI3h29fDN7ipH0_mSg/exec';
+
+    const maxEventsToShow = 200;
+    const defaultEventDurationMinutes = 120;
+    const maxDaysInAdvanceToShow = 91;
+
+    // Only allow Workshops + Jams
+    // The parent tab selects a type; event content and rendering stay unchanged.
+    const requestedType = new URLSearchParams(location.search).get('type');
+    const allowedEventTypes = new Set(
+      ['workshop', 'jam'].includes(requestedType) ? [requestedType] : ['workshop', 'jam']
+    );
+
+    // ---------- Utilities ----------
+    function getText(node, selector) {
+      const el = node.querySelector(selector);
+      return el ? (el.textContent || '').trim() : '';
+    }
+
+    function getCategories(node) {
+      return Array.from(node.querySelectorAll('category'))
+        .map(c => (c.textContent || '').trim().toLowerCase());
+    }
+
+    function hasAllowedType(categories) {
+      return categories.some(c => allowedEventTypes.has(c));
+    }
+
+    function parseDate(value) {
+      const d = new Date(value);
+      return isNaN(d.getTime()) ? null : d;
+    }
+
+    function stripScripts(html) {
+      return (html || '').replace(/<script\b[^<]*(?:(?!<\/script>)<[^<]*)*<\/script>/gi, '');
+    }
+
+    function removeTypeLines(html) {
+      return (html || '')
+        .replace(/<strong>\s*Type:\s*<\/strong>.*?(<br\/>|<\/p>)/gi, '')
+        .replace(/<strong>\s*Website RSS Display:\s*<\/strong>.*?(<br\/>|<\/p>)/gi, '')
+        .replace(/Type:\s*[^\n<]+/gi, '')
+        .replace(/Website RSS Display:\s*[^\n<]+/gi, '')
+        .replace(/<p>\s*<a\b[^>]*>\s*Event link\s*<\/a>\s*<\/p>/gi, '')
+        .replace(/<a\b[^>]*>\s*Event link\s*<\/a>/gi, '')
+        .replace(/(<br\/>\s*){2,}/g, '<br/>')
+        .replace(/<p>\s*<\/p>/gi, '')
+        .trim();
+    }
+
+    function plainText(html) {
+      return (html || '')
+        .replace(/<br\s*\/?>/gi, '\n')
+        .replace(/<\/?[^>]+>/g, '')
+        .trim();
+    }
+
+    function pad(n) { return String(n).padStart(2, '0'); }
+
+    function toUtc(date) {
+      return (
+        date.getUTCFullYear() +
+        pad(date.getUTCMonth() + 1) +
+        pad(date.getUTCDate()) +
+        'T' +
+        pad(date.getUTCHours()) +
+        pad(date.getUTCMinutes()) +
+        pad(date.getUTCSeconds()) +
+        'Z'
+      );
+    }
+
+    function googleCalUrl({ title, description, start, end }) {
+      const params = new URLSearchParams({
+        action: 'TEMPLATE',
+        text: title,
+        details: description,
+        dates: `${toUtc(start)}/${toUtc(end)}`
+      });
+      return `https://www.google.com/calendar/render?${params.toString()}`;
+    }
+
+    function icsUrl({ title, description, start, end, link }) {
+      const uid = `${Date.now()}-${Math.random().toString(36).slice(2)}@amalgamimprov`;
+      const content = [
+        'BEGIN:VCALENDAR',
+        'VERSION:2.0',
+        'PRODID:-//Amalgam Improv//Events//EN',
+        'BEGIN:VEVENT',
+        `UID:${uid}`,
+        `DTSTAMP:${toUtc(new Date())}`,
+        `DTSTART:${toUtc(start)}`,
+        `DTEND:${toUtc(end)}`,
+        `SUMMARY:${title}`,
+        `DESCRIPTION:${description}`,
+        link ? `URL:${link}` : '',
+        'END:VEVENT',
+        'END:VCALENDAR'
+      ].filter(Boolean).join('\r\n');
+
+      return URL.createObjectURL(
+        new Blob([content], { type: 'text/calendar;charset=utf-8' })
+      );
+    }
+
+    // ---------- Fetch & Render ----------
+    fetch(rssUrl)
+      .then(r => r.text())
+      .then(xml => new DOMParser().parseFromString(xml, 'text/xml'))
+      .then(doc => {
+        const now = new Date();
+        const latestEventDate = new Date(
+          now.getTime() + maxDaysInAdvanceToShow * 24 * 60 * 60 * 1000
+        );
+
+        const items = Array.from(doc.querySelectorAll('item')).map(node => {
+          const title = getText(node, 'title');
+          const link = getText(node, 'link');
+          const pubDate = parseDate(getText(node, 'pubDate'));
+          const categories = getCategories(node);
+
+          const rawDesc = stripScripts(getText(node, 'description'));
+          const cleanDesc = removeTypeLines(rawDesc);
+
+          if (!pubDate || pubDate < now) return null;
+          if (pubDate > latestEventDate) return null;
+          if (!hasAllowedType(categories)) return null;
+
+          const end = new Date(pubDate.getTime() + defaultEventDurationMinutes * 60000);
+
+          return { title, link, pubDate, end, cleanDesc };
+        }).filter(Boolean);
+
+        items.sort((a, b) => a.pubDate - b.pubDate);
+
+        const visibleItems = items.slice(0, maxEventsToShow);
+        const eventsPerLoad = 5;
+        let visibleEventCount = 0;
+        const feedEl = document.getElementById('rss-feed');
+
+        function renderEvent(ev, index) {
+          const textDesc = plainText(ev.cleanDesc);
+          return `
+            <div class="event">
+              <h3>${ev.title}</h3>
+              ${ev.cleanDesc ? `<div>${ev.cleanDesc}</div>` : ''}
+              ${ev.link ? `<p><a href="${ev.link}" target="_blank">Link</a></p>` : ''}
+              <div class="actions">
+                <a class="btn" href="${googleCalUrl({
+                  title: ev.title,
+                  description: textDesc,
+                  start: ev.pubDate,
+                  end: ev.end
+                })}" target="_blank">Add to Google Calendar</a>
+                <a class="btn ics-download" href="#" data-event-index="${index}" download="${encodeURIComponent(ev.title)}.ics">Download .ics</a>
+              </div>
+            </div>
+          `;
+        }
+
+        function updateLoadMoreButton() {
+          let loadMoreButton = document.getElementById('load-more-events');
+          if (visibleEventCount >= visibleItems.length) {
+            if (loadMoreButton) loadMoreButton.parentElement.remove();
+            return;
+          }
+          if (!loadMoreButton) {
+            const wrap = document.createElement('div');
+            wrap.className = 'load-more-wrap';
+            loadMoreButton = document.createElement('button');
+            loadMoreButton.id = 'load-more-events';
+            loadMoreButton.className = 'load-more-btn';
+            loadMoreButton.type = 'button';
+            loadMoreButton.addEventListener('click', renderNextEvents);
+            wrap.appendChild(loadMoreButton);
+            feedEl.insertAdjacentElement('afterend', wrap);
+          }
+          const remaining = visibleItems.length - visibleEventCount;
+          loadMoreButton.textContent = remaining === 1 ? 'Load final event' : `Load next event (${remaining} remaining)`;
+        }
+
+        function renderNextEvents() {
+          if (!visibleItems.length) {
+            feedEl.innerHTML = '<div class="empty-state">No upcoming workshops or jams.</div>';
+            return;
+          }
+          const nextItems = visibleItems.slice(visibleEventCount, visibleEventCount + eventsPerLoad);
+          feedEl.insertAdjacentHTML('beforeend', nextItems.map((ev, offset) => renderEvent(ev, visibleEventCount + offset)).join(''));
+          visibleEventCount += nextItems.length;
+          updateLoadMoreButton();
+        }
+
+        feedEl.addEventListener('click', event => {
+          const link = event.target.closest('.ics-download');
+          if (!link) return;
+          event.preventDefault();
+          const ev = visibleItems[Number(link.dataset.eventIndex)];
+          if (!ev) return;
+          const textDesc = plainText(ev.cleanDesc);
+          const url = icsUrl({
+            title: ev.title,
+            description: textDesc,
+            start: ev.pubDate,
+            end: ev.end,
+            link: ev.link
+          });
+          const tempLink = document.createElement('a');
+          tempLink.href = url;
+          tempLink.download = `${encodeURIComponent(ev.title)}.ics`;
+          document.body.appendChild(tempLink);
+          tempLink.click();
+          tempLink.remove();
+          setTimeout(() => URL.revokeObjectURL(url), 30000);
+        });
+
+        document.getElementById('loading-state').style.display = 'none';
+        renderNextEvents();
+      })
+      .catch(err => {
+        console.error(err);
+        document.getElementById('loading-state').style.display = 'none';
+        document.getElementById('rss-feed').innerHTML =
+          '<div class="empty-state">Error loading events.</div>';
+      });
+  </script>
+
+  <script>
+    // Size the nested feed to its content, including additional loaded events.
+    const feedContainer = document.querySelector('.feed-container');
+    let lastReportedHeight = 0;
+    function reportFeedHeight() {
+      const height = Math.ceil(feedContainer.getBoundingClientRect().height + 16);
+      if (height <= 16 || height === lastReportedHeight) return;
+      lastReportedHeight = height;
+      window.parent.postMessage({ type: 'amalgam-feed-height', height }, location.origin);
+    }
+    new ResizeObserver(reportFeedHeight).observe(feedContainer);
+    window.addEventListener('load', reportFeedHeight);
+  </script>
+</body>
+</html>
