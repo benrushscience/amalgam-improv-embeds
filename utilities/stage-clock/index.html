@@ -7,13 +7,17 @@
   <link rel="icon" href="data:,">
   <meta name="description" content="A silent, full-screen red countdown clock for stages, rehearsals, and performances.">
   <title>Stage Clock · Amalgam Improv</title>
+  <!-- Load the brand fonts for headings and supporting interface text. -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;700&family=Oswald:wght@500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="stage-clock.css">
   <script src="stage-clock.js" defer></script>
 </head>
 <body>
   <main id="app">
     <header class="topbar controls">
-      <div><span class="eyebrow">AMALGAM IMPROV</span><h1>Stage clock<span class="red-dot" aria-hidden="true"></span></h1></div>
+      <div><span class="eyebrow">AMALGAM IMPROV</span><h1>Stage clock</h1></div>
       <button id="fullscreen" class="quiet">↗ Full screen</button>
     </header>
 
@@ -27,9 +31,9 @@
       <div class="actions">
         <button id="toggle" class="primary">Start countdown</button>
         <button id="restart">Restart</button>
-        <button id="new-time">New time</button>
+        <button id="new-time" aria-controls="settings">New time</button>
       </div>
-      <div class="settings">
+      <div id="settings" class="settings">
         <form id="time-form">
           <fieldset><legend>SET DURATION</legend><div class="duration-fields">
             <label><input id="hours" type="number" min="0" max="99" step="1" value="0" required inputmode="numeric">Hours</label>

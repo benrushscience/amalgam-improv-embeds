@@ -81,6 +81,7 @@ function start() {
   acquireWakeLock();
   updateControls();
   tick();
+  hideControls();
 }
 function toggle() {
   tick();
@@ -93,6 +94,7 @@ function restart() {
   if (state === 'finished') state = 'ready';
   updateControls();
   render();
+  if (state === 'running') hideControls();
 }
 
 // Setting a duration deliberately stops the previous run and waits for Start.
@@ -111,14 +113,24 @@ byId('time-form').addEventListener('submit', (event) => {
 });
 byId('toggle').addEventListener('click', toggle);
 byId('restart').addEventListener('click', restart);
-byId('new-time').addEventListener('click', () => { showControls(); byId('minutes').focus(); byId('minutes').select(); });
+byId('new-time').addEventListener('click', () => {
+  document.body.classList.add('editing');
+  byId('new-time').setAttribute('aria-expanded', 'true');
+  showControls();
+  byId('minutes').focus();
+  byId('minutes').select();
+});
 byId('font').addEventListener('change', (event) => { font = event.target.value; render(); });
 
 // Fullscreen includes an in-page fallback for embedded and mobile browsers.
 function setStage(active) {
   document.body.classList.toggle('stage', active);
+  document.body.classList.remove('editing');
+  byId('new-time').textContent = active ? 'Customize' : 'New time';
+  if (active) byId('new-time').setAttribute('aria-expanded', 'false');
+  else byId('new-time').removeAttribute('aria-expanded');
   byId('fullscreen').textContent = active ? '↙ Exit full screen' : '↗ Full screen';
-  if (active) showControls();
+  if (active) { if (state === 'running') hideControls(); else showControls(); }
   else { clearTimeout(hideTimer); document.body.classList.remove('hidden-controls'); }
   requestAnimationFrame(fitDisplay);
 }
@@ -132,28 +144,36 @@ async function toggleFullscreen() {
     catch { byId('message').textContent = 'Stage view enabled. For a larger display, open this page directly in a new tab.'; }
   }
 }
+// Collapse customization before hiding; the next interaction reveals only the toolbar.
+function hideControls() {
+  if (!document.body.classList.contains('stage')) return;
+  clearTimeout(hideTimer);
+  if (document.activeElement.closest('.controls')) document.activeElement.blur();
+  document.body.classList.remove('editing');
+  byId('new-time').setAttribute('aria-expanded', 'false');
+  document.body.classList.add('hidden-controls');
+}
 function showControls() {
   document.body.classList.remove('hidden-controls');
   clearTimeout(hideTimer);
-  if (document.body.classList.contains('stage')) hideTimer = setTimeout(() => {
-    if (!document.querySelector('input:focus, select:focus')) document.body.classList.add('hidden-controls');
-  }, 3500);
+  if (document.body.classList.contains('stage')) hideTimer = setTimeout(hideControls, 3500);
 }
 byId('fullscreen').addEventListener('click', toggleFullscreen);
 byId('reveal').addEventListener('click', showControls);
 document.addEventListener('pointermove', showControls);
 document.addEventListener('pointerdown', showControls);
 document.addEventListener('focusin', showControls);
-document.addEventListener('focusout', showControls);
+document.addEventListener('input', showControls);
+document.addEventListener('change', showControls);
 document.addEventListener('fullscreenchange', () => { setStage(Boolean(document.fullscreenElement)); });
 document.addEventListener('visibilitychange', () => { tick(); if (state === 'running') acquireWakeLock(); });
 document.addEventListener('keydown', (event) => {
+  showControls();
   if (event.key === 'Escape') { setStage(false); return; }
   if (event.target.closest('input, select, button') || event.ctrlKey || event.metaKey || event.altKey || event.repeat) return;
   if (event.code === 'Space') { event.preventDefault(); toggle(); }
   if (event.key.toLowerCase() === 'r') restart();
   if (event.key.toLowerCase() === 'f') toggleFullscreen();
-  showControls();
 });
 new ResizeObserver(fitDisplay).observe(document.querySelector('.display'));
 setInterval(tick, 100);

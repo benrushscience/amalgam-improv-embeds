@@ -1,6 +1,6 @@
 # Stage Clock
 
-A buildless, silent red countdown for performers, rehearsals, and stage managers. All fonts and assets use local browser resources; no account or external service is needed.
+A buildless, silent red countdown for performers, rehearsals, and stage managers. Interface headings use Oswald and body text uses Arimo, loaded from Google Fonts with system fallbacks. Clock faces use local browser resources. No account is needed.
 
 ## Use
 
@@ -8,7 +8,7 @@ Set hours, minutes, and seconds, then choose **Set time** and **Start countdown*
 
 Choose from five faces: digital segments, monospace, bold sans, condensed, and slab serif. The last four use system font stacks, so their exact appearance depends on the device.
 
-Full screen hides controls after 3.5 seconds. Move the pointer, tap, or tab to show them. Escape exits stage view. Space pauses/resumes, R restarts, and F toggles fullscreen when focus is outside the controls. Screen wake lock is requested while running where supported; device power policies can still turn off a display. Keep the browser open: reloading resets the timer.
+Full screen shows a compact toolbar with customization collapsed. Starting or resuming hides all controls immediately. Move the pointer, tap, or tab to reveal the toolbar; choose **Customize** to edit the duration or font. Controls hide and customization collapses after 3.5 seconds without input, even when an input remains focused. Visible controls take their own space below the countdown rather than covering it. Escape exits stage view. Space pauses/resumes, R restarts, and F toggles fullscreen when focus is outside the controls. Screen wake lock is requested while running where supported; device power policies can still turn off a display. Keep the browser open: reloading resets the timer.
 
 ## GitHub Pages and website embed
 
