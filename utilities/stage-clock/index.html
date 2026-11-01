@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#000000">
+  <link rel="icon" href="data:,">
+  <meta name="description" content="A silent, full-screen red countdown clock for stages, rehearsals, and performances.">
+  <title>Stage Clock · Amalgam Improv</title>
+  <link rel="stylesheet" href="stage-clock.css">
+  <script src="stage-clock.js" defer></script>
+</head>
+<body>
+  <main id="app">
+    <header class="topbar controls">
+      <div><span class="eyebrow">AMALGAM IMPROV</span><h1>Stage clock<span class="red-dot" aria-hidden="true"></span></h1></div>
+      <button id="fullscreen" class="quiet">↗ Full screen</button>
+    </header>
+
+    <!-- The display scales to its available width and height, including large external screens. -->
+    <section class="display" aria-label="Countdown display">
+      <div id="clock" role="timer" aria-label="10 minutes remaining"><span id="digits" aria-hidden="true">10:00</span></div>
+    </section>
+
+    <section class="console controls" aria-label="Timer controls">
+      <div class="status-row"><span id="status" role="status">Ready when you are</span><span class="silent-label">SILENT TIMER</span></div>
+      <div class="actions">
+        <button id="toggle" class="primary">Start countdown</button>
+        <button id="restart">Restart</button>
+        <button id="new-time">New time</button>
+      </div>
+      <div class="settings">
+        <form id="time-form">
+          <fieldset><legend>SET DURATION</legend><div class="duration-fields">
+            <label><input id="hours" type="number" min="0" max="99" step="1" value="0" required inputmode="numeric">Hours</label>
+            <span aria-hidden="true">:</span>
+            <label><input id="minutes" type="number" min="0" max="59" step="1" value="10" required inputmode="numeric">Minutes</label>
+            <span aria-hidden="true">:</span>
+            <label><input id="seconds" type="number" min="0" max="59" step="1" value="0" required inputmode="numeric">Seconds</label>
+            <button type="submit">Set time</button>
+          </div></fieldset>
+        </form>
+        <label class="font-label" for="font">CLOCK FONT<select id="font">
+          <option value="digital">01 / Digital segments</option>
+          <option value="mono">02 / Monospace</option>
+          <option value="bold" selected>03 / Bold sans</option>
+          <option value="condensed">04 / Condensed</option>
+          <option value="serif">05 / Slab serif</option>
+        </select></label>
+      </div>
+      <p id="message" role="status"></p>
+      <footer><span>Space · pause / resume &nbsp; R · restart &nbsp; F · full screen</span></footer>
+    </section>
+    <button id="reveal" aria-label="Show timer controls">Controls</button>
+  </main>
+</body>
+</html>

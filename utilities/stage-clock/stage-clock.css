@@ -1,0 +1,60 @@
+/* Stage Clock v1 — quiet operator controls around a high-contrast stage display. */
+:root { color-scheme: dark; font-family: Arial, Helvetica, sans-serif; background: #000; color: #eeeded; }
+* { box-sizing: border-box; }
+body { margin: 0; }
+button, input, select { font: inherit; }
+button, select { cursor: pointer; }
+button { border: 1px solid #353535; border-radius: 8px; background: #181818; color: #eee; padding: 13px 20px; min-height: 46px; }
+button:hover { background: #292929; border-color: #777; }
+button:focus-visible, input:focus-visible, select:focus-visible { outline: 2px solid #ff5050; outline-offset: 4px; }
+#app { min-height: 100svh; display: flex; flex-direction: column; padding: 28px 4vw 20px; }
+.topbar { display: flex; justify-content: space-between; align-items: center; gap: 16px; }
+.eyebrow { font-size: 10px; letter-spacing: .22em; color: #999; }
+h1 { font-size: 22px; font-weight: 500; margin: 8px 0 0; letter-spacing: -.04em; }
+.red-dot { display: inline-block; width: 7px; height: 7px; border-radius: 50%; background: #ff3038; margin: 0 0 3px 10px; }
+.quiet { background: transparent; font-size: 13px; }
+.display { flex: 1; min-height: 230px; display: flex; align-items: center; justify-content: center; overflow: hidden; }
+#clock { width: 100%; height: 100%; min-height: inherit; display: flex; align-items: center; justify-content: center; color: #ff3038; }
+#digits { display: inline-flex; align-items: center; white-space: nowrap; line-height: 1; font-variant-numeric: tabular-nums; font-weight: 700; }
+/* Locally drawn seven-segment digits avoid network fonts and remain crisp on projectors. */
+.digit { width: .60em; height: 1em; flex-shrink: 0; }
+.colon { width: .22em; height: 1em; flex-shrink: 0; }
+.console { width: min(100%, 960px); margin: 0 auto; }
+.status-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: #aaa; margin-bottom: 16px; }
+.silent-label { font-size: 9px; letter-spacing: .16em; color: #777; }
+.actions { display: flex; gap: 10px; }
+.primary { background: #ff3038; color: #080808; border-color: #ff3038; font-weight: 700; min-width: 190px; }
+.primary:hover { background: #ff555b; border-color: #ff555b; }
+.settings { border-top: 1px solid #252525; margin-top: 25px; padding-top: 23px; display: flex; justify-content: space-between; gap: 24px; }
+fieldset { border: 0; padding: 0; margin: 0; }
+legend, .font-label { font-size: 10px; letter-spacing: .14em; color: #aaa; }
+legend { margin-bottom: 12px; }
+.duration-fields { display: flex; align-items: baseline; gap: 9px; }
+.duration-fields label { display: flex; flex-direction: column; gap: 6px; font-size: 10px; color: #999; }
+input { width: 66px; padding: 10px 6px; border: 1px solid #333; border-radius: 6px; background: #111; color: #eee; text-align: center; font-size: 19px; }
+.duration-fields button { margin-left: 8px; font-size: 12px; }
+select { display: block; margin-top: 12px; min-height: 46px; padding: 10px 30px 10px 12px; border: 1px solid #333; border-radius: 6px; background: #111; color: #eee; font-size: 13px; letter-spacing: normal; }
+#message { color: #ccc; font-size: 12px; min-height: 15px; margin: 12px 0; }
+footer { border-top: 1px solid #252525; padding-top: 14px; display: flex; justify-content: space-between; gap: 12px; font-size: 10px; color: #888; }
+#reveal { display: none; }
+/* Stage mode also works when a browser or iframe does not permit native fullscreen. */
+body.stage #app { position: fixed; inset: 0; min-height: 0; padding: 2vw; background: #000; }
+body.stage .topbar { position: absolute; top: 16px; left: 24px; right: 24px; z-index: 2; }
+body.stage .topbar > div { display: none; }
+body.stage .topbar { justify-content: flex-end; }
+body.stage .console { position: absolute; bottom: 20px; left: 50%; transform: translateX(-50%); width: min(960px, calc(100% - 32px)); padding: 18px; border: 1px solid #333; border-radius: 12px; background: #101010f5; z-index: 2; max-height: 70vh; overflow: auto; }
+body.stage .display { min-height: 0; }
+body.stage.hidden-controls .controls { visibility: hidden; pointer-events: none; }
+body.stage.hidden-controls { cursor: none; }
+body.stage #reveal { display: block; position: absolute; bottom: 8px; left: 50%; transform: translateX(-50%); opacity: 0; z-index: 3; }
+body.stage #reveal:focus-visible { opacity: 1; }
+@media (max-width: 620px) {
+  #app { padding: 20px 18px; }
+  .display { min-height: 200px; }
+  .settings { flex-direction: column; gap: 20px; }
+  .actions button { padding: 12px; flex: 1; min-width: 0; font-size: 13px; }
+  .duration-fields { gap: 6px; }
+  input { width: 58px; }
+  select { width: 100%; }
+  footer { line-height: 1.6; }
+}

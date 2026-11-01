@@ -1,0 +1,40 @@
+# Stage Clock
+
+A buildless, silent red countdown for performers, rehearsals, and stage managers. All fonts and assets use local browser resources; no account or external service is needed.
+
+## Use
+
+Set hours, minutes, and seconds, then choose **Set time** and **Start countdown**. Pause and resume preserve the remaining time. Restart resets the selected duration and keeps a running clock running; a paused clock stays paused. New time focuses the duration editor; submitting it stops the old countdown and prepares the new one. Durations range from one second to 99:59:59. At zero the clock stays at zero without sound or flashing.
+
+Choose from five faces: digital segments, monospace, bold sans, condensed, and slab serif. The last four use system font stacks, so their exact appearance depends on the device.
+
+Full screen hides controls after 3.5 seconds. Move the pointer, tap, or tab to show them. Escape exits stage view. Space pauses/resumes, R restarts, and F toggles fullscreen when focus is outside the controls. Screen wake lock is requested while running where supported; device power policies can still turn off a display. Keep the browser open: reloading resets the timer.
+
+## GitHub Pages and website embed
+
+After these files are committed and published by the repository's Pages workflow, the URL is:
+
+https://benrushscience.github.io/amalgam-improv-embeds/utilities/stage-clock/
+
+For a website Code Block:
+
+```html
+<iframe
+  src="https://benrushscience.github.io/amalgam-improv-embeds/utilities/stage-clock/"
+  title="Stage countdown clock"
+  style="display:block;width:100%;height:850px;border:0;background:#000;"
+  allow="fullscreen; screen-wake-lock"
+  allowfullscreen>
+</iframe>
+<p><a href="https://benrushscience.github.io/amalgam-improv-embeds/utilities/stage-clock/" target="_blank" rel="noopener">Open the stage clock in a new tab</a></p>
+```
+
+Direct access is best for a dedicated monitor. If native fullscreen is unavailable, stage view fills its current page or iframe. Connect a larger screen and move the browser onto that display before entering fullscreen.
+
+## Maintain
+
+- `index.html`: accessible controls and page structure.
+- `stage-clock.css`: responsive operator console and stage view.
+- `stage-clock.js`: deadline timing, locally drawn digital face, display fitting, and fullscreen controls.
+
+For a local preview, run `python -m http.server 8765` from the repository and visit `http://localhost:8765/utilities/stage-clock/`.
