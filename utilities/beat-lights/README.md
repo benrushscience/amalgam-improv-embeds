@@ -18,7 +18,9 @@ Color labels and cue announcements supplement the lights for accessibility. Ther
 
 Public page: https://benrushscience.github.io/amalgam-improv-embeds/utilities/beat-lights/
 
-Paste into a Squarespace Code Block:
+Beat Lights is an HTML page hosted on GitHub Pages. Squarespace embeds that page with an HTML iframe; do not add a `widget.js` loader or paste the timer's JavaScript into Squarespace. The timer logic runs inside the hosted page.
+
+Copy `squarespace-embed.html` into a Squarespace Code Block configured for HTML, or use the equivalent snippet below:
 
 ```html
 <iframe
@@ -36,6 +38,7 @@ The iframe scrolls for longer custom beat lists or narrower screens. Native full
 ## Maintain and verify
 
 - `index.html` — page structure and accessible controls.
+- `squarespace-embed.html` — copy-ready HTML iframe for the Squarespace page.
 - `beat-lights.css` — responsive console and fullscreen stage.
 - `beat-lights.js` — settings, playback, storage, and fullscreen interaction.
 - `timing.mjs` — pure duration and cue calculations.
