@@ -1,6 +1,6 @@
 # Beat Lights
 
-A silent traffic light timer for improv beats. Green, yellow, and red stay horizontal, from left to right. The active lamp and scene elapsed timer share a color. No account, build, network fonts, or external libraries are needed.
+A silent traffic light timer for improv beats. Green, yellow, and red stay horizontal, from left to right. The active lamp and scene elapsed timer share a color. No account, build, or external JavaScript libraries are needed. Headings use Oswald and body text uses Arimo, loaded through Google Fonts with local font fallbacks.
 
 ## Use
 

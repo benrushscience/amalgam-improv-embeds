@@ -1,5 +1,5 @@
 /* Beat Lights v1 — a quiet practice console with highly visible stage cues. */
-:root { color-scheme: dark; font-size: 18px; font-family: Arial, Helvetica, sans-serif; color: #f7f6f3; background: #101211; --muted: #a3aaa5; --line: #343b36; --green: #83ed9c; --yellow: #ffe974; --red: #ff725f; }
+:root { color-scheme: dark; font-size: 18px; font-family: "Arimo", Arial, Helvetica, sans-serif; color: #f7f6f3; background: #101211; --muted: #a3aaa5; --line: #343b36; --green: #83ed9c; --yellow: #ffe974; --red: #ff725f; }
 * { box-sizing: border-box; }
 body { margin: 0; }
 button, input { font: inherit; }
@@ -12,7 +12,8 @@ input { min-width: 0; width: 100%; min-height: 44px; background: #101612; color:
 input:invalid { border-color: var(--red); }
 input::placeholder { color: #8f9991; }
 h1, h2, h3, p { margin: 0; }
-h1, h2, h3 { font-weight: 700; }
+/* Amalgam brand typography: bold Oswald headings above readable Arimo body text. */
+h1, h2, h3 { font-family: "Oswald", Impact, sans-serif; font-weight: 700; }
 #app { max-width: 1240px; margin: auto; padding: 30px 5vw 24px; text-align: center; }
 /* Equal side columns keep the title on the same centerline as the stage. */
 .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 20px; }
