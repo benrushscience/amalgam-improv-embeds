@@ -10,6 +10,7 @@ Utility projects are published as widgets with a `widget.js` loader. Squarespace
 
 ## Current Embeds
 
+- `utilities/beat-lights/` — customizable traffic light timer for improv beats, with fullscreen mode; see its README for the Squarespace iframe.
 - `aggregator-resources/watch/`
 - `aggregator-resources/read/`
 - `aggregator-resources/listen/`
