@@ -7,13 +7,14 @@
   <meta name="description" content="A silent, customizable traffic light timer for improv scenes. Find your rhythm with timed beats, visual transition cues, and fullscreen practice.">
   <title>Beat Lights · Amalgam Improv</title>
   <link rel="icon" href="icon.svg" type="image/svg+xml">
-  <link rel="stylesheet" href="beat-lights.css">
+  <link rel="stylesheet" href="beat-lights.css?v=20261101-3">
   <script type="module" src="beat-lights.js"></script>
 </head>
 <body>
   <main id="app">
     <header class="topbar">
-      <h1>Beat Lights<span class="title-dots" aria-hidden="true">● ● ●</span></h1>
+      <h1>Beat Lights</h1>
+      <p class="intro">Explore a beat on green. Prepare a shift on yellow. Use red to transition, heighten, or follow something new.</p>
       <button id="fullscreen" class="quiet" type="button">⛶ Full screen</button>
     </header>
 
@@ -31,12 +32,11 @@
     <section class="console" aria-label="Timer controls">
       <div class="progress-track" aria-hidden="true"><div id="progress"></div></div>
       <div class="status-row"><span id="status" role="status">Ready when you are.</span><span id="beat-remaining">1:00 in this beat</span></div>
-      <div class="actions"><button id="play" class="primary" type="button">Start scene <span aria-hidden="true">▶</span></button><button id="reset" type="button">Reset</button><span class="quiet-note">A little structure.<br>Room to play.</span></div>
+      <div class="actions"><button id="play" class="primary" type="button">Start scene <span aria-hidden="true">▶</span></button><button id="reset" type="button">Reset</button></div>
     </section>
 
     <section class="settings" aria-labelledby="settings-title">
-      <div class="section-heading"><div><p class="eyebrow">MAKE IT YOUR OWN</p><h2 id="settings-title">Set the rhythm.</h2></div><span id="plan-summary">3 beats · 3:00 total</span></div>
-      <p class="intro">Explore a beat on green. Prepare a shift on yellow. Use red to transition, heighten, or follow something new.</p>
+      <div class="section-heading"><h2 id="settings-title">Customize the your beats</h2><span id="plan-summary">3 beats · 3:00 total</span></div>
       <form id="settings-form">
         <fieldset id="settings-fields">
           <legend class="sr-only">Scene timing</legend>
@@ -46,7 +46,7 @@
             <label>Number of beats <input id="beat-number" type="number" min="1" max="24" step="1" value="3" required></label>
             <label><span class="yellow-text">Yellow</span> seconds <input id="default-yellow" type="number" min="0" max="86400" step="1" value="15" required></label>
             <label><span class="red-text">Red</span> seconds <input id="default-red" type="number" min="0" max="86400" step="1" value="15" required></label>
-            <button id="divide" type="button">Divide evenly <span aria-hidden="true">↗</span></button>
+            <button id="divide" type="button">Divide evenly among beats</button>
           </div>
           <p id="split-help" class="help">Divide the scene into equal beats, with green taking the remaining time. Short beats scale the warning times to keep at least half green.</p>
           <div class="beat-editor-heading"><h3>Fine-tune each beat</h3><span>All light times are in seconds</span></div>
@@ -56,7 +56,7 @@
       </form>
       <p id="message" role="status"></p>
     </section>
-    <footer><span>Silent cues. Shared rhythm.</span><span>SPACE pause / play <b>·</b> R reset <b>·</b> F full screen</span></footer>
+    <footer><span>SPACE pause / play <b>·</b> R reset <b>·</b> F full screen</span></footer>
     <div id="stage-controls" aria-label="Fullscreen controls"><button id="stage-play" type="button">Start scene ▶</button><button id="stage-reset" type="button">Reset</button><button id="exit-stage" type="button">Exit full screen ↙</button></div>
     <div id="announcement" class="sr-only" role="status" aria-live="polite"></div>
     <noscript><p>Enable JavaScript to use Beat Lights.</p></noscript>

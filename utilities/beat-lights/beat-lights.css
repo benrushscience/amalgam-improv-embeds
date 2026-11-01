@@ -15,11 +15,10 @@ h1, h2, h3, p { margin: 0; }
 #app { max-width: 1240px; margin: auto; padding: 30px 5vw 24px; text-align: center; }
 /* Equal side columns keep the title on the same centerline as the stage. */
 .topbar { display: grid; grid-template-columns: minmax(0, 1fr) auto minmax(0, 1fr); align-items: center; gap: 20px; }
-.topbar h1 { grid-column: 2; margin: 0; }
-.topbar #fullscreen { grid-column: 3; justify-self: end; }
+.topbar h1 { grid-column: 2; grid-row: 1; margin: 0; }
+.topbar #fullscreen { grid-column: 3; grid-row: 1; justify-self: end; }
 .eyebrow { font-size: 10px; font-weight: 600; letter-spacing: .17em; color: var(--muted); }
 h1 { font-size: 28px; letter-spacing: -.06em; margin-top: 8px; }
-.title-dots { font-size: 10px; letter-spacing: .18em; margin-left: 14px; color: var(--yellow); vertical-align: middle; }
 .quiet { background: transparent; }
 /* The three lamps always stay horizontal, including on narrow phone screens. */
 #stage { --active: var(--green); width: 100%; height: 470px; display: grid; grid-template-columns: minmax(0, 1fr); grid-template-rows: 1fr 4fr 1fr; justify-items: center; margin: 24px auto 16px; text-align: center; }
@@ -50,13 +49,13 @@ h1 { font-size: 28px; letter-spacing: -.06em; margin-top: 8px; }
 .actions { display: flex; flex-wrap: wrap; justify-content: center; align-items: center; gap: 12px; }
 .primary { background: var(--green); border-color: var(--green); color: #102316; min-width: 190px; font-weight: 700; display: flex; justify-content: center; gap: 24px; }
 .primary:hover { background: #a3f7b6; border-color: #a3f7b6; }
-.quiet-note { flex-basis: 100%; text-align: center; font-size: 12px; line-height: 1.5; color: #8f9991; }
 /* Timing controls remain outside the distraction-free stage view. */
 .settings { margin: 38px auto 0; padding: 28px; max-width: 1000px; border: 1px solid var(--line); background: #191e1a; border-radius: 14px; }
-.section-heading { display: flex; flex-direction: column; align-items: center; gap: 12px; }
-.section-heading h2 { font-size: 26px; letter-spacing: -.04em; margin-top: 8px; }
+.section-heading { display: flex; flex-direction: column; align-items: center; gap: 12px; margin-bottom: 24px; }
+.section-heading h2 { font-size: clamp(20px, 3vw, 26px); letter-spacing: -.04em; }
 #plan-summary { font-size: 12px; color: var(--yellow); white-space: nowrap; }
-.intro { max-width: 630px; font-size: 13px; line-height: 1.7; color: #b2bcb4; margin: 12px auto 24px; }
+/* Introduce the color cues directly below the page title. */
+.intro { grid-column: 1 / -1; grid-row: 2; max-width: 630px; font-size: 13px; line-height: 1.7; color: #b2bcb4; margin: 0 auto; }
 fieldset { border: 0; padding: 0; margin: 0; min-width: 0; }
 .builder { display: grid; grid-template-columns: 1.2fr 1fr 1fr 1fr auto; gap: 12px; align-items: start; }
 label { display: flex; flex-direction: column; gap: 8px; font-size: 11px; color: #c0c9c2; }
@@ -106,7 +105,7 @@ body.stage-mode.controls-visible #stage-controls, body.stage-mode #stage-control
   .beat-row { grid-template-columns: 1.4fr repeat(3, 1fr); gap: 8px; }
   .beat-duration { grid-column: 1 / -1; padding: 0; font-size: 11px; }
   .beat-duration span { display: inline; margin-right: 8px; }
-  footer span:last-child { display: none; }
+  footer { display: none; }
 }
 @media (max-width: 460px) {
   #app { padding: 20px 16px; }
@@ -116,7 +115,6 @@ body.stage-mode.controls-visible #stage-controls, body.stage-mode #stage-control
   .lights { width: 100%; gap: 16px; }
   .signal > span { font-size: 9px; }
   .signal small { font-size: 10px; }
-  .quiet-note { display: none; }
   .actions button { flex: 1; min-width: 0; }
   .section-heading { gap: 12px; }
   .beat-row { grid-template-columns: repeat(3, minmax(0, 1fr)); }
