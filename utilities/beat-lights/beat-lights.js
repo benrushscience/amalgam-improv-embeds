@@ -1,5 +1,5 @@
 // Beat Lights v1 — settings, drift-free playback, and a quiet fullscreen stage.
-import { COLORS, divideScene, duration, formatTime, parseTime, positionAt, validateBeats } from "./timing.mjs";
+import { COLORS, MAX_BEATS, divideScene, duration, formatTime, parseTime, positionAt, validateBeats } from "./timing.mjs";
 
 const byId = id => document.getElementById(id);
 const storageKey = "amalgam-beat-lights-v1";
@@ -62,12 +62,23 @@ function renderRows() {
     total.innerHTML = '<span>Total</span><output></output>';
     total.querySelector("output").textContent = formatTime(duration(beat));
     row.append(total);
+    const remove = document.createElement("button");
+    remove.type = "button";
+    remove.className = "remove-beat";
+    remove.textContent = "×";
+    remove.setAttribute("aria-label", `Remove Beat ${index + 1}`);
+    remove.disabled = beats.length === 1;
+    remove.title = beats.length === 1 ? "Keep at least one beat" : `Remove Beat ${index + 1}`;
+    remove.addEventListener("click", () => changeBeatCount(index));
+    row.append(remove);
     rows.append(row);
   });
+  byId("add-beat").disabled = beats.length >= MAX_BEATS;
+  byId("add-beat").title = beats.length >= MAX_BEATS ? "Maximum of 24 beats" : "Add a beat using the last beat's light times";
 }
 
-function readRows() {
-  const next = [...byId("beat-rows").children].map(row => {
+function readRows(skipIndex = -1) {
+  const next = [...byId("beat-rows").children].filter((row, index) => index !== skipIndex).map(row => {
     const beat = {};
     row.querySelectorAll("input").forEach(input => {
       beat[input.dataset.field] = input.dataset.field === "name" ? input.value.trim() : input.valueAsNumber;
@@ -75,6 +86,25 @@ function readRows() {
     return beat;
   });
   return validateBeats(next);
+}
+
+// Change only the selected beat; never redistribute existing light durations.
+function changeBeatCount(removeIndex = null) {
+  if (running || elapsedBeforeRun > 0) return;
+  try {
+    const next = readRows(removeIndex === null ? -1 : removeIndex);
+    if (removeIndex === null) next.push({ ...next[next.length - 1], name: "" });
+    beats = validateBeats(next);
+    renderRows();
+    updateSummary();
+    saveSettings();
+    renderStage();
+    const focusIndex = removeIndex === null ? beats.length - 1 : Math.min(removeIndex, beats.length - 1);
+    byId("beat-rows").children[focusIndex].querySelector("input").focus();
+    showMessage(removeIndex === null
+      ? "Beat added with the last beat's light times. Other beats are unchanged."
+      : "Beat removed. Remaining beats keep their light times.");
+  } catch (error) { showMessage(error.message); }
 }
 
 function updateSummary() {
@@ -217,6 +247,7 @@ async function leaveStage() {
 // Settings are applied immediately when valid; dividing explicitly rebuilds the beat plan.
 byId("settings-form").addEventListener("submit", event => event.preventDefault());
 byId("beat-rows").addEventListener("input", acceptEdits);
+byId("add-beat").addEventListener("click", () => changeBeatCount());
 byId("divide").addEventListener("click", () => {
   try {
     beats = divideScene(parseTime(byId("scene-length").value), byId("beat-number").valueAsNumber,

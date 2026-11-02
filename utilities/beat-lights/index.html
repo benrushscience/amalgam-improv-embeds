@@ -1,3 +1,4 @@
+<!-- Beat Lights: a customizable scene timer with independent beat controls. -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -10,8 +11,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Arimo:wght@400;500;600;700&amp;family=Oswald:wght@700&amp;display=swap">
-  <link rel="stylesheet" href="beat-lights.css?v=20261101-5">
-  <script type="module" src="beat-lights.js"></script>
+  <link rel="stylesheet" href="beat-lights.css?v=20261102-1">
+  <script type="module" src="beat-lights.js?v=20261102-1"></script>
 </head>
 <body>
   <main id="app">
@@ -54,6 +55,8 @@
           <p id="split-help" class="help">Divide the scene into equal beats, with green taking the remaining time. Short beats scale the warning times to keep at least half green.</p>
           <div class="beat-editor-heading"><h3>Fine-tune each beat</h3><span>All light times are in seconds</span></div>
           <div id="beat-rows"></div>
+          <button id="add-beat" class="add-beat" type="button"><span aria-hidden="true">+</span> Add beat</button>
+          <p class="help">Add or remove beats without changing other beats' light times. New beats copy the last beat's times. Keep 1–24 beats.</p>
           <div class="settings-bottom"><p class="help">Names are optional. Each beat runs green → yellow → red, then the next beat begins. Set a color to 0 to skip it.</p><button id="defaults" class="quiet" type="button">Restore defaults</button></div>
         </fieldset>
       </form>
