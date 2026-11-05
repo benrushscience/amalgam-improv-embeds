@@ -108,6 +108,25 @@
       opacity: 0.4;
       cursor: not-allowed;
     }
+    /* Keep inspiration links readable within the scoped widget reset. */
+    #amalgam-word-widget .inspiration-links{
+      margin-top: 20px;
+      text-align: center;
+      font-size: 14px;
+      line-height: 1.6;
+    }
+
+    #amalgam-word-widget .inspiration-links a{
+      color: var(--bg-pink);
+      font-weight: 700;
+      text-decoration: underline !important;
+      text-underline-offset: 3px;
+    }
+
+    #amalgam-word-widget .inspiration-links a:focus-visible{
+      outline: 2px solid var(--ink);
+      outline-offset: 3px;
+    }
   </style>
 
   <div class="word-card">
@@ -128,6 +147,7 @@
     <button id="copy-word">Copy</button>
     <button id="undo-word" disabled>Undo</button>
   </div>
+  <p class="inspiration-links">For more inspiration, explore the <a href="https://www.amalgamimprov.com/emotion-wheel" target="_blank" rel="noopener noreferrer" aria-label="Emotion Wheel (opens in a new tab)">Emotion Wheel</a> and <a href="https://www.amalgamimprov.com/character-field-guide" target="_blank" rel="noopener noreferrer" aria-label="Character Field Guide (opens in a new tab)">Character Field Guide</a>.</p>
 </div>
 
 <script>
