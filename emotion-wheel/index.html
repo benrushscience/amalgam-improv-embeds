@@ -3289,7 +3289,8 @@
           const focusTarget = explorerStage === "emotion"
             ? explorerBack
             : overlayFamilyGrid.querySelector("button") || explorerClose;
-          focusTarget.focus();
+          // Keep desktop page and embed scrolling stable when switching cards.
+          focusTarget.focus({ preventScroll: !isMobileWheel() });
         }, 0);
       }
 
@@ -3299,7 +3300,8 @@
         explorerOverlay.classList.remove("is-open");
         explorerOverlay.setAttribute("aria-hidden", "true");
         if (explorerTrigger && typeof explorerTrigger.focus === "function") {
-          explorerTrigger.focus();
+          // Restore keyboard focus without scrolling the desktop wheel into view.
+          explorerTrigger.focus({ preventScroll: !isMobileWheel() });
         }
       }
 
