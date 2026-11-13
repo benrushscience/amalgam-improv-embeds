@@ -1,4 +1,4 @@
-/* Stage Clock v1 — deadline-based timing avoids drift when browser tabs are throttled. */
+/* Stage Clock — timestamp-based Timer and Stopwatch timing avoids interval drift. */
 'use strict';
 const byId = (id) => document.getElementById(id);
 const digits = byId('digits');
@@ -6,6 +6,9 @@ const clock = byId('clock');
 let duration = 10 * 60 * 1000;
 let remaining = duration;
 let deadline = 0;
+let mode = 'timer';
+let elapsed = 0;
+let startedAt = 0;
 let state = 'ready';
 let font = 'bold';
 let lastDisplay = '';
@@ -31,30 +34,38 @@ function fitDisplay() {
   digits.style.fontSize = `${Math.max(1, size)}px`;
 }
 function render() {
-  const total = Math.ceil(remaining / 1000);
+  const total = mode === 'stopwatch' ? Math.floor(elapsed / 1000) : Math.ceil(remaining / 1000);
   const hours = Math.floor(total / 3600);
   const minutes = Math.floor(total / 60) % 60;
   const seconds = total % 60;
-  // Retain the hours column for the entire run so the display does not jump in size.
-  const text = (duration >= 3600000 ? `${String(hours).padStart(2, '0')}:` : '') + `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
-  if (lastDisplay !== text + font) {
+  // Timer retains its hours column; Stopwatch adds hours when elapsed time reaches one hour.
+  const showHours = mode === 'stopwatch' ? hours > 0 : duration >= 3600000;
+  const text = (showHours ? `${String(hours).padStart(2, '0')}:` : '') + `${String(minutes).padStart(2, '0')}:${String(seconds).padStart(2, '0')}`;
+  if (lastDisplay !== text + font + mode) {
     digits.style.fontFamily = faces[font];
     if (font === 'digital') digits.innerHTML = [...text].map(digitalCharacter).join('');
     else digits.textContent = text;
-    clock.setAttribute('aria-label', `${hours} hours ${minutes} minutes ${seconds} seconds remaining`);
-    document.title = `${text} · Stage Clock`;
-    lastDisplay = text + font;
+    clock.setAttribute('aria-label', `${hours} hours ${minutes} minutes ${seconds} seconds ${mode === 'stopwatch' ? 'elapsed' : 'remaining'}`);
+    document.title = `${text} · ${mode === 'stopwatch' ? 'Stopwatch' : 'Timer'} · Stage Clock`;
+    lastDisplay = text + font + mode;
     fitDisplay();
   }
 }
 function updateControls() {
-  byId('toggle').textContent = {ready: 'Start countdown', running: 'Pause', paused: 'Resume', finished: 'Start again'}[state];
-  byId('status').textContent = {ready: 'Ready when you are', running: 'Countdown running', paused: 'Paused', finished: 'Time is up'}[state];
+  const isStopwatch = mode === 'stopwatch';
+  byId('toggle').textContent = {ready: isStopwatch ? 'Start stopwatch' : 'Start timer', running: 'Pause', paused: 'Resume', finished: 'Start again'}[state];
+  byId('status').textContent = {ready: 'Ready when you are', running: isStopwatch ? 'Stopwatch running' : 'Timer running', paused: 'Paused', finished: 'Time is up'}[state];
+  byId('mode-timer').setAttribute('aria-pressed', String(!isStopwatch));
+  byId('mode-stopwatch').setAttribute('aria-pressed', String(isStopwatch));
+  byId('mode-label').textContent = isStopwatch ? 'SILENT STOPWATCH' : 'SILENT TIMER';
+  byId('time-form').hidden = isStopwatch;
+  byId('new-time').textContent = isStopwatch || document.body.classList.contains('stage') ? 'Customize' : 'New time';
 }
 function tick() {
   if (state === 'running') {
-    remaining = Math.max(0, deadline - Date.now());
-    if (remaining === 0) {
+    if (mode === 'stopwatch') elapsed = Math.max(0, Date.now() - startedAt);
+    else remaining = Math.max(0, deadline - Date.now());
+    if (mode === 'timer' && remaining === 0) {
       state = 'finished';
       updateControls();
       releaseWakeLock();
@@ -77,6 +88,7 @@ function releaseWakeLock() { if (wakeLock) { wakeLock.release().catch(() => {});
 function start() {
   if (state === 'finished') remaining = duration;
   deadline = Date.now() + remaining;
+  startedAt = Date.now() - elapsed;
   state = 'running';
   acquireWakeLock();
   updateControls();
@@ -90,6 +102,8 @@ function toggle() {
 }
 function restart() {
   remaining = duration;
+  elapsed = 0;
+  startedAt = Date.now();
   deadline = Date.now() + duration;
   if (state === 'finished') state = 'ready';
   updateControls();
@@ -97,9 +111,26 @@ function restart() {
   if (state === 'running') hideControls();
 }
 
+// A mode change stops and resets the clock while retaining the configured timer duration.
+function setMode(nextMode) {
+  if (mode === nextMode) return;
+  mode = nextMode;
+  state = 'ready';
+  remaining = duration;
+  elapsed = 0;
+  releaseWakeLock();
+  byId('message').textContent = '';
+  updateControls();
+  render();
+  showControls();
+}
+byId('mode-timer').addEventListener('click', () => setMode('timer'));
+byId('mode-stopwatch').addEventListener('click', () => setMode('stopwatch'));
+
 // Setting a duration deliberately stops the previous run and waits for Start.
 byId('time-form').addEventListener('submit', (event) => {
   event.preventDefault();
+  if (mode !== 'timer') return;
   const values = ['hours', 'minutes', 'seconds'].map((id) => Number(byId(id).value));
   if (!values.every(Number.isInteger) || values[0] < 0 || values[0] > 99 || values.slice(1).some((value) => value < 0 || value > 59)) return;
   const next = (values[0] * 3600 + values[1] * 60 + values[2]) * 1000;
@@ -107,7 +138,7 @@ byId('time-form').addEventListener('submit', (event) => {
   duration = remaining = next;
   state = 'ready';
   releaseWakeLock();
-  byId('message').textContent = 'Time set. Press Start countdown when ready.';
+  byId('message').textContent = 'Time set. Press Start timer when ready.';
   updateControls();
   render();
 });
@@ -117,8 +148,8 @@ byId('new-time').addEventListener('click', () => {
   document.body.classList.add('editing');
   byId('new-time').setAttribute('aria-expanded', 'true');
   showControls();
-  byId('minutes').focus();
-  byId('minutes').select();
+  if (mode === 'stopwatch') byId('font').focus();
+  else { byId('minutes').focus(); byId('minutes').select(); }
 });
 byId('font').addEventListener('change', (event) => { font = event.target.value; render(); });
 
@@ -126,7 +157,7 @@ byId('font').addEventListener('change', (event) => { font = event.target.value; 
 function setStage(active) {
   document.body.classList.toggle('stage', active);
   document.body.classList.remove('editing');
-  byId('new-time').textContent = active ? 'Customize' : 'New time';
+  updateControls();
   if (active) byId('new-time').setAttribute('aria-expanded', 'false');
   else byId('new-time').removeAttribute('aria-expanded');
   byId('fullscreen').textContent = active ? '↙ Exit full screen' : '↗ Full screen';
@@ -177,4 +208,6 @@ document.addEventListener('keydown', (event) => {
 });
 new ResizeObserver(fitDisplay).observe(document.querySelector('.display'));
 setInterval(tick, 100);
+updateControls();
 render();
+

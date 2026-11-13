@@ -1,3 +1,4 @@
+<!-- Stage Clock provides a large, silent Timer and Stopwatch display. -->
 <!doctype html>
 <html lang="en">
 <head>
@@ -5,7 +6,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <meta name="theme-color" content="#000000">
   <link rel="icon" href="data:,">
-  <meta name="description" content="A silent, full-screen red countdown clock for stages, rehearsals, and performances.">
+  <meta name="description" content="A silent, full-screen red timer and stopwatch for stages, rehearsals, and performances.">
   <title>Stage Clock · Amalgam Improv</title>
   <!-- Load the brand fonts for headings and supporting interface text. -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
@@ -22,14 +23,19 @@
     </header>
 
     <!-- The display scales to its available width and height, including large external screens. -->
-    <section class="display" aria-label="Countdown display">
+    <section class="display" aria-label="Stage clock display">
       <div id="clock" role="timer" aria-label="10 minutes remaining"><span id="digits" aria-hidden="true">10:00</span></div>
     </section>
 
-    <section class="console controls" aria-label="Timer controls">
-      <div class="status-row"><span id="status" role="status">Ready when you are</span><span class="silent-label">SILENT TIMER</span></div>
+    <section class="console controls" aria-label="Stage clock controls">
+      <div class="mode-toggle" role="group" aria-label="Clock mode" aria-describedby="mode-help">
+        <button id="mode-timer" type="button" aria-pressed="true">Timer</button>
+        <button id="mode-stopwatch" type="button" aria-pressed="false">Stopwatch</button>
+      </div>
+      <p id="mode-help">Switching modes resets the clock. Your timer duration is kept.</p>
+      <div class="status-row"><span id="status" role="status">Ready when you are</span><span id="mode-label" class="silent-label">SILENT TIMER</span></div>
       <div class="actions">
-        <button id="toggle" class="primary">Start countdown</button>
+        <button id="toggle" class="primary">Start timer</button>
         <button id="restart">Restart</button>
         <button id="new-time" aria-controls="settings">New time</button>
       </div>
@@ -55,7 +61,8 @@
       <p id="message" role="status"></p>
       <footer><span>Space · pause / resume &nbsp; R · restart &nbsp; F · full screen</span></footer>
     </section>
-    <button id="reveal" aria-label="Show timer controls">Controls</button>
+    <button id="reveal" aria-label="Show clock controls">Controls</button>
   </main>
 </body>
 </html>
+

@@ -1,4 +1,4 @@
-/* Stage Clock v1 — quiet operator controls around a high-contrast stage display. */
+/* Stage Clock — quiet Timer and Stopwatch controls around a high-contrast display. */
 :root { color-scheme: dark; font-family: "Arimo", Arial, Helvetica, sans-serif; background: #000; color: #eeeded; }
 /* Brand typography applies to the interface; the clock keeps its selectable face. */
 h1, h2, h3, h4, h5, h6 { font-family: "Oswald", Impact, sans-serif; }
@@ -24,6 +24,10 @@ h1 { font-size: 22px; font-weight: 500; margin: 8px 0 0; letter-spacing: -.04em;
 .console { width: min(100%, 960px); margin: 0 auto; }
 .status-row { display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: #aaa; margin-bottom: 16px; }
 .silent-label { font-size: 9px; letter-spacing: .16em; color: #777; }
+.mode-toggle { display: flex; gap: 6px; }
+.mode-toggle button { flex: 1; }
+.mode-toggle button[aria-pressed="true"] { background: #eee; color: #080808; border-color: #eee; font-weight: 700; }
+#mode-help { color: #aaa; font-size: 12px; margin: 10px 0 18px; }
 .actions { display: flex; gap: 10px; }
 .primary { background: #ff3038; color: #080808; border-color: #ff3038; font-weight: 700; min-width: 190px; }
 .primary:hover { background: #ff555b; border-color: #ff555b; }
@@ -47,6 +51,8 @@ body.stage .topbar { justify-content: flex-end; }
 /* Keep the toolbar in layout so it never covers the countdown. */
 body.stage .console { flex-shrink: 0; width: fit-content; max-width: 100%; margin-top: 12px; padding: 8px; border: 1px solid #333; border-radius: 12px; background: #101010; max-height: 55dvh; overflow: auto; }
 body.stage .console .status-row, body.stage .console footer, body.stage .console #message { display: none; }
+body.stage .mode-toggle { margin-bottom: 8px; }
+body.stage:not(.editing) #mode-help { display: none; }
 body.stage:not(.editing) .settings { display: none; }
 body.stage.editing .console { width: min(960px, 100%); }
 body.stage.editing .console #message { display: block; }
@@ -65,3 +71,4 @@ body.stage #reveal:focus-visible { opacity: 1; }
   select { width: 100%; }
   footer { line-height: 1.6; }
 }
+

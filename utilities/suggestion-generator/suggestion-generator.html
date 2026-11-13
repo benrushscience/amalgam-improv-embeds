@@ -36,12 +36,19 @@
       background: var(--bg-yellow);
       border: 2px solid var(--ink);
       border-radius: 14px;
-      padding: 28px 20px;
+      height: 184px;
+      padding: 20px;
+      display: flex;
+      align-items: center;
+      overflow: hidden;
       text-align: center;
       margin-bottom: 18px;
     }
 
     #amalgam-word-widget .word{
+      width: 100%;
+      min-width: 0;
+      overflow-wrap: anywhere;
       font-size: clamp(36px, 6vw, 60px);
       font-weight: 900;
       letter-spacing: 0.5px;
@@ -413,6 +420,59 @@
 
     if (!widgetEl || !currentWordEl || !newWordBtn || !copyBtn || !undoBtn || laneBtns.length === 0) return;
 
+    const wordCardEl = widgetEl.querySelector(".word-card");
+
+    // Fit the complete suggestion inside a fixed card without moving the controls.
+    function fitSuggestion(){
+      currentWordEl.style.removeProperty("font-size");
+      const cardStyle = window.getComputedStyle(wordCardEl);
+      const availableHeight = wordCardEl.clientHeight
+        - parseFloat(cardStyle.paddingTop) - parseFloat(cardStyle.paddingBottom);
+      const availableWidth = currentWordEl.clientWidth;
+      if (availableWidth <= 0 || availableHeight <= 0) return;
+
+      let lowerSize = 1;
+      let upperSize = parseFloat(window.getComputedStyle(currentWordEl).fontSize);
+      const fits = () => currentWordEl.scrollHeight <= availableHeight
+        && currentWordEl.scrollWidth <= availableWidth;
+      if (fits()) return;
+
+      // Find the largest fitting size; wrapping also handles unusually long words.
+      while (upperSize - lowerSize > 0.25){
+        const candidateSize = (lowerSize + upperSize) / 2;
+        currentWordEl.style.fontSize = candidateSize + "px";
+        if (fits()) lowerSize = candidateSize;
+        else upperSize = candidateSize;
+      }
+      currentWordEl.style.fontSize = lowerSize + "px";
+    }
+
+    function showSuggestion(text){
+      currentWordEl.textContent = text;
+      fitSuggestion();
+    }
+
+    let resizeFrame = null;
+    function scheduleFit(){
+      if (resizeFrame !== null) window.cancelAnimationFrame(resizeFrame);
+      resizeFrame = window.requestAnimationFrame(() => {
+        resizeFrame = null;
+        fitSuggestion();
+      });
+    }
+
+    // Container resizing covers embedded layouts as well as viewport changes.
+    if (typeof ResizeObserver !== "undefined"){
+      const cardResizeObserver = new ResizeObserver(scheduleFit);
+      cardResizeObserver.observe(wordCardEl);
+    }
+    window.addEventListener("resize", scheduleFit);
+    if (document.fonts){
+      document.fonts.ready.then(scheduleFit);
+      document.fonts.addEventListener("loadingdone", scheduleFit);
+    }
+    fitSuggestion();
+
     let deck = [];
     let lastWord = null;
     let activeCategory = "all";
@@ -430,7 +490,7 @@
         .map((item) => item.text);
 
       if (activePool.length === 0){
-        currentWordEl.textContent = "No words in this lane";
+        showSuggestion("No words in this lane");
         undoBtn.disabled = true;
         return;
       }
@@ -439,14 +499,14 @@
         deck = shuffle(activePool);
       }
       lastWord = currentWordEl.textContent;
-      currentWordEl.textContent = deck.pop();
+      showSuggestion(deck.pop());
       undoBtn.disabled = false;
     }
 
     function undo(){
       if (!lastWord) return;
       deck.push(currentWordEl.textContent);
-      currentWordEl.textContent = lastWord;
+      showSuggestion(lastWord);
       lastWord = null;
       undoBtn.disabled = true;
     }
@@ -470,7 +530,7 @@
         deck = [];
         lastWord = null;
         undoBtn.disabled = true;
-        currentWordEl.textContent = "Click for a word";
+        showSuggestion("Click for a word");
       });
     });
 
