@@ -1,4 +1,4 @@
-﻿<!doctype html>
+<!doctype html>
 <html lang="en">
 <head>
   <meta charset="utf-8">
@@ -572,7 +572,7 @@
           <span class="pill">&#x1F4B8; Freemium</span>
           <span class="pill">&#x1F4B2; Purchase</span>
         </div>
-        <div class="status">
+        <div class="status" role="status" aria-live="polite">
           <span id="statusDot" class="dot loading" aria-hidden="true"></span>
           <span id="statusText">Loading resources...</span>
         </div>
@@ -650,69 +650,10 @@
     const MAX_CONCURRENT_IMAGES = 6;
     const IMAGE_TIMEOUT_MS = 3000;
 
-    const AIRTABLE_SOURCE = {
-      baseId: "appvJnNJbdcXwWSho",
-      shareId: "shrpu9qmRaoGRuHXl",
-      publicUrl: "https://airtable.com/appvJnNJbdcXwWSho/shrpu9qmRaoGRuHXl",
-      tableId: "tblCqeDj48Bf6qNT9",
-      tableName: "Read Resources",
-      fields: {
-        title: "Name",
-        public: "Public",
-        publicationStatus: "Publication Status",
-        sortOrder: "Sort Order",
-        creator: "Creator",
-        category: "Category",
-        format: "Format",
-        access: "Access",
-        desc: "Description",
-        isbn: "ISBN",
-        coverUrl: "Cover URL",
-        sourceUrl: "Source URL",
-        sourceLabel: "Source Label",
-        amazonUrl: "Amazon URL"
-      }
-    };
-
-    let resources = [
-      { title: "UCB Comedy Improvisation Manual", creator: "Matt Besser, Ian Roberts, Matt Walsh", category: "manual", format: "Book / Manual", access: "purchase", desc: "Core UCB approach to game, scene work, and long form.", isbn: "9780989387804", sourceUrl: "https://ucbcomedy.com/shop/ucb-manual/", sourceLabel: "Publisher", amazonUrl: "https://www.amazon.com/s?k=UCB+Comedy+Improvisation+Manual" },
-      { title: "Truth in Comedy: The Manual of Improvisation", creator: "Del Close, Charna Halpern, Kim Johnson", category: "manual", format: "Book", access: "purchase", desc: "Foundational long-form text associated with Harold practice.", isbn: "9781566080033", sourceUrl: "https://www.amazon.com/s?k=Truth+in+Comedy+Del+Close+Charna+Halpern", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Truth+in+Comedy+Del+Close+Charna+Halpern" },
-      { title: "Improvisation for the Theater", creator: "Viola Spolin", category: "manual", format: "Book", access: "purchase", desc: "Foundational theater games and training methodology.", isbn: "9780810140080", sourceUrl: "https://www.amazon.com/s?k=Improvisation+for+the+Theater+Viola+Spolin", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Improvisation+for+the+Theater+Viola+Spolin" },
-      { title: "Impro: Improvisation and the Theatre", creator: "Keith Johnstone", category: "manual", format: "Book", access: "purchase", desc: "Status, spontaneity, masks, and theatrical improvisation principles.", isbn: "9780878301171", sourceUrl: "https://www.amazon.com/s?k=Impro+Keith+Johnstone", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Impro+Keith+Johnstone" },
-      { title: "Impro for Storytellers", creator: "Keith Johnstone", category: "manual", format: "Book", access: "purchase", desc: "Narrative-focused improv tools and structure patterns.", isbn: "9780878301058", sourceUrl: "https://www.amazon.com/s?k=Impro+for+Storytellers+Keith+Johnstone", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Impro+for+Storytellers+Keith+Johnstone" },
-      { title: "Improv Encyclopedia", creator: "improvencyclopedia.org", category: "blog", format: "Reference Library", access: "free", desc: "Large free index of exercises, games, and workshop tools.", coverUrl: "https://www.improvencyclopedia.org/images/logo.jpg", sourceUrl: "https://improvencyclopedia.org/", sourceLabel: "Visit", amazonUrl: "" },
-
-      { title: "How to Be the Greatest Improviser on Earth", creator: "Will Hines", category: "book", format: "Book", access: "purchase", desc: "Practical scene notes and philosophy from an experienced coach.", isbn: "9780982625729", sourceUrl: "https://www.amazon.com/s?k=How+to+Be+the+Greatest+Improviser+on+Earth+Will+Hines", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=How+to+Be+the+Greatest+Improviser+on+Earth+Will+Hines" },
-      { title: "Improv Nonsense: All The Posts", creator: "Will Hines", category: "book", format: "Book", access: "purchase", desc: "Collected essays from the influential Improv Nonsense series.", isbn: "9780982625743", sourceUrl: "https://www.amazon.com/s?k=Improv+Nonsense+All+The+Posts+Will+Hines", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Improv+Nonsense+All+The+Posts+Will+Hines" },
-      { title: "Pirate, Robot, Ninja: An Improv Fable", creator: "Will Hines, Billy Merritt", category: "book", format: "Book", access: "purchase", desc: "Narrative teaching format for improv mindset and training.", isbn: "9781099142246", sourceUrl: "https://www.amazon.com/s?k=Pirate+Robot+Ninja+Will+Hines+Billy+Merritt", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Pirate+Robot+Ninja+Will+Hines+Billy+Merritt" },
-      { title: "Improvise: Scene from the Inside Out", creator: "Mick Napier", category: "book", format: "Book", access: "purchase", desc: "Direct practical notes on scene behavior and choice-making.", isbn: "9780325006307", sourceUrl: "https://www.amazon.com/s?k=Improvise+Scene+from+the+Inside+Out+Mick+Napier", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Improvise+Scene+from+the+Inside+Out+Mick+Napier" },
-      { title: "Behind the Scenes: Improvising Long Form", creator: "Mick Napier", category: "book", format: "Book / manual", access: "purchase", desc: "Long-form follow-up to Improvise, focused on edits, openers, back line, character, energy, and sustained long-form work.", isbn: "9781566081993", sourceUrl: "https://www.pioneerdrama.com/searchdetail.asp?pc=BEHINDTHES", sourceLabel: "Pioneer Drama", amazonUrl: "https://www.amazon.com/Behind-Scenes-Improvising-Long-Form/dp/1566081998" },
-      { title: "The Second City Almanac of Improvisation", creator: "Anne Libera", category: "book", format: "Book", access: "purchase", desc: "Second City perspective on creating, rehearsing, and performing.", isbn: "9780810118010", sourceUrl: "https://nupress.northwestern.edu/9780810118010/the-second-city-almanac-of-improvisation/", sourceLabel: "Publisher", amazonUrl: "https://www.amazon.com/s?k=Second+City+Almanac+of+Improvisation+Anne+Libera" },
-      { title: "Improv Nation", creator: "Sam Wasson", category: "book", format: "Book", access: "purchase", desc: "History of American improv comedy and the people who shaped it.", isbn: "9780544557208", sourceUrl: "https://www.amazon.com/s?k=Improv+Nation+Sam+Wasson", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Improv+Nation+Sam+Wasson" },
-      { title: "Yes, And", creator: "Kelly Leonard, Tom Yorton", category: "book", format: "Book", access: "purchase", desc: "Applying improv principles to leadership and organizations.", isbn: "9780062248541", sourceUrl: "https://www.amazon.com/s?k=Yes+And+Kelly+Leonard+Tom+Yorton", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Yes+And+Kelly+Leonard+Tom+Yorton" },
-      { title: "Improvising Better", creator: "Jimmy Carrane, Liz Allen", category: "book", format: "Book", access: "purchase", desc: "Coaching-focused workbook and practical growth framework.", isbn: "9780325009421", sourceUrl: "https://www.amazon.com/s?k=Improvising+Better+Jimmy+Carrane+Liz+Allen", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Improvising+Better+Jimmy+Carrane+Liz+Allen" },
-      { title: "The Improv Comedy Musician", creator: "Laura Hall, Bob Baker", category: "book", format: "Book", access: "purchase", desc: "Specialized writing/performance guide for musical improv skills.", isbn: "9780965618311", sourceUrl: "https://www.amazon.com/s?k=The+Improv+Comedy+Musician+Laura+Hall+Bob+Baker", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=The+Improv+Comedy+Musician+Laura+Hall+Bob+Baker" },
-      { title: "Tips: Ideas for Actors", creator: "Jon Jory", category: "book", format: "Book", access: "purchase", desc: "Short, practical acting notes for rehearsal, performance, and auditions.", isbn: "9781575252025", sourceUrl: "https://www.amazon.com/s?k=Tips+Ideas+for+Actors+Jon+Jory", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=Tips+Ideas+for+Actors+Jon+Jory" },
-      { title: "A Practical Handbook for the Actor", creator: "Melissa Bruder, Lee Michael Cohn, Madeleine Olnek, Nathaniel Pollack, Robert Previto, Scott Zigler", category: "book", format: "Book", access: "purchase", desc: "Action-based acting technique associated with Practical Aesthetics.", isbn: "9780394744124", sourceUrl: "https://www.amazon.com/s?k=A+Practical+Handbook+for+the+Actor+Melissa+Bruder", sourceLabel: "Source", amazonUrl: "https://www.amazon.com/s?k=A+Practical+Handbook+for+the+Actor+Melissa+Bruder" },
-
-      { title: "Will Hines on Medium", creator: "Will Hines", category: "blog", format: "Medium", access: "freemium", desc: "Opinion and coaching essays on scene craft and improv habits.", coverUrl: "https://www.wgimprovschool.com/images/logos/logo_square_small.jpg", sourceUrl: "https://willhines.medium.com/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Improv Nonsense (Tumblr archive)", creator: "Will Hines", category: "blog", format: "Blog Archive", access: "free", desc: "Classic short-form posts and improv thought experiments.", coverUrl: "https://64.media.tumblr.com/avatar_c30616cdee51_128.pnj", sourceUrl: "https://www.tumblr.com/improvnonsense", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Will Hines official site", creator: "Will Hines", category: "blog", format: "Author site", access: "free", desc: "Hub for books, classes, and writing channels.", sourceUrl: "https://www.willhines.net/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Improv City", creator: "Molly Thomas", category: "blog", format: "Substack", access: "freemium", desc: "Molly Thomas' active improv writing/newsletter channel.", coverUrl: "https://substackcdn.com/image/fetch/$s_!_4Y8!,f_auto,q_auto:best,fl_progressive:steep/https%3A%2F%2Fimprovcity.substack.com%2Ftwitter%2Fsubscribe-card.jpg%3Fv%3D-1801380786%26version%3D9", sourceUrl: "https://improvcity.substack.com/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Molly Thomas UCB profile", creator: "UCB", category: "blog", format: "Profile / hub", access: "free", desc: "Author profile and links into Molly's current writing work.", sourceUrl: "https://ucbcomedy.com/people/molly-thomas/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Improv Resource Center Wiki", creator: "IRC community", category: "blog", format: "Reference wiki", access: "free", desc: "Community-built scene ideas, formats, and notes.", sourceUrl: "https://wiki.improvresourcecenter.com/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Applied Improvisation Magazine", creator: "Applied Improvisation Network", category: "blog", format: "Magazine", access: "free", desc: "Applied improv essays and case studies across industries.", coverUrl: "https://www.appliedimprovisationnetwork.org/assets/site/logo.png", sourceUrl: "https://www.appliedimprovisationnetwork.org/applied-improvisation-magazine", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "AIM Article Database", creator: "Applied Improvisation Network", category: "blog", format: "Article archive", access: "free", desc: "Searchable writing and references on applied improv practice.", coverUrl: "https://www.appliedimprovisationnetwork.org/assets/site/logo.png", sourceUrl: "https://www.appliedimprovisationnetwork.org/aim-articles", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "The Second City Network", creator: "The Second City", category: "blog", format: "Blog / essays", access: "free", desc: "Articles on improv, comedy craft, and creative process.", coverUrl: "https://www.secondcity.com/_next/image?url=https%3A%2F%2Fplatform.secondcity.com%2Fwp-content%2Fuploads%2F2025%2F01%2FSC_2014_logo_blk.png&w=640&q=75", sourceUrl: "https://www.secondcity.com/network", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Improvised Caregiving (AMA Journal of Ethics)", creator: "AMA Journal of Ethics", category: "blog", format: "Journal article", access: "free", desc: "Medical ethics article linking improv methods to caregiving.", coverUrl: "https://www.ama-assn.org/themes/custom/ama_one/logo.svg", sourceUrl: "https://journalofethics.ama-assn.org/article/improvised-caregiving-or-how-famous-comedy-theatre-found-itself-health-care/2020-07", sourceLabel: "Visit", amazonUrl: "" },
-
-      { title: "Medical Improv", creator: "Northwestern / Medical Improv community", category: "applied", format: "Resource site", access: "free", desc: "Applied improv hub for healthcare communication training.", sourceUrl: "https://www.medicalimprov.org/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Northwestern: Break the Blocks workshops", creator: "Northwestern University", category: "applied", format: "University article", access: "free", desc: "Coverage of improv-based workshops for stuttering support.", sourceUrl: "https://news.northwestern.edu/stories/2024/september/improv-workshops-for-stutters", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Alan Alda Center for Communicating Science", creator: "Stony Brook University", category: "applied", format: "Resource site", access: "free", desc: "Improv-informed communication training for science/STEM.", sourceUrl: "https://www.aldacenter.org/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Alda Center: The Link", creator: "Alda Center", category: "applied", format: "Resource platform", access: "free", desc: "Science communication resources grounded in improv principles.", sourceUrl: "https://www.aldacenter.org/thelink/about", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Stony Brook on demand for Alda training", creator: "Stony Brook News", category: "applied", format: "University article", access: "free", desc: "Article on growth of improv-based communication training demand.", sourceUrl: "https://news.stonybrook.edu/global/alda-center-science-communication-training/", sourceLabel: "Visit", amazonUrl: "" },
-      { title: "Second City: People Centered Rapid Prototyping", creator: "The Second City", category: "applied", format: "Applied article", access: "free", desc: "Improv principles translated into innovation process language.", sourceUrl: "https://www.secondcity.com/network/improvisation-is-people-centered-rapid-prototyping", sourceLabel: "Visit", amazonUrl: "" }
-    ];
+    // Public data comes from the local sync script; no browser Airtable credentials.
+    const RESOURCE_CACHE_KEY = "amalgam-read-resources-v1";
+    const CACHE_MAX_AGE_MS = 24 * 60 * 60 * 1000;
+    let resources = [];
 
     const accessMap = {
       free: { icon: "\u{1F193}", label: "Free" },
@@ -746,7 +687,7 @@
       });
 
       resources.forEach((resource, index) => {
-        resource.id = `resource-${index}`;
+        // Preserve Airtable IDs across syncs for stable image targets.
         if (!groupedResources[resource.category]) {
           groupedResources[resource.category] = [];
         }
@@ -775,94 +716,64 @@
       }
     }
 
-    function airtableEmbedUrl() {
-      return `https://airtable.com/embed/${AIRTABLE_SOURCE.baseId}/${AIRTABLE_SOURCE.shareId}`;
-    }
+    let resourceSource = "resources unavailable";
 
-    function decodeAirtablePath(encodedPath) {
-      return JSON.parse(`"${encodedPath}"`);
-    }
-
-    function airtableColumnByName(tableSchema, fieldName) {
-      return tableSchema.columns.find((column) => column.name === fieldName);
-    }
-
-    function airtableValue(row, tableSchema, fieldName) {
-      const column = airtableColumnByName(tableSchema, fieldName);
-      if (!column) return "";
-      const value = row.cellValuesByColumnId[column.id];
-      if (column.type === "select") {
-        return column.typeOptions?.choices?.[value]?.name || "";
+    // Validate the complete document before rendering or replacing the saved copy.
+    function validateResourceDocument(document) {
+      if (document?.schemaVersion !== 1 || !Array.isArray(document.resources) || !document.resources.length) {
+        throw new Error("Unsupported or empty resource file");
       }
-      return value || "";
-    }
-
-    async function fetchAirtableTable() {
-      const embedResponse = await fetch(airtableEmbedUrl(), { cache: "no-store" });
-      if (!embedResponse.ok) throw new Error("Airtable embed request failed");
-
-      const embedHtml = await embedResponse.text();
-      const urlMatch = embedHtml.match(/urlWithParams:\s*"([^"]+)"/s);
-      if (!urlMatch) throw new Error("Airtable shared read URL not found");
-
-      const readUrl = new URL(`https://airtable.com${decodeAirtablePath(urlMatch[1])}`);
-      const params = JSON.parse(readUrl.searchParams.get("stringifiedObjectParams"));
-      params.includeDataForTableIds = [AIRTABLE_SOURCE.tableId];
-      params.allowMsgpackOfResult = false;
-      readUrl.searchParams.set("stringifiedObjectParams", JSON.stringify(params));
-      readUrl.searchParams.delete("requestId");
-      readUrl.searchParams.set("x-time-zone", Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago");
-      readUrl.searchParams.set("x-airtable-application-id", AIRTABLE_SOURCE.baseId);
-      readUrl.searchParams.set("x-user-locale", "en");
-
-      const response = await fetch(readUrl, {
-        cache: "no-store",
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      });
-      if (!response.ok) throw new Error("Airtable table request failed");
-
-      const payload = await response.json();
-      const tableSchema = payload.data.tableSchemas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
-      const tableData = payload.data.tableDatas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
-      if (!tableSchema || !tableData) throw new Error("Airtable table data missing");
-
-      return tableData.rows
-        .map((row) => {
-          const fields = AIRTABLE_SOURCE.fields;
-          return {
-            title: airtableValue(row, tableSchema, fields.title),
-            public: airtableValue(row, tableSchema, fields.public),
-            publicationStatus: airtableValue(row, tableSchema, fields.publicationStatus),
-            sortOrder: airtableValue(row, tableSchema, fields.sortOrder),
-            creator: airtableValue(row, tableSchema, fields.creator),
-            category: airtableValue(row, tableSchema, fields.category),
-            format: airtableValue(row, tableSchema, fields.format),
-            access: airtableValue(row, tableSchema, fields.access),
-            desc: airtableValue(row, tableSchema, fields.desc),
-            isbn: airtableValue(row, tableSchema, fields.isbn),
-            coverUrl: airtableValue(row, tableSchema, fields.coverUrl),
-            sourceUrl: airtableValue(row, tableSchema, fields.sourceUrl),
-            sourceLabel: airtableValue(row, tableSchema, fields.sourceLabel),
-            amazonUrl: airtableValue(row, tableSchema, fields.amazonUrl)
-          };
-        })
-        .filter((resource) => resource.public === true && resource.publicationStatus === "Active" && resource.title)
-        .sort((a, b) => (Number(a.sortOrder) || 9999) - (Number(b.sortOrder) || 9999));
-    }
-
-    let resourceSource = "built-in fallback";
-
-    async function loadResourcesFromAirtable() {
-      try {
-        const airtableResources = await fetchAirtableTable();
-        if (airtableResources.length) {
-          resources = airtableResources;
-          resourceSource = "Airtable";
-          setStatus(`Loaded ${resources.length} resources from Airtable`, false);
+      const ids = new Set();
+      document.resources.forEach((resource) => {
+        if (!/^rec[A-Za-z0-9]{14}$/.test(resource.id) || ids.has(resource.id)) {
+          throw new Error("Invalid or duplicate resource ID");
         }
+        ids.add(resource.id);
+        for (const field of ["title", "creator", "format", "description", "sourceUrl"]) {
+          if (typeof resource[field] !== "string" || !resource[field].trim()) {
+            throw new Error("Missing resource field");
+          }
+        }
+        if (!["book", "manual", "blog", "applied"].includes(resource.category) ||
+            !["free", "freemium", "purchase"].includes(resource.access) ||
+            !Number.isFinite(resource.sortOrder)) throw new Error("Invalid resource category, access, or order");
+        for (const field of ["sourceUrl", "coverUrl", "amazonUrl"]) {
+          if (resource[field] && !safeUrl(resource[field])) throw new Error("Invalid resource URL");
+        }
+      });
+      return document.resources.map((resource) => ({ ...resource, desc: resource.description }))
+        .sort((a, b) => a.sortOrder - b.sortOrder || a.id.localeCompare(b.id));
+    }
+
+    async function loadResourcesFromJson() {
+      const controller = new AbortController();
+      const timeout = setTimeout(() => controller.abort(), 12000);
+      try {
+        const response = await fetch(new URL("./resources.json", window.location.href), {
+          cache: "no-cache", signal: controller.signal
+        });
+        if (!response.ok) throw new Error("Resource file request failed");
+        const document = await response.json();
+        resources = validateResourceDocument(document);
+        resourceSource = "synced JSON";
+        try {
+          localStorage.setItem(RESOURCE_CACHE_KEY, JSON.stringify({ savedAt: Date.now(), document }));
+        } catch (_) { /* Private browsing or a full cache must not block current resources. */ }
       } catch (error) {
-        console.warn("Read resource Airtable fetch failed; using built-in fallback.", error);
-        setStatus("Using built-in resources; Airtable feed could not be loaded", false);
+        console.warn("Read resource JSON could not be loaded.", error);
+        try {
+          const cached = JSON.parse(localStorage.getItem(RESOURCE_CACHE_KEY));
+          const age = Date.now() - cached?.savedAt;
+          if (!Number.isFinite(age) || age < 0 || age > CACHE_MAX_AGE_MS) throw new Error("Saved copy expired");
+          resources = validateResourceDocument(cached.document);
+          resourceSource = "saved fallback; updates unavailable, may be out of date";
+        } catch (_) {
+          resources = [];
+          resourceSource = "resources unavailable; please try again later";
+        }
+      } finally {
+        clearTimeout(timeout);
+        setStatus(`${resources.length} resources (${resourceSource})`, false);
       }
     }
 
@@ -1009,14 +920,14 @@
       const root = document.getElementById(id);
       if (!root) return;
       const data = groupedResources[category] || [];
-      root.innerHTML = data.map(card).join("");
+      root.innerHTML = data.length ? data.map(card).join("") : `<p class="empty">${resources.length ? "No resources in this category." : "Resources are temporarily unavailable. Please try again later."}</p>`;
     }
 
     function renderCombinedRow(id, categories) {
       const root = document.getElementById(id);
       if (!root) return;
-      const data = categories.flatMap((category) => groupedResources[category] || []);
-      root.innerHTML = data.map(card).join("");
+      const data = resources.filter((resource) => categories.includes(resource.category));
+      root.innerHTML = data.length ? data.map(card).join("") : `<p class="empty">${resources.length ? "No resources in this category." : "Resources are temporarily unavailable. Please try again later."}</p>`;
     }
 
     function renderAllRows() {
@@ -1207,7 +1118,7 @@
       let nextIndex = 0;
       let completed = 0;
 
-      setStatus("Loading resources...", true);
+      setStatus(`${resources.length} resources (${resourceSource}); loading covers...`, true);
 
       async function worker() {
         while (true) {
@@ -1222,7 +1133,7 @@
           }
 
           completed += 1;
-          setStatus(`Loading resources ${completed}/${resources.length}...`, true);
+          setStatus(`${resources.length} resources (${resourceSource}); covers ${completed}/${resources.length}`, true);
         }
       }
 
@@ -1231,7 +1142,7 @@
     }
 
     async function init() {
-      await loadResourcesFromAirtable();
+      await loadResourcesFromJson();
       rebuildGroupedResources();
       renderAllRows();
       wireNav();
