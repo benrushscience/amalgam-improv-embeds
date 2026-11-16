@@ -428,6 +428,10 @@
     /* Hover raise effect for cards. */
     .card:hover { transform: translateY(-2px); border-color: rgba(189, 0, 91, 0.4); }
 
+    /* Paid resources use the same card frame, with native external-link behavior. */
+    .paid-card { display: block; color: inherit; text-decoration: none; }
+    .paid-card:focus-visible { outline: 3px solid var(--pink); outline-offset: 2px; }
+
     /* Thumbnail image container and fallback background. */
     .cover {
       width: 100%;
@@ -768,6 +772,27 @@
       { type: "Short", title: "Shorts", railId: "shortsRail", emptyText: "No shorts loaded yet." },
       { type: "Sketch", title: "Sketch", railId: "sketchRail", emptyText: "No sketch videos loaded yet." },
       { type: "Podcast", title: "Video Podcasts", railId: "podcastRail", emptyText: "No video podcasts loaded yet." }
+    ];
+
+    // Curated subscriptions stay independent of the free YouTube feed and its filters.
+    const PAID_VIDEO_SECTION = { title: "Paid Video or Subscription", railId: "paidVideoRail" };
+    const PAID_VIDEO_RESOURCES = [
+      {
+        name: "Holy Shit Improv",
+        url: "https://www.patreon.com/HolyShitImprov",
+        image: "assets/holy-shit-improv.jpg",
+        imageAlt: "Holy Shit Improv logo",
+        label: "Patreon",
+        description: "Recorded improv shows and HSI Playback commentary."
+      },
+      {
+        name: "Improv Fiend",
+        url: "https://improvfiend.com/",
+        image: "assets/improv-fiend-mick-napier.png",
+        imageAlt: "Improv Fiend presents: Improv Masterclass with Mick Napier",
+        label: "Subscription",
+        description: "Improv master classes and Q&As hosted by Mick Napier."
+      }
     ];
 
     // DOM references reused across the page lifecycle.
@@ -1140,6 +1165,30 @@
       return section;
     }
 
+    // Reuses the regular carousel dimensions; paid cards open the provider in a new tab.
+    function buildPaidVideoRow() {
+      const section = buildTypeRowShell(PAID_VIDEO_SECTION);
+      const rail = section.querySelector(".rail");
+      rail.replaceChildren();
+      PAID_VIDEO_RESOURCES.forEach((resource) => {
+        const card = document.createElement("a");
+        card.className = "card paid-card";
+        card.href = resource.url;
+        card.target = "_blank";
+        card.rel = "noopener noreferrer";
+        card.setAttribute("aria-label", `${resource.name}: paid subscription (opens in a new tab)`);
+        card.innerHTML = `
+          <img class="cover" loading="lazy" src="${resource.image}" alt="${resource.imageAlt}">
+          <div class="card-body">
+            <p class="card-title">${resource.name}</p>
+            <p class="card-meta"><strong>${resource.label}</strong> - ${resource.description}</p>
+          </div>
+        `;
+        rail.appendChild(card);
+      });
+      return section;
+    }
+
     // Wires left/right rail buttons for smooth horizontal scrolling.
     function wireRailNav(container) {
       const buttons = container.querySelectorAll(".nav");
@@ -1473,14 +1522,16 @@
 
     // Boots the page: shell render, parallel feed fetch, hero, and aggregate rail.
     async function init() {
+      // Show the curated cards immediately, even while remote channel data is loading.
+      VIDEO_TYPE_SECTIONS.forEach((section) => {
+        rowsRoot.appendChild(buildTypeRowShell(section));
+        if (section.type === "Short") rowsRoot.appendChild(buildPaidVideoRow());
+      });
+      wireRailNav(document);
+
       await loadGroupsFromAirtable();
       const workerCount = Math.min(MAX_CONCURRENT_FEEDS, groups.length);
       statusText.textContent = `Loading ${groups.length} channels with ${workerCount} workers...`;
-
-      VIDEO_TYPE_SECTIONS.forEach((section) => {
-        rowsRoot.appendChild(buildTypeRowShell(section));
-      });
-      wireRailNav(document);
       populateResourceFilters();
       renderResourceList();
 
