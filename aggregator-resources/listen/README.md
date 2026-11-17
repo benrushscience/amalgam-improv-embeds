@@ -25,7 +25,7 @@ It does not wake the computer. It cannot run while the computer is off.
 
 Timestamped reports and latest-report.txt are beside the launcher in a descriptively
 named reports folder, retained for 35 days. Detailed logs retain 35 daily rotations.
-Health failures are recorded locally with a nonzero exit code; no email is sent.
+Failures return a nonzero exit code and email ben@deeperthandata.media. An independent hourly monitor also alerts when the last successful sync is more than 36 hours old.
 The daily sync's stale threshold is 36 hours; three consecutive failures also raise
 an alert. Use --check-health for a local freshness check without API calls.
 
@@ -51,3 +51,5 @@ python aggregator-resources/sync_media_resources.py --kind listen
 # Add --local-only to fetch/validate without publishing.
 python -m unittest discover -s aggregator-resources -p 'test_sync_media_resources.py' -v
 ```
+
+See [email alert setup](../scheduled-tasks/resource-sync-email-alerts.md) for deduplication, delivery retries, and monitor installation.

@@ -111,8 +111,7 @@ exit code 1 so Task Scheduler records and retries them.
 
 The independent health task returns failure and writes `READ-SYNC-ALERT.txt`
 when the last successful sync is older than 24 hours or three consecutive runs
-fail. The next successful sync clears the alert. This is a local file / Task
-Scheduler alert, not email or a desktop notification. It does not notify anyone
+fail. The next successful sync clears the alert. The engine writes a local file / Task Scheduler alert. The desktop launcher now also emails ben@deeperthandata.media on failure; an independent hourly monitor checks for more than 36 hours without a successful sync. It does not notify anyone
 while the computer is powered off.
 
 The initial verified table contained 127 records, of which 104 were Public/Active.
@@ -132,3 +131,5 @@ books and the second book's Amazon ASIN `1566081998`.
 
 API references: [Airtable pagination](https://support.airtable.com/articles/6292134965-getting-started-with-airtable-s-web-api),
 [GitHub Contents API](https://docs.github.com/en/rest/repos/contents?apiversion=2022-11-28).
+
+The current desktop uses the 3 AM / after-sign-in launcher in Scheduled Tasks. See [email alert setup](../scheduled-tasks/resource-sync-email-alerts.md) for the shared Read, Watch, and Listen email monitor, deduplication, and recovery behavior.

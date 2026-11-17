@@ -1,4 +1,4 @@
-r"""Amalgam Watch resources scheduled launcher v1.
+r"""Amalgam Watch resources scheduled launcher v2.
 
 Sync Public/Active Airtable media resources into the GitHub-hosted JSON used
 by www.amalgamimprov.com/watch. Reuses the tested repository implementation,
@@ -13,7 +13,7 @@ when available. Battery operation is allowed; the task does not wake the PC.
 REPORTS
 Writes timestamped reports and latest-report.txt in the sibling
 amalgam-watch-resources-sync-reports directory. Retains reports for 35 days.
-No emails are sent. Health/logs are in watch/.watch-sync; encrypted credentials
+Failure and overdue alerts go to ben@deeperthandata.media. Health/logs are in watch/.watch-sync; encrypted credentials
 and the Python runtime are shared with read/.read-sync in the repository.
 
 MANUAL RUN
@@ -33,6 +33,8 @@ from pathlib import Path
 import subprocess
 import sys
 import tempfile
+
+import amalgam_resource_sync_alerts as sync_alerts
 
 
 # Keep human-readable locations together so a future move is easy to reproduce.
@@ -120,10 +122,29 @@ def main() -> int:
         exit_code = 1
         lines.append("FAILED: " + type(error).__name__)
 
-    # Task Scheduler receives the same nonzero result that appears in the report.
+    # Keep report failures visible to both Task Scheduler and the email monitor.
+    try:
+        save_report(lines, started)
+    except Exception as error:
+        exit_code = 1
+        lines.append("Report write failed: " + type(error).__name__)
+
+    # Only production runs send alerts; local previews and health-only checks do not.
+    if not args.local_only and not args.check_health:
+        try:
+            alert = sync_alerts.record_run('watch', exit_code, started)
+            lines.append("Email alert: " + alert["email"])
+        except Exception as error:
+            exit_code = 1
+            lines.append("Email alert pending; monitor will retry: " + type(error).__name__)
+
+    # Task Scheduler receives the same nonzero result that appears in the final report.
     lines.extend(["", f"Finished (UTC): {datetime.now(timezone.utc).isoformat()}",
                   f"Result: {'SUCCESS' if exit_code == 0 else 'FAILED'} (exit {exit_code})"])
-    save_report(lines, started)
+    try:
+        save_report(lines, started)
+    except Exception:
+        exit_code = 1
     if sys.stdout is not None:
         print("\n".join(lines))
     return exit_code

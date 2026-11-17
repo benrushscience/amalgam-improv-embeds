@@ -8,7 +8,7 @@ Runs on battery and continues when unplugged. Requires a signed-in Windows accou
 a locked desktop is fine. Does not wake the PC. Retries three times, ten minutes apart.
 
 Reports: `amalgam-listen-resources-sync-reports/latest-report.txt`, plus 35 days of
-history. Exit 0 means success; nonzero means failure. No email is sent.
+history. Exit 0 means success; nonzero means failure. Failures and more-than-36-hour stale syncs email ben@deeperthandata.media.
 
 Uses the maintained repository script `aggregator-resources/sync_media_resources.py`
 with `--kind listen`, the existing Read Python environment and encrypted credentials,
@@ -20,3 +20,5 @@ validates without publishing; `--check-health` checks last production success.
 Re-register with `amalgam-listen-resources-sync-task-registration.ps1` in this folder.
 
 [Published JSON](https://github.com/benrushscience/amalgam-improv-embeds/blob/main/aggregator-resources/listen/resources.json).
+
+Email monitoring and retry behavior are documented in `resource-sync-email-alerts.md` beside this file.
