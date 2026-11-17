@@ -609,6 +609,7 @@
         <span id="statusText">Loading recent uploads...</span>
       </div>
     </header>
+    <p id="catalogStatus" role="status" aria-live="polite" style="font-size:0.8rem;color:var(--muted);margin:0.4rem 0 0.8rem">Loading source catalog...</p>
 
     <!-- Featured hero block with always-on inline player and selected video details. -->
     <section class="hero" id="hero">
@@ -708,49 +709,11 @@
     </div>
   </div>
 
+  <script src="../resource-catalog.js"></script>
   <script>
     // Static channel list used to build rows and fetch recent uploads.
-    const AIRTABLE_SOURCE = {
-      baseId: "appvJnNJbdcXwWSho",
-      shareId: "shrpu9qmRaoGRuHXl",
-      publicUrl: "https://airtable.com/appvJnNJbdcXwWSho/shrpu9qmRaoGRuHXl",
-      tableId: "tblWG12Sv7Ur3Wqv8",
-      tableName: "Watch Resources",
-      fields: {
-        name: "Name",
-        public: "Public",
-        publicationStatus: "Publication Status",
-        improvVideoType: "improv_video_type",
-        sortOrder: "Sort Order",
-        location: "Location",
-        channelId: "YouTube Channel ID",
-        channelUrl: "Channel URL",
-        uploadsPlaylistUrl: "Uploads Playlist URL",
-        category: "Category",
-        desc: "Description"
-      }
-    };
-
-    let groups = [
-      { name: "The Second City", location: "Chicago, Toronto, NYC", channelId: "UCzkcuUgsMln4y_aSxhE0H-g", improvVideoType: ["Short"] },
-      { name: "Upright Citizens Brigade (UCB)", location: "New York, Los Angeles", channelId: "UC33mB2wpioTCG4_nICJ3upQ", improvVideoType: ["Set"] },
-      { name: "The Groundlings", location: "Los Angeles", channelId: "UCbASIjWl8MFXCFK9X5CBmfA", improvVideoType: ["Sketch"] },
-      { name: "Boom Chicago", location: "Amsterdam", channelId: "UCzPXWF7yFul9eTR4lNC52dA", improvVideoType: ["Short"] },
-      { name: "The Annoyance Theatre", location: "Chicago", channelId: "UCQ9x3AdOk674ilL7CdCNnbQ", improvVideoType: ["Short"] },
-      { name: "Magnet Theater", location: "New York City", channelId: "UCLSkEVrumvoCMHSU5dvZvNw", improvVideoType: ["Short"] },
-      { name: "BATS Improv", location: "San Francisco", channelId: "UCnsiX_2XoTaF1ISWlltE22g", improvVideoType: ["Short"] },
-      { name: "ImprovBoston", location: "Boston", channelId: "UCfLcRdPsxAF36atdL_MNrnQ", improvVideoType: ["Short"] },
-      { name: "Washington Improv Theater (WIT)", location: "Washington, DC", channelId: "UC9xVhtSdd4aIh-pGPQaof_w", improvVideoType: ["Set"] },
-      { name: "HUGE Theater", location: "Minneapolis", channelId: "UCL92YZrm4wr12vS72npH3Qw", improvVideoType: ["Set"] },
-      { name: "Impro Theatre", location: "Los Angeles", channelId: "UC9ER2KsZENbueozTg7WqvCw", improvVideoType: ["Podcast"] },
-      { name: "CSz Worldwide (ComedySportz)", location: "Milwaukee origin, global network", channelId: "UC2fnjTifsNCI39kfrHsGp5g", improvVideoType: ["Short"] },
-      { name: "Unexpected Productions", location: "Seattle", channelId: "UCm-gAI-HSzMaZjHRdRHMUFA", improvVideoType: ["Set"] },
-      { name: "Logan Square Improv", location: "Chicago", channelId: "UCjjzkZlNFHe94h9KqfyEvrw", improvVideoType: ["Set"] },
-      { name: "WGIS", location: "", channelId: "UClyXVLmssvzJCXP6vs8ZMAQ", improvVideoType: ["Set"] },
-      { name: "Dynasty Typewriter", location: "Los Angeles", channelId: "UCwSDhz_hLh-3M6oxn5qDG-Q", improvVideoType: ["Short"] },
-      { name: "Ben Schwartz and Friends", location: "", channelId: "UCPq6mxMBlGfnPAG1LTnpwOA", improvVideoType: ["Short"] },
-      { name: "Whose Line Is It Anyway?", location: "", channelId: "UCKg_ZFByYTINckLG76cjUEg", improvVideoType: ["Short"] }
-    ];
+    // Validated source metadata is supplied by the scheduled Airtable JSON sync.
+    let groups = [];
 
     // Paste the deployed Google Apps Script /exec URL here after publishing watch_feed_proxy_google_apps_script.gs.
     const GOOGLE_SCRIPT_FEED_ENDPOINT = "https://script.google.com/macros/s/AKfycbwMUCpqz2q0FMft2g6iN--DagUAgdjwtiLwTRUdYOoPXzcyjcMma9qll7fqhJ8iWE-z/exec";
@@ -832,32 +795,6 @@
     let heroSeededFromDefaultChannel = false;
     let feedLoadErrors = [];
 
-    function airtableEmbedUrl() {
-      return `https://airtable.com/embed/${AIRTABLE_SOURCE.baseId}/${AIRTABLE_SOURCE.shareId}`;
-    }
-
-    function decodeAirtablePath(encodedPath) {
-      return JSON.parse(`"${encodedPath}"`);
-    }
-
-    function airtableColumnByName(tableSchema, fieldName) {
-      return tableSchema.columns.find((column) => column.name === fieldName);
-    }
-
-    function airtableValue(row, tableSchema, fieldName) {
-      const column = airtableColumnByName(tableSchema, fieldName);
-      if (!column) return "";
-      const value = row.cellValuesByColumnId[column.id];
-      if (column.type === "select") {
-        return column.typeOptions?.choices?.[value]?.name || "";
-      }
-      if (column.type === "multiSelect" || column.type === "multipleSelects") {
-        if (!Array.isArray(value)) return [];
-        return value.map((choiceId) => column.typeOptions?.choices?.[choiceId]?.name || choiceId).filter(Boolean);
-      }
-      return value || "";
-    }
-
     // Airtable resources without manual video-type review stay out of the watch feed.
     function hasReviewedVideoType(group) {
       return Array.isArray(group.improvVideoType)
@@ -872,68 +809,6 @@
 
     function primaryVideoType(group) {
       return groupVideoTypes(group)[0] || "";
-    }
-
-    async function fetchAirtableTable() {
-      const embedResponse = await fetch(airtableEmbedUrl(), { cache: "no-store" });
-      if (!embedResponse.ok) throw new Error("Airtable embed request failed");
-
-      const embedHtml = await embedResponse.text();
-      const urlMatch = embedHtml.match(/urlWithParams:\s*"([^"]+)"/s);
-      if (!urlMatch) throw new Error("Airtable shared read URL not found");
-
-      const readUrl = new URL(`https://airtable.com${decodeAirtablePath(urlMatch[1])}`);
-      const params = JSON.parse(readUrl.searchParams.get("stringifiedObjectParams"));
-      params.includeDataForTableIds = [AIRTABLE_SOURCE.tableId];
-      params.allowMsgpackOfResult = false;
-      readUrl.searchParams.set("stringifiedObjectParams", JSON.stringify(params));
-      readUrl.searchParams.delete("requestId");
-      readUrl.searchParams.set("x-time-zone", Intl.DateTimeFormat().resolvedOptions().timeZone || "America/Chicago");
-      readUrl.searchParams.set("x-airtable-application-id", AIRTABLE_SOURCE.baseId);
-      readUrl.searchParams.set("x-user-locale", "en");
-
-      const response = await fetch(readUrl, {
-        cache: "no-store",
-        headers: { "X-Requested-With": "XMLHttpRequest" }
-      });
-      if (!response.ok) throw new Error("Airtable table request failed");
-
-      const payload = await response.json();
-      const tableSchema = payload.data.tableSchemas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
-      const tableData = payload.data.tableDatas.find((table) => table.id === AIRTABLE_SOURCE.tableId);
-      if (!tableSchema || !tableData) throw new Error("Airtable table data missing");
-
-      return tableData.rows
-        .map((row) => {
-          const fields = AIRTABLE_SOURCE.fields;
-          return {
-            name: airtableValue(row, tableSchema, fields.name),
-            public: airtableValue(row, tableSchema, fields.public),
-            publicationStatus: airtableValue(row, tableSchema, fields.publicationStatus),
-            improvVideoType: airtableValue(row, tableSchema, fields.improvVideoType),
-            sortOrder: airtableValue(row, tableSchema, fields.sortOrder),
-            location: airtableValue(row, tableSchema, fields.location),
-            channelId: airtableValue(row, tableSchema, fields.channelId),
-            channelUrl: airtableValue(row, tableSchema, fields.channelUrl),
-            uploadsPlaylistUrl: airtableValue(row, tableSchema, fields.uploadsPlaylistUrl),
-            category: airtableValue(row, tableSchema, fields.category),
-            desc: airtableValue(row, tableSchema, fields.desc)
-          };
-        })
-        .filter((group) => group.public === true && group.publicationStatus === "Active" && group.name && group.channelId && hasReviewedVideoType(group))
-        .sort((a, b) => (Number(a.sortOrder) || 9999) - (Number(b.sortOrder) || 9999));
-    }
-
-    async function loadGroupsFromAirtable() {
-      try {
-        const airtableGroups = await fetchAirtableTable();
-        if (airtableGroups.length) {
-          groups = airtableGroups;
-          statusText.textContent = `Loaded ${groups.length} channels from Airtable...`;
-        }
-      } catch (error) {
-        statusText.textContent = "Using built-in channel list; Airtable source is available.";
-      }
     }
 
     // Schedules render chunks during idle windows to keep the UI responsive.
@@ -1095,6 +970,14 @@
       (payload.videos || []).map(hydrateScriptVideo).forEach((video) => {
         const index = groupIndexByChannelId.get(video.channelId);
         if (index === undefined) return;
+        // Current Airtable metadata takes precedence over any proxy-cached labels.
+        const group = groups[index];
+        Object.assign(video, {
+          groupName: group.name, location: group.location,
+          channelUrl: group.channelUrl || `https://www.youtube.com/channel/${group.channelId}`,
+          uploadsPlaylistUrl: group.uploadsPlaylistUrl || `https://www.youtube.com/playlist?list=UU${group.channelId.slice(2)}`,
+          improvVideoType: groupVideoTypes(group), primaryVideoType: primaryVideoType(group)
+        });
         results[index].push(video);
       });
 
@@ -1116,8 +999,8 @@
       card.innerHTML = `
         <img class="cover" loading="lazy" src="${video.thumbnail}" alt="">
         <div class="card-body">
-          <p class="card-title">${video.groupName}</p>
-          <p class="card-meta"><strong>${video.primaryVideoType || "Video"}</strong> - Latest: ${video.title} - ${video.publishedLabel}</p>
+          <p class="card-title">${escapeHtml(video.groupName)}</p>
+          <p class="card-meta"><strong>${video.primaryVideoType || "Video"}</strong> - Latest: ${escapeHtml(video.title)} - ${video.publishedLabel}</p>
         </div>
       `;
       const cover = card.querySelector(".cover");
@@ -1418,6 +1301,11 @@
       );
     }
 
+    function escapeHtml(value) {
+      return String(value ?? "").replace(/&/g, "&amp;").replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;").replace(/"/g, "&quot;").replace(/'/g, "&#39;");
+    }
+
     function renderResourceList() {
       const channelId = resourceChannelFilter.value;
       const videoType = resourceTypeFilter.value;
@@ -1444,11 +1332,11 @@
         const channelUrl = group.channelUrl || `https://www.youtube.com/channel/${group.channelId}`;
         const uploadsUrl = group.uploadsPlaylistUrl || `https://www.youtube.com/playlist?list=UU${group.channelId.slice(2)}`;
         item.innerHTML = `
-          <h3>${group.name}</h3>
-          <p class="resource-meta">${groupVideoTypes(group).join(", ")}${group.location ? ` - ${group.location}` : ""}</p>
+          <h3>${escapeHtml(group.name)}</h3>
+          <p class="resource-meta">${escapeHtml(groupVideoTypes(group).join(", "))}${group.location ? ` - ${escapeHtml(group.location)}` : ""}</p>
           <div class="actions">
-            <a class="btn btn-secondary" href="${channelUrl}" target="_blank" rel="noopener">Open Channel</a>
-            <a class="btn btn-soft" href="${uploadsUrl}" target="_blank" rel="noopener">Uploads</a>
+            <a class="btn btn-secondary" href="${escapeHtml(channelUrl)}" target="_blank" rel="noopener">Open Channel</a>
+            <a class="btn btn-soft" href="${escapeHtml(uploadsUrl)}" target="_blank" rel="noopener">Uploads</a>
           </div>
         `;
         resourceList.appendChild(item);
@@ -1529,12 +1417,20 @@
       });
       wireRailNav(document);
 
-      await loadGroupsFromAirtable();
+      groups = await loadResourceCatalog("watch", document.getElementById("catalogStatus"));
+      heroMeta.textContent = `${groups.length} reviewed improv channels`;
       const workerCount = Math.min(MAX_CONCURRENT_FEEDS, groups.length);
       statusText.textContent = `Loading ${groups.length} channels with ${workerCount} workers...`;
       populateResourceFilters();
       renderResourceList();
 
+      if (!groups.length) {
+        statusText.textContent = "Video sources temporarily unavailable.";
+        heroTitle.textContent = "Video sources temporarily unavailable";
+        hideHeroLoading();
+        renderTypeRails([]);
+        return;
+      }
       const groupResults = await loadFeedsInParallel();
       const allVideos = [];
       groupResults.forEach((videos) => {

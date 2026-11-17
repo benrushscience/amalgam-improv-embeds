@@ -1,0 +1,12 @@
+{
+  "baseId": "appvJnNJbdcXwWSho",
+  "tableId": "tblWG12Sv7Ur3Wqv8",
+  "repository": "benrushscience/amalgam-improv-embeds",
+  "branch": "main",
+  "jsonPath": "aggregator-resources/watch/resources.json",
+  "minimumTotalRecords": 45,
+  "minimumPublicRecords": 40,
+  "maximumDropFraction": 0.2,
+  "failureAlertThreshold": 3,
+  "staleHours": 36
+}

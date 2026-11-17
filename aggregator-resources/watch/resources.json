@@ -1,0 +1,746 @@
+{
+  "schemaVersion": 1,
+  "kind": "watch",
+  "source": "Airtable Watch Resources",
+  "sourceMetadata": {
+    "baseId": "appvJnNJbdcXwWSho",
+    "tableId": "tblWG12Sv7Ur3Wqv8",
+    "recordCountAtContentChange": 57
+  },
+  "contentUpdatedAt": "2026-11-17T04:53:29+00:00",
+  "resources": [
+    {
+      "name": "The Second City",
+      "location": "Chicago, Toronto, NYC",
+      "channelId": "UCzkcuUgsMln4y_aSxhE0H-g",
+      "channelUrl": "https://www.youtube.com/channel/UCzkcuUgsMln4y_aSxhE0H-g",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUzkcuUgsMln4y_aSxhE0H-g",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recULjg5BC5EYOTMt",
+      "sortOrder": 1.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Upright Citizens Brigade (UCB)",
+      "location": "New York, Los Angeles",
+      "channelId": "UC33mB2wpioTCG4_nICJ3upQ",
+      "channelUrl": "https://www.youtube.com/channel/UC33mB2wpioTCG4_nICJ3upQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU33mB2wpioTCG4_nICJ3upQ",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recWoFLZj92UMmVSx",
+      "sortOrder": 2.0,
+      "improvVideoType": [
+        "Set"
+      ]
+    },
+    {
+      "name": "The Groundlings",
+      "location": "Los Angeles",
+      "channelId": "UCbASIjWl8MFXCFK9X5CBmfA",
+      "channelUrl": "https://www.youtube.com/channel/UCbASIjWl8MFXCFK9X5CBmfA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUbASIjWl8MFXCFK9X5CBmfA",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recozqYnCFvGsDOjF",
+      "sortOrder": 3.0,
+      "improvVideoType": [
+        "Sketch"
+      ]
+    },
+    {
+      "name": "Boom Chicago",
+      "location": "Amsterdam",
+      "channelId": "UCzPXWF7yFul9eTR4lNC52dA",
+      "channelUrl": "https://www.youtube.com/channel/UCzPXWF7yFul9eTR4lNC52dA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUzPXWF7yFul9eTR4lNC52dA",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "rec8GKd99qrtct7QV",
+      "sortOrder": 5.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "The Annoyance Theatre",
+      "location": "Chicago",
+      "channelId": "UCQ9x3AdOk674ilL7CdCNnbQ",
+      "channelUrl": "https://www.youtube.com/@AnnoyanceTheatre/videos",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUQ9x3AdOk674ilL7CdCNnbQ",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "rectrOZ87dsS9MmJ5",
+      "sortOrder": 6.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Magnet Theater",
+      "location": "New York City",
+      "channelId": "UCLSkEVrumvoCMHSU5dvZvNw",
+      "channelUrl": "https://www.youtube.com/channel/UCLSkEVrumvoCMHSU5dvZvNw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UULSkEVrumvoCMHSU5dvZvNw",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recZPr2GV7KEk5LOr",
+      "sortOrder": 7.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "BATS Improv",
+      "location": "San Francisco",
+      "channelId": "UCnsiX_2XoTaF1ISWlltE22g",
+      "channelUrl": "https://www.youtube.com/channel/UCnsiX_2XoTaF1ISWlltE22g",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUnsiX_2XoTaF1ISWlltE22g",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recSDUBbwh08UiGAY",
+      "sortOrder": 8.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "ImprovBoston",
+      "location": "Boston",
+      "channelId": "UCfLcRdPsxAF36atdL_MNrnQ",
+      "channelUrl": "https://www.youtube.com/channel/UCfLcRdPsxAF36atdL_MNrnQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUfLcRdPsxAF36atdL_MNrnQ",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recBYHV2zWHpsKmzC",
+      "sortOrder": 10.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Washington Improv Theater (WIT)",
+      "location": "Washington, DC",
+      "channelId": "UC9xVhtSdd4aIh-pGPQaof_w",
+      "channelUrl": "https://www.youtube.com/channel/UC9xVhtSdd4aIh-pGPQaof_w",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU9xVhtSdd4aIh-pGPQaof_w",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "rec63DWhlX3RYWiQs",
+      "sortOrder": 11.0,
+      "improvVideoType": [
+        "Set"
+      ]
+    },
+    {
+      "name": "HUGE Theater",
+      "location": "Minneapolis",
+      "channelId": "UCL92YZrm4wr12vS72npH3Qw",
+      "channelUrl": "https://www.youtube.com/channel/UCL92YZrm4wr12vS72npH3Qw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUL92YZrm4wr12vS72npH3Qw",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "rec6Yjko6fJUztcFg",
+      "sortOrder": 12.0,
+      "improvVideoType": [
+        "Set"
+      ]
+    },
+    {
+      "name": "Impro Theatre",
+      "location": "Los Angeles",
+      "channelId": "UC9ER2KsZENbueozTg7WqvCw",
+      "channelUrl": "https://www.youtube.com/channel/UC9ER2KsZENbueozTg7WqvCw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU9ER2KsZENbueozTg7WqvCw",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recssmG1Z6Pw1ePvM",
+      "sortOrder": 13.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "CSz Worldwide (ComedySportz)",
+      "location": "Milwaukee origin, global network",
+      "channelId": "UC2fnjTifsNCI39kfrHsGp5g",
+      "channelUrl": "https://www.youtube.com/channel/UC2fnjTifsNCI39kfrHsGp5g",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU2fnjTifsNCI39kfrHsGp5g",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recPwiLLVYLPH7Jbg",
+      "sortOrder": 14.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Unexpected Productions",
+      "location": "Seattle",
+      "channelId": "UCm-gAI-HSzMaZjHRdRHMUFA",
+      "channelUrl": "https://www.youtube.com/channel/UCm-gAI-HSzMaZjHRdRHMUFA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUm-gAI-HSzMaZjHRdRHMUFA",
+      "category": "Improv Theater / Training Center",
+      "description": "",
+      "id": "recDwULQGDnbXxOxv",
+      "sortOrder": 15.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Logan Square Improv",
+      "location": "Chicago",
+      "channelId": "UCjjzkZlNFHe94h9KqfyEvrw",
+      "channelUrl": "https://www.youtube.com/c/LoganSquareImprov",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUjjzkZlNFHe94h9KqfyEvrw",
+      "category": "",
+      "description": "Logan Square Improv YouTube channel.",
+      "id": "recBPzPKfq7EzUHRs",
+      "sortOrder": 16.0,
+      "improvVideoType": [
+        "Set"
+      ]
+    },
+    {
+      "name": "WGIS",
+      "location": "",
+      "channelId": "UClyXVLmssvzJCXP6vs8ZMAQ",
+      "channelUrl": "https://www.youtube.com/@WorldsGreatestImprov/videos",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUlyXVLmssvzJCXP6vs8ZMAQ",
+      "category": "",
+      "description": "World's Greatest Improv YouTube channel.",
+      "id": "rec00FY4IAxemXOHy",
+      "sortOrder": 17.0,
+      "improvVideoType": [
+        "Set"
+      ]
+    },
+    {
+      "name": "Dynasty Typewriter",
+      "location": "Los Angeles",
+      "channelId": "UCwSDhz_hLh-3M6oxn5qDG-Q",
+      "channelUrl": "https://www.youtube.com/@DynastyTypewriter/videos",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUwSDhz_hLh-3M6oxn5qDG-Q",
+      "category": "",
+      "description": "Dynasty Typewriter YouTube channel.",
+      "id": "recAU2savrv4Mr8mY",
+      "sortOrder": 18.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Ben Schwartz and Friends",
+      "location": "",
+      "channelId": "UCPq6mxMBlGfnPAG1LTnpwOA",
+      "channelUrl": "https://www.youtube.com/@rejectedjokes/videos",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUPq6mxMBlGfnPAG1LTnpwOA",
+      "category": "",
+      "description": "Ben Schwartz and Friends / rejectedjokes YouTube channel.",
+      "id": "rec0d3B3Htt3l6fFj",
+      "sortOrder": 19.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Whose Line Is It Anyway?",
+      "location": "",
+      "channelId": "UCKg_ZFByYTINckLG76cjUEg",
+      "channelUrl": "https://www.youtube.com/@WhoseLineIsItAnyway/videos",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUKg_ZFByYTINckLG76cjUEg",
+      "category": "",
+      "description": "Whose Line Is It Anyway? YouTube channel.",
+      "id": "rec239pJlMzWjZ6FX",
+      "sortOrder": 20.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Shoot From The Hip",
+      "location": "London, UK",
+      "channelId": "UC3JVlyuEqD9B7VaQp7FSkIQ",
+      "channelUrl": "https://www.youtube.com/channel/UC3JVlyuEqD9B7VaQp7FSkIQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU3JVlyuEqD9B7VaQp7FSkIQ",
+      "category": "Other",
+      "description": "London improv comedy group publishing frequent short-form clips and longer improvised performance material useful for studying pace, game play, and audience-driven scenes.",
+      "id": "receGOcG4ECrtU8QA",
+      "sortOrder": 21.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Bandit Theater",
+      "location": "Seattle",
+      "channelId": "UC89oUKfj-yH1yBC2iVrsycQ",
+      "channelUrl": "https://www.youtube.com/channel/UC89oUKfj-yH1yBC2iVrsycQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU89oUKfj-yH1yBC2iVrsycQ",
+      "category": "Improv Theater / Training Center",
+      "description": "Seattle theater and comedy organization with public performance uploads and short-form comedy material from a contemporary improv scene.",
+      "id": "rec3C4N9GwqOkfhBL",
+      "sortOrder": 22.0,
+      "improvVideoType": [
+        "Short",
+        "Sketch"
+      ]
+    },
+    {
+      "name": "ImprovBroadway",
+      "location": "Provo, Utah",
+      "channelId": "UCl0Pjeqlj9Ort2LVqP_2Ilw",
+      "channelUrl": "https://www.youtube.com/channel/UCl0Pjeqlj9Ort2LVqP_2Ilw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUl0Pjeqlj9Ort2LVqP_2Ilw",
+      "category": "Comedy Theater",
+      "description": "Improvised musical comedy channel with performance clips and staged musical improv material suited to studying song, structure, and ensemble choices.",
+      "id": "recZMHDVcU2ZevWko",
+      "sortOrder": 23.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Extreme Improv",
+      "location": "International / UK",
+      "channelId": "UCFYhqbpyN-YLUZaSikuDOFA",
+      "channelUrl": "https://www.youtube.com/channel/UCFYhqbpyN-YLUZaSikuDOFA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUFYhqbpyN-YLUZaSikuDOFA",
+      "category": "Other",
+      "description": "International improv comedy show channel with frequent clips and full-stage material useful for short-form game study and performance examples.",
+      "id": "recSXQBa7ohw2rXhh",
+      "sortOrder": 24.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "The Mopco Improv Theatre",
+      "location": "Schenectady, New York",
+      "channelId": "UCi5p-KqAQeAw-wP32wmLBSw",
+      "channelUrl": "https://www.youtube.com/channel/UCi5p-KqAQeAw-wP32wmLBSw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUi5p-KqAQeAw-wP32wmLBSw",
+      "category": "Improv Theater / Training Center",
+      "description": "Upstate New York improv theater with public show, class, and event videos that can support study of live improv formats and local theater programming.",
+      "id": "reckChkfRE3dI0Smq",
+      "sortOrder": 25.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Moment Improv Theatre",
+      "location": "San Francisco",
+      "channelId": "UCCBoUhm0h6fMiZyCNp1SatA",
+      "channelUrl": "https://www.youtube.com/channel/UCCBoUhm0h6fMiZyCNp1SatA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUCBoUhm0h6fMiZyCNp1SatA",
+      "category": "Improv Theater / Training Center",
+      "description": "San Francisco long-form improv theatre and training center with public performance uploads for studying scene work and show structure.",
+      "id": "recTJeT02VXOeUtDk",
+      "sortOrder": 26.0,
+      "improvVideoType": [
+        "Set"
+      ]
+    },
+    {
+      "name": "Villain Theater",
+      "location": "Miami",
+      "channelId": "UCyB6RsJVihDPq3oLfbC8eLg",
+      "channelUrl": "https://www.youtube.com/channel/UCyB6RsJVihDPq3oLfbC8eLg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUyB6RsJVihDPq3oLfbC8eLg",
+      "category": "Improv Theater / Training Center",
+      "description": "Miami improv theater publishing live and interactive show material, student performances, and short clips with clear improv training relevance.",
+      "id": "recfrpfzuwRaM9NsK",
+      "sortOrder": 27.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Peak Improv Theater",
+      "location": "Colorado Springs",
+      "channelId": "UCU0tHtklcXVTkWxLyjSp3Jg",
+      "channelUrl": "https://www.youtube.com/channel/UCU0tHtklcXVTkWxLyjSp3Jg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUU0tHtklcXVTkWxLyjSp3Jg",
+      "category": "Improv Theater / Training Center",
+      "description": "Colorado Springs improv theater channel with active short-form comedy and improv clips for quick study examples.",
+      "id": "recLVOm945RXymvn9",
+      "sortOrder": 28.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "The Ultimate Improv Show",
+      "location": "Los Angeles",
+      "channelId": "UCEx-w7A7yipx6eFx5S0P-Vg",
+      "channelUrl": "https://www.youtube.com/channel/UCEx-w7A7yipx6eFx5S0P-Vg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUEx-w7A7yipx6eFx5S0P-Vg",
+      "category": "Comedy Theater",
+      "description": "Los Angeles improvised comedy show channel with recent guest-driven episodes and performance clips for studying premise, host dynamics, and fast choices.",
+      "id": "recYfpN0hdnnfGNYC",
+      "sortOrder": 29.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Glasgow Improv Theatre",
+      "location": "Glasgow, Scotland",
+      "channelId": "UC7eUy-KQZLZS4rqLz_zQjnQ",
+      "channelUrl": "https://www.youtube.com/channel/UC7eUy-KQZLZS4rqLz_zQjnQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU7eUy-KQZLZS4rqLz_zQjnQ",
+      "category": "Improv Theater / Training Center",
+      "description": "Scottish improv theater channel with recent live show and marathon uploads useful for studying regional long-form and short-form performance styles.",
+      "id": "recF0MHjQy4EObUCZ",
+      "sortOrder": 30.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "MissImp: Improv Comedy Theatre",
+      "location": "Nottingham, UK",
+      "channelId": "UCqJVOtkPkDoU5qYUNi2jJgg",
+      "channelUrl": "https://www.youtube.com/channel/UCqJVOtkPkDoU5qYUNi2jJgg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUqJVOtkPkDoU5qYUNi2jJgg",
+      "category": "Improv Theater / Training Center",
+      "description": "Nottingham improv theatre and comedy group with recent public improv videos and short-form material from a long-running local scene.",
+      "id": "recN9RX8nIf8EbDmj",
+      "sortOrder": 31.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Pasadonuts Improv",
+      "location": "Los Angeles",
+      "channelId": "UC1iyRMgs-tQgIHwlc23DePw",
+      "channelUrl": "https://www.youtube.com/channel/UC1iyRMgs-tQgIHwlc23DePw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU1iyRMgs-tQgIHwlc23DePw",
+      "category": "Other",
+      "description": "Los Angeles long-form improv project with streamed and recorded performance material from Studio City, useful for compact set examples.",
+      "id": "recrKfhzoHCqk48Uv",
+      "sortOrder": 34.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Curious Comedy",
+      "location": "Portland, Oregon",
+      "channelId": "UCAXtl6vskKYw6KSNgViOGgw",
+      "channelUrl": "https://www.youtube.com/channel/UCAXtl6vskKYw6KSNgViOGgw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUAXtl6vskKYw6KSNgViOGgw",
+      "category": "Comedy Theater",
+      "description": "Portland comedy theater channel with training-center and stage content across improv, sketch, and stand-up contexts.",
+      "id": "rec9Y0kdsjqzHrOwD",
+      "sortOrder": 36.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Third Coast Comedy Club",
+      "location": "Nashville",
+      "channelId": "UCpyu0kdRclF7uY1nPHmg3bQ",
+      "channelUrl": "https://www.youtube.com/channel/UCpyu0kdRclF7uY1nPHmg3bQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUpyu0kdRclF7uY1nPHmg3bQ",
+      "category": "Comedy Theater",
+      "description": "Nashville comedy club and training center channel with improv advice and short-form training clips that can support instructional Watch browsing.",
+      "id": "recMz64ShaXJsYQXt",
+      "sortOrder": 38.0,
+      "improvVideoType": [
+        "Short",
+        "Sketch"
+      ]
+    },
+    {
+      "name": "Santa Fe Improv",
+      "location": "Santa Fe, New Mexico",
+      "channelId": "UCn8RTp3wCuszFMSmQPq5knQ",
+      "channelUrl": "https://www.youtube.com/channel/UCn8RTp3wCuszFMSmQPq5knQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUn8RTp3wCuszFMSmQPq5knQ",
+      "category": "Improv Theater / Training Center",
+      "description": "Santa Fe improv training center channel with public introductory and short-form materials for regional improv discovery.",
+      "id": "rec0qQldQfgXnEGDF",
+      "sortOrder": 39.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Grad School Improv",
+      "location": "Vancouver",
+      "channelId": "UCqySn7F-461zPy7k60_nzAg",
+      "channelUrl": "https://www.youtube.com/channel/UCqySn7F-461zPy7k60_nzAg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUqySn7F-461zPy7k60_nzAg",
+      "category": "Other",
+      "description": "Vancouver improvised theatre group with public set and short-form videos that may add independent troupe examples to the Watch aggregator.",
+      "id": "recx8WZ0bgX1pdmKL",
+      "sortOrder": 40.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Improvcircle",
+      "location": "Nigeria",
+      "channelId": "UCGlkOdyAgVMNx4N5pxZeJuQ",
+      "channelUrl": "https://www.youtube.com/channel/UCGlkOdyAgVMNx4N5pxZeJuQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUGlkOdyAgVMNx4N5pxZeJuQ",
+      "category": "Other",
+      "description": "Nigerian improv troupe and comedy channel with active short-form improvised comedy and performance material for broadening the Watch feed geographically.",
+      "id": "recqoNPaoGJe4sAGk",
+      "sortOrder": 51.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "SPIT Manila",
+      "location": "Manila, Philippines",
+      "channelId": "UCHEstMWfMeCBer_I_AF-3Zg",
+      "channelUrl": "https://www.youtube.com/channel/UCHEstMWfMeCBer_I_AF-3Zg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUHEstMWfMeCBer_I_AF-3Zg",
+      "category": "Other",
+      "description": "Manila improv group with a large active video presence, including short clips and performance material useful for international improv study.",
+      "id": "recISyowWXkD4oN0z",
+      "sortOrder": 52.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "The Bird Comedy Theater",
+      "location": "Kansas City",
+      "channelId": "UCnKNIBHhtv-p8TNC2VFKeng",
+      "channelUrl": "https://www.youtube.com/channel/UCnKNIBHhtv-p8TNC2VFKeng",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUnKNIBHhtv-p8TNC2VFKeng",
+      "category": "Comedy Theater",
+      "description": "Kansas City comedy theater channel with active improvised comedy clips and short-form sketch-adjacent material suited for quick Watch browsing.",
+      "id": "recT8aMMlLSZ0e6CV",
+      "sortOrder": 53.0,
+      "improvVideoType": [
+        "Short",
+        "Sketch"
+      ]
+    },
+    {
+      "name": "LAC Comedy",
+      "location": "Los Angeles",
+      "channelId": "UC4OnSfNWOm-vOjxte_0b3WA",
+      "channelUrl": "https://www.youtube.com/channel/UC4OnSfNWOm-vOjxte_0b3WA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU4OnSfNWOm-vOjxte_0b3WA",
+      "category": "Comedy Theater",
+      "description": "Los Angeles improv comedy theater channel with recurring live-cast uploads and short-form performance examples from adult and youth ensembles.",
+      "id": "recl1ZcaLYSe595jd",
+      "sortOrder": 54.0,
+      "improvVideoType": [
+        "Short",
+        "Sketch",
+        "Set"
+      ]
+    },
+    {
+      "name": "Haus of Comedy",
+      "location": "Sacramento",
+      "channelId": "UCuOQehsQZRX2yGzS8iFwJ2A",
+      "channelUrl": "https://www.youtube.com/channel/UCuOQehsQZRX2yGzS8iFwJ2A",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUuOQehsQZRX2yGzS8iFwJ2A",
+      "category": "Comedy Theater",
+      "description": "Sacramento improv classes and live comedy channel with active solo exercises, short-form clips, and team-building improv content.",
+      "id": "recZ6E8IAsbVHu1My",
+      "sortOrder": 55.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Bent Theatre Comedy",
+      "location": "Charlottesville, Virginia",
+      "channelId": "UCIpTgeivv0_BCtSMX0ZBlgA",
+      "channelUrl": "https://www.youtube.com/channel/UCIpTgeivv0_BCtSMX0ZBlgA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUIpTgeivv0_BCtSMX0ZBlgA",
+      "category": "Other",
+      "description": "Charlottesville improv troupe channel with current performance uploads and short scene material from a long-running local ensemble.",
+      "id": "recOjEC7AVwCkA53S",
+      "sortOrder": 56.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Chaos Bloom Theater",
+      "location": "Denver",
+      "channelId": "UCbim0gUxCTQQn4mfn88Ehfw",
+      "channelUrl": "https://www.youtube.com/channel/UCbim0gUxCTQQn4mfn88Ehfw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUbim0gUxCTQQn4mfn88Ehfw",
+      "category": "Comedy Theater",
+      "description": "Denver comedy and improv theater channel with sketch, class, and stage uploads that may support Watch examples of training-center performance pathways.",
+      "id": "recWNlOXkyOtOqwp0",
+      "sortOrder": 57.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Charcoal Pony Improv",
+      "location": "United States",
+      "channelId": "UCq7yYNH10z007JEVFE9bbwQ",
+      "channelUrl": "https://www.youtube.com/channel/UCq7yYNH10z007JEVFE9bbwQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUq7yYNH10z007JEVFE9bbwQ",
+      "category": "Other",
+      "description": "Independent improv troupe channel with full shows, alumni events, and sketch-adjacent videos that can add ensemble examples to Watch.",
+      "id": "reckXwJe7lP4cJcr3",
+      "sortOrder": 58.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Push Comedy Theater",
+      "location": "Norfolk, Virginia",
+      "channelId": "UCeGOoz9rImN8FAADqw7CpRg",
+      "channelUrl": "https://www.youtube.com/channel/UCeGOoz9rImN8FAADqw7CpRg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUeGOoz9rImN8FAADqw7CpRg",
+      "category": "Comedy Theater",
+      "description": "Norfolk comedy theater channel with improv, sketch, and stage-promotional videos from a local comedy venue and training community.",
+      "id": "recFIE97jMkDDKO9y",
+      "sortOrder": 59.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Early Bird Special Improv Troupe",
+      "location": "United States",
+      "channelId": "UC4IQBb0_6YdghK1O8iiq0Gw",
+      "channelUrl": "https://www.youtube.com/channel/UC4IQBb0_6YdghK1O8iiq0Gw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UU4IQBb0_6YdghK1O8iiq0Gw",
+      "category": "Other",
+      "description": "Small improv troupe channel with recent full-show and mixed-nuts style performance uploads; useful as a lower-priority ensemble example.",
+      "id": "recRW3pJA1GSTf0qq",
+      "sortOrder": 60.0,
+      "improvVideoType": [
+        "Short"
+      ]
+    },
+    {
+      "name": "Not Another D&D Podcast",
+      "location": "",
+      "channelId": "UCV58y_DbGkuYCNQC2OjJWOw",
+      "channelUrl": "https://www.youtube.com/channel/UCV58y_DbGkuYCNQC2OjJWOw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUV58y_DbGkuYCNQC2OjJWOw",
+      "category": "Other",
+      "description": "Official Not Another D&D Podcast YouTube channel.",
+      "id": "rec2Vwyl8U4EPVmD9",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "Yes, Also",
+      "location": "",
+      "channelId": "UCgWKnIrmQ973mnHJtRRNAdA",
+      "channelUrl": "https://www.youtube.com/channel/UCgWKnIrmQ973mnHJtRRNAdA",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUgWKnIrmQ973mnHJtRRNAdA",
+      "category": "Other",
+      "description": "Official Yes, Also YouTube channel for podcast video episodes and clips.",
+      "id": "rec5omcqElrRO24gX",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "Mega",
+      "location": "",
+      "channelId": "UCUG7Yn5DjV7z-y493epKoJw",
+      "channelUrl": "https://www.youtube.com/channel/UCUG7Yn5DjV7z-y493epKoJw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUUG7Yn5DjV7z-y493epKoJw",
+      "category": "Other",
+      "description": "Official Mega podcast YouTube channel.",
+      "id": "rec6esjjTiJypPj2B",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "Artists on Artists on Artists on Artists",
+      "location": "",
+      "channelId": "UCry_pllgLAt-Rev5XJUBBlw",
+      "channelUrl": "https://www.youtube.com/channel/UCry_pllgLAt-Rev5XJUBBlw",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUry_pllgLAt-Rev5XJUBBlw",
+      "category": "Other",
+      "description": "Official podcast YouTube channel.",
+      "id": "recGH5nJCRBH7VGvh",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "ManDogPod",
+      "location": "",
+      "channelId": "UCNW0sgvxgiENf8OKGjNmoZg",
+      "channelUrl": "https://www.youtube.com/channel/UCNW0sgvxgiENf8OKGjNmoZg",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUNW0sgvxgiENf8OKGjNmoZg",
+      "category": "Other",
+      "description": "Official ManDogPod YouTube channel for podcast video episodes and clips.",
+      "id": "recnjsZGqpmne7cME",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "Dungeons and Daddies",
+      "location": "",
+      "channelId": "UCk0KIpWaQwMhFSWQhnwb1RQ",
+      "channelUrl": "https://www.youtube.com/channel/UCk0KIpWaQwMhFSWQhnwb1RQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUk0KIpWaQwMhFSWQhnwb1RQ",
+      "category": "Other",
+      "description": "Official Dungeons and Daddies YouTube channel.",
+      "id": "recquyA2PKSbZhTrk",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "improv4humans with Matt Besser",
+      "location": "",
+      "channelId": "UCnlDp_ut-BznRgkeyXM7UwQ",
+      "channelUrl": "https://www.youtube.com/channel/UCnlDp_ut-BznRgkeyXM7UwQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUnlDp_ut-BznRgkeyXM7UwQ",
+      "category": "Other",
+      "description": "Official improv4humans YouTube channel.",
+      "id": "recsRWbDFS6DuTSi2",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    },
+    {
+      "name": "Hello From The Magic Tavern",
+      "location": "",
+      "channelId": "UCUYdQY0I9hv1ZpH6PXbyzbQ",
+      "channelUrl": "https://www.youtube.com/channel/UCUYdQY0I9hv1ZpH6PXbyzbQ",
+      "uploadsPlaylistUrl": "https://www.youtube.com/playlist?list=UUUYdQY0I9hv1ZpH6PXbyzbQ",
+      "category": "Other",
+      "description": "Official Hello From The Magic Tavern YouTube channel.",
+      "id": "recwhsBvyd0Bu1aiR",
+      "sortOrder": 9999.0,
+      "improvVideoType": [
+        "Podcast"
+      ]
+    }
+  ]
+}
