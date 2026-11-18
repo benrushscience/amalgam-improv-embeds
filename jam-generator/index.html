@@ -55,10 +55,10 @@
     <table class="ajg-table" id="ajg-table" aria-label="Generated jam activities">
       <thead>
         <tr>
-          <th style="width: 18%">Slot</th>
-          <th style="width: 18%">Activity name</th>
-          <th style="width: 18%">Type</th>
-          <th>Description</th>
+          <th style="width: 10%">Slot</th>
+          <th style="width: 16%">Activity name</th>
+          <th style="width: 12%">Type</th>
+          <th style="width: 62%">Description</th>
         </tr>
       </thead>
       <tbody id="ajg-tbody">
@@ -85,6 +85,9 @@
   }
 
   .ajg{
+    box-sizing: border-box;
+    width: 100%;
+    min-width: 0;
     font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif;
     background: var(--ajg-offwhite);
     border: 2px solid var(--ajg-black);
@@ -264,8 +267,10 @@
     margin-bottom: 10px;
   }
 
+  /* Fit the containing embed and give descriptions most of the available width. */
   .ajg-table-wrap{
-    overflow-x:auto;
+    max-width: 100%;
+    min-width: 0;
     border-radius: 12px;
     border: 2px solid var(--ajg-black);
     background: white;
@@ -273,8 +278,20 @@
 
   .ajg-table{
     border-collapse: collapse;
+    table-layout: fixed;
     width: 100%;
-    min-width: 780px;
+    min-width: 0;
+  }
+
+  .ajg-table th, .ajg-table td{
+    box-sizing: border-box;
+    white-space: normal;
+    overflow-wrap: anywhere;
+  }
+
+  .ajg-table th:nth-child(-n + 3), .ajg-table td:nth-child(-n + 3){
+    padding-left: 6px;
+    padding-right: 6px;
   }
 
   .ajg-table thead th{
@@ -315,14 +332,16 @@
 
   .ajg-pill{
     display:inline-block;
+    box-sizing: border-box;
+    max-width: 100%;
     font-weight: 800;
     font-size: 12px;
-    padding: 2px 8px;
-    border-radius: 999px;
-    border: 2px solid var(--ajg-black);
-    background: var(--ajg-offwhite);
-    margin-right: 6px;
-    white-space: nowrap;
+    /* The colored slot edge supplies emphasis without a bulky badge. */
+    padding: 2px 0;
+    border: 0;
+    background: transparent;
+    white-space: normal;
+    overflow-wrap: anywhere;
   }
 
   .ajg-empty{
