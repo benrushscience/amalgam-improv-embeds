@@ -4,9 +4,9 @@
   "sourceMetadata": {
     "baseId": "appvJnNJbdcXwWSho",
     "tableId": "tblCqeDj48Bf6qNT9",
-    "recordCountAtContentChange": 127
+    "recordCountAtContentChange": 128
   },
-  "contentUpdatedAt": "2026-11-16T23:20:08+00:00",
+  "contentUpdatedAt": "2026-11-18T14:16:05+00:00",
   "resources": [
     {
       "title": "UCB Comedy Improvisation Manual",
@@ -1552,6 +1552,21 @@
       "amazonUrl": "",
       "id": "recm5bHnldXQxH8KJ",
       "sortOrder": 126.0
+    },
+    {
+      "title": "Putting Improv to Work: Spontaneous Performance for Professional and Personal Life",
+      "creator": "Greg Hohn",
+      "category": "applied",
+      "format": "Book / applied improv (softcover and ebook)",
+      "access": "purchase",
+      "description": "A practical applied-improv course with exercises for using improvisation beyond the stage. Develops communication, collaboration, creativity, confidence, and emotional awareness for work, education, and everyday life.",
+      "isbn": "9781476687759",
+      "coverUrl": "https://mcfarlandbooks.com/wp-content/uploads/H_978-1-4766-8775-9.jpg",
+      "sourceUrl": "https://mcfarlandbooks.com/product/Putting-Improv-to-Work/",
+      "sourceLabel": "McFarland / Toplight Books",
+      "amazonUrl": "",
+      "id": "rec9I2rnzzm40iN9Y",
+      "sortOrder": 127.0
     },
     {
       "title": "The Jokebook",
