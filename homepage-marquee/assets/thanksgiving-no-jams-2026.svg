@@ -1,6 +1,6 @@
 <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 800 640" role="img" aria-labelledby="title description">
-  <title id="title">No jams November 26</title>
-  <desc id="description">Taking a Thanksgiving break. Keep laughing, and enjoy the holiday!</desc>
+  <title id="title">No jams or shows during Thanksgiving week</title>
+  <desc id="description">Taking a Thanksgiving week break. Keep laughing, and enjoy the holiday!</desc>
   <!-- Editable brand-color poster; keep the announcement above the card caption. -->
   <rect width="800" height="640" fill="#BD005B"/>
   <rect x="24" y="24" width="752" height="592" rx="20" fill="none" stroke="#FFE974" stroke-width="5"/>
@@ -8,8 +8,8 @@
   <circle cx="60" cy="480" r="130" fill="#E55937"/>
   <g fill="#FFE974" font-family="Arial, Helvetica, sans-serif" text-anchor="middle" font-weight="900">
     <text x="400" y="110" font-size="28" letter-spacing="5">THANKSGIVING BREAK</text>
-    <text x="400" y="230" font-size="92">NO JAMS</text>
-    <text x="400" y="328" font-size="76">NOVEMBER 26</text>
+    <text x="400" y="208" font-size="66">NO JAMS OR SHOWS</text>
+    <text x="400" y="280" font-size="44">THANKSGIVING WEEK</text>
     <text x="400" y="396" font-size="30" fill="#F7F6F3">Keep laughing. Enjoy the holiday!</text>
   </g>
 </svg>
